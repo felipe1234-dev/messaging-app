@@ -17,7 +17,6 @@ const recoverPasswordController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {

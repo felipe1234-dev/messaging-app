@@ -12,7 +12,8 @@ import {
     Forbidden, 
     InvalidParam, 
     MissingPostParam, 
-    ServerError 
+    ServerError, 
+    Unauthorized
 } from "@errors";
 
 const loginUserController: RouteController = async (
@@ -27,7 +28,6 @@ const loginUserController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {
@@ -59,7 +59,10 @@ const loginUserController: RouteController = async (
 
         delete user.token;
 
-        socket.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, user);
+        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, user);
+
+        const socket = req.socket;
+        if (!socket) throw new Unauthorized("You're not connected");
 
         // Watch for changes in user's data
         socket.join(`user:${user.uid}`);

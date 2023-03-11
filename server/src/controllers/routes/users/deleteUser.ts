@@ -11,12 +11,11 @@ const deleteUserController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {
         const currentUser = req.user;
-        if (!currentUser.admin) throw new Unauthorized("You don't have permission to delete users");
+        if (!currentUser?.admin) throw new Unauthorized("You don't have permission to delete users");
  
         const { userUid } = req.params;
         if (!userUid) throw new MissingURLParam("userUid");
@@ -32,7 +31,7 @@ const deleteUserController: RouteController = async (
 
         const updatedUser = await UsersDB.getUserByUid(userUid);
         io.to(`user:${userUid}`).emit(events.USER_UPDATED, updatedUser);
-        socket.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, updatedUser);
+        io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, updatedUser);
 
         return res.sendResponse({
             status: 200,

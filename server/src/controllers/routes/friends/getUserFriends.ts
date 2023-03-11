@@ -1,11 +1,12 @@
 import { RouteController } from "@typings";
 import { User, codes } from "messaging-app-globals";
 import { UsersDB } from "@databases";
-import { ServerError } from "@errors";
+import { ServerError, Unauthorized } from "@errors";
 
 const getUserFriendsController: RouteController = async (req, res) => {
     try {
         const { user } = req;
+        if (!user) throw new Unauthorized("You're not authenticated");
 
         const friends: User[] = [];
 

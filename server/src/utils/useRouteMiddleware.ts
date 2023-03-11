@@ -19,6 +19,7 @@ const useRouteMiddleware = (
     res: ExpressResponse,
     next: ExpressNextFunction
 ) => {
+    // @ts-ignore
     const request = req as Request;
     const response = res as Response;
     const nextFunc = next as NextFunction;

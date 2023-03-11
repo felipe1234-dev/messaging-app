@@ -31,6 +31,8 @@ const addChatAdminController: RouteController = async (
         if (!admin) throw new NotFound("User not found");
         
         const currentUser = req.user;
+        if (!currentUser) throw new Unauthorized("You're not authenticated");
+
         const canAddAdmins = chat.admins.includes(currentUser.uid);
         if (!canAddAdmins) throw new Unauthorized("You are not allowed to add admins to this chat");
 

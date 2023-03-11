@@ -71,6 +71,8 @@ const sendMessageController: RouteController = async (
         if (!type) throw new MissingURLParam("type");
 
         const currentUser = req.user;
+        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        
         const { chat: chatUid } = req.body;
 
         if (!chatUid) throw new MissingPostParam("chat");

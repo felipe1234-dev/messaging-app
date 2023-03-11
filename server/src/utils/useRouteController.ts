@@ -9,30 +9,27 @@ import {
     Response,
     NextFunction,
     RouteController,
-    SocketServer,
-    Socket
+    SocketServer
 } from "@typings";
 
 const useRouteController = (
-    controller: RouteController, 
-    socket: socketIo.Socket,
+    controller: RouteController,
     io: socketIo.Server
 ) => async (
     req: ExpressRequest, 
     res: ExpressResponse,
     next: ExpressNextFunction
 ) => {
+    // @ts-ignore
     const request = req as Request;
     const response = res as Response;
     const nextFunc = next as NextFunction;
-    const newSocket = socket as Socket;
     const socketServer = io as SocketServer;
     
     await controller(
         request, 
         response, 
-        nextFunc, 
-        newSocket,
+        nextFunc,
         socketServer
     );
 };

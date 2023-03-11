@@ -16,12 +16,11 @@ const unblockUserController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {
         const currentUser = req.user;
-        if (!currentUser.admin) throw new Unauthorized("You don't have permission to unblock users");
+        if (!currentUser?.admin) throw new Unauthorized("You don't have permission to unblock users");
 
         const { userUid } = req.params;
         if (!userUid) throw new MissingURLParam("userUid");
@@ -37,7 +36,7 @@ const unblockUserController: RouteController = async (
 
         const unblockedUser = await UsersDB.getUserByUid(userUid);
         io.to(`user:${userUid}`).emit(events.USER_UPDATED, unblockedUser);
-        socket.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, unblockedUser);
+        io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, unblockedUser);
 
         return res.sendResponse({
             status: 200,

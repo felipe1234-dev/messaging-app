@@ -1,7 +1,7 @@
 import { RouteController, Request } from "@typings";
 import { FriendRequest, codes, events } from "messaging-app-globals";
 import { UsersDB, FriendRequestsDB } from "@databases";
-import { InvalidParam, MissingPostParam, NotFound, ServerError } from "@errors";
+import { InvalidParam, MissingPostParam, NotFound, ServerError, Unauthorized } from "@errors";
 
 const sendFriendRequestController: RouteController = async (
     req: Request & {
@@ -11,11 +11,12 @@ const sendFriendRequestController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {
         const { user } = req;
+        if (!user) throw new Unauthorized("You're not authenticated");
+        
         const { friendUid } = req.params;
         if (!friendUid) throw new MissingPostParam("friendUid");
         

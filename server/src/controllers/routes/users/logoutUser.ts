@@ -3,7 +3,7 @@ import { codes, events } from "messaging-app-globals";
 import { 
     MissingHeaderParam, 
     NotFound, 
-    ServerError, 
+    ServerError,
     Unauthorized 
 } from "@errors";
 import { UsersDB } from "@databases";
@@ -16,7 +16,6 @@ const logoutUserController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {
@@ -24,7 +23,7 @@ const logoutUserController: RouteController = async (
         if (!userUid) throw new MissingHeaderParam("userUid");
 
         const currentUser = req.user;
-        if (currentUser.uid !== userUid) throw new Unauthorized("You're not authorized");
+        if (currentUser?.uid !== userUid) throw new Unauthorized("You're not authorized");
 
         const user = await UsersDB.getUserByUid(userUid);
         if (!user) throw new NotFound("User not found");
@@ -37,7 +36,10 @@ const logoutUserController: RouteController = async (
 
         await UsersDB.updateUser(user.uid, { ...user });
 
-        socket.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, user);
+        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, user);
+
+        const socket = req.socket;
+        if (!socket) throw new Unauthorized("You're not connected");
 
         for (const room of socket.rooms) {
             if (room !== socket.id) socket.leave(room);

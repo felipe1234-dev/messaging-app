@@ -6,6 +6,14 @@ import {
 import { User, codes } from "messaging-app-globals";
 import * as socketIo from "socket.io";
 
+export interface Socket extends socketIo.Socket {
+    event: string;
+}
+
+export interface App extends Express {}
+
+export interface SocketServer extends socketIo.Server {}
+
 export type Code = keyof typeof codes;
 
 export type Operator = "<"
@@ -19,11 +27,14 @@ export type Operator = "<"
     | "not-in"
     | "array-contains-any";
 
-export interface Request extends ExpressRequest {
+export interface Request extends Omit<ExpressRequest, "socket"> {
     headers: {
-        [key: string]: string;
+        authorization?: string;
+        "socket-id"?: string;
+        origin?: string;
     };
-    user: User;
+    user?: User;
+    socket?: Socket;
     body: {
         [key: string]: any;
     };
@@ -32,7 +43,7 @@ export interface Request extends ExpressRequest {
     };
     query: {
         [key: string]: string;
-    }
+    };
 }
 
 export type NextFunction = (error?: Error) => void;
@@ -62,15 +73,12 @@ export interface FilterParams {
     startAfter?: string;
 }
 
-export interface Socket extends socketIo.Socket {
-    event: string;
-}
+export type HTTPRouter = (
+    app: App,
+    io: socketIo.Server
+) => void;
 
-export interface App extends Express {}
-
-export interface SocketServer extends socketIo.Server {}
-
-export type Router = (
+export type SocketRouter = (
     app: App,
     socket: socketIo.Socket,
     io: socketIo.Server
@@ -80,7 +88,6 @@ export type RouteController = (
     req: Request,
     res: Response, 
     next: NextFunction,
-    socket: Socket,
     io: SocketServer
 ) => Promise<void>;
 

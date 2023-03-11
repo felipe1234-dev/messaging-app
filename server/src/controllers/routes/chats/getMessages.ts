@@ -28,6 +28,8 @@ const getChatMessagesController: RouteController = async (
         if (!chat) throw new NotFound("Chat not found");
         
         const currentUser = req.user;
+        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        
         const canSeeChat = chat.members.includes(currentUser.uid) || currentUser.admin;
         if (!canSeeChat) throw new Unauthorized("You are not allowed to see this chat");
 

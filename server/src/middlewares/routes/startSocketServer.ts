@@ -2,7 +2,7 @@ import { RouteMiddleware } from "@typings";
 import configs from "@configs";
 import portscanner from "portscanner";
 
-const startSocketServer: RouteMiddleware = (req, res, next, io) => {
+const startSocketServerMiddleware: RouteMiddleware = (req, res, next, io) => {
     portscanner.checkPortStatus(configs.socketPort, (error, status) => {
         if (!error && status === "closed") {
             io.listen(configs.socketPort);
@@ -13,4 +13,4 @@ const startSocketServer: RouteMiddleware = (req, res, next, io) => {
     });
 };
 
-export default startSocketServer;
+export default startSocketServerMiddleware;

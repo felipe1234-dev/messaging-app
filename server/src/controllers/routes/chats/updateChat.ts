@@ -25,6 +25,8 @@ const updateChatController: RouteController = async (
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
+        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        
         const canUpdateChat = currentUser.admin || chat.admins.includes(currentUser.uid);
         if (!canUpdateChat) 
             throw new Unauthorized("You don't have permission to update this chat");

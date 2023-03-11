@@ -16,12 +16,11 @@ const blockUserController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {
         const currentUser = req.user;
-        if (!currentUser.admin) throw new Unauthorized("You don't have permission to block users");
+        if (!currentUser?.admin) throw new Unauthorized("You don't have permission to block users");
 
         const { userUid } = req.params;
         if (!userUid) throw new MissingURLParam("userUid");
@@ -35,9 +34,9 @@ const blockUserController: RouteController = async (
             blockedBy: currentUser.uid
         });
 
-        const blockedUser = await UsersDB.getUserByUid(userUid);
+        const blockedUser = await UsersDB.getUserByUid(userUid);        
         io.to(`user:${userUid}`).emit(events.USER_UPDATED, blockedUser);
-        socket.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, blockedUser);
+        io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, blockedUser);
 
         return res.sendResponse({
             status: 200,

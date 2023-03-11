@@ -19,6 +19,8 @@ const deleteChatController: RouteController = async (
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
+        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        
         const canDeleteChat = currentUser.admin || chat.admins.includes(currentUser.uid);
         if (!canDeleteChat) throw new Unauthorized("You don't have permission to delete this chat");
 

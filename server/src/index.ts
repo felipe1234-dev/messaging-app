@@ -41,33 +41,30 @@ const io = new socket.Server(server, {
 });
 
 // Global route middlewares
+app.use("/*", useRouteMiddleware(responseFormatterMiddleware, io));
 app.use("/*", useRouteMiddleware(startSocketServerMiddleware, io));
 app.use("/*", useRouteMiddleware(corsMiddleware, io));
-app.use("/*", useRouteMiddleware(responseFormatterMiddleware, io));
 app.use("/*", useRouteMiddleware(logRequestsMiddleware, io));
+
+// Ping
+app.get("/ping", (req, res) => res.status(200).send("Ping"));
+
+// HTTP routes
+usersRouter(app, io);
+messagesRouter(app, io);
+chatsRouter(app, io);
+friendsRouter(app, io);
 
 // Global socket middlewares
 io.use(useSocketMiddleware(logConenctionsMiddleware, io));
 io.use(useSocketMiddleware(logDisconenctionsMiddleware, io));
 
-// Ping
-app.get("/ping", (req, res) => res.status(200).send("Ping"));
-
 // Sockets
 io.on("connect", socket => {
     // Socket events
-    
 });
 
-io.on("connection", socket => {
-    // HTTP routes
-    usersRouter(app, socket, io);
-    messagesRouter(app, socket, io);
-    chatsRouter(app, socket, io);
-    friendsRouter(app, socket, io);
-
-    // Schedules
-    setInterval(() => expireTokens(socket, io), 1 * 60 * 1000);
-});
+// Schedules
+setInterval(() => expireTokens(io), 1 * 60 * 1000);
 
 export default functions.https.onRequest(app);

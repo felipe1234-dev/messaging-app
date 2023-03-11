@@ -1,6 +1,6 @@
-import { Router } from "@typings";
+import { HTTPRouter } from "@typings";
 import { useRouteController, useRouteMiddleware } from "@utils";
-import { authenticationMiddleware } from "@middlewares/routes";
+import { authenticationMiddleware, getConnectedSocketMiddleware } from "@middlewares/routes";
 import { 
     refreshSessionController,
     registerUserController, 
@@ -13,47 +13,49 @@ import {
     recoverPasswordController
 } from "@controllers/routes/users";
 
-const usersRouter: Router = (api, socket, io) => {
+const usersRouter: HTTPRouter = (api, io) => {
     api.post(
         "/refresh/session", 
-        useRouteController(refreshSessionController, socket, io)
+        useRouteController(refreshSessionController, io)
     );
     api.put(
         "/register", 
-        useRouteController(registerUserController, socket, io)
+        useRouteController(registerUserController, io)
     );
     api.post(
         "/login", 
-        useRouteController(loginUserController, socket, io)
+        useRouteMiddleware(getConnectedSocketMiddleware, io),
+        useRouteController(loginUserController, io)
     );
     api.post(
         "/logout/:userUid", 
+        useRouteMiddleware(getConnectedSocketMiddleware, io),
         useRouteMiddleware(authenticationMiddleware, io), 
-        useRouteController(logoutUserController, socket, io)
+        useRouteController(logoutUserController, io)
     );
     api.delete(
         "/block/user/:userUid", 
         useRouteMiddleware(authenticationMiddleware, io), 
-        useRouteController(blockUserController, socket, io)
+        useRouteController(blockUserController, io)
     );
     api.patch(
         "/unblock/user/:userUid", 
         useRouteMiddleware(authenticationMiddleware, io), 
-        useRouteController(unblockUserController, socket, io)
+        useRouteController(unblockUserController, io)
     );
     api.delete(
         "/delete/user/:userUid", 
         useRouteMiddleware(authenticationMiddleware, io),
-        useRouteController(deleteUserController, socket, io)
+        useRouteController(deleteUserController, io)
     );
     api.patch(
         "/update/user/:userUid", 
         useRouteMiddleware(authenticationMiddleware, io), 
-        useRouteController(updateUserController, socket, io)
+        useRouteController(updateUserController, io)
     );
     api.post(
         "/recover/password/:userUid", 
-        useRouteController(recoverPasswordController, socket, io)
+        useRouteController(recoverPasswordController, io)
     );
 }; 
 

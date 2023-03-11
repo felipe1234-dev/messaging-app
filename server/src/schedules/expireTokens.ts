@@ -5,7 +5,7 @@ import * as socketIo from "socket.io";
 
 let expiresInExecutions = 0;
 
-async function expireTokens(socket: socketIo.Socket, io: socketIo.Server) {
+async function expireTokens(io: socketIo.Server) {
     if (expiresInExecutions > 0) return;
     
     expiresInExecutions++;
@@ -25,7 +25,7 @@ async function expireTokens(socket: socketIo.Socket, io: socketIo.Server) {
         
         const updatedUser = await UsersDB.getUserByUid(user.uid);
         io.to(`user:${user.uid}`).emit(events.USER_UPDATED, updatedUser);
-        socket.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, updatedUser);
+        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, updatedUser);
     };
 
     for (const user of onlineUsers) {

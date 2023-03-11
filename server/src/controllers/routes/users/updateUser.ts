@@ -18,7 +18,6 @@ const updateUserController: RouteController = async (
     },
     res,
     next,
-    socket,
     io
 ) => {
     try {
@@ -26,7 +25,7 @@ const updateUserController: RouteController = async (
         if (!userUid) throw new MissingURLParam("userUid");
 
         const currentUser = req.user;
-        if (!currentUser.admin && currentUser.uid !== userUid) 
+        if (!currentUser?.admin && currentUser?.uid !== userUid) 
             throw new Unauthorized("You don't have permission to update this user");
 
         const userToBeUpdated = await UsersDB.getUserByUid(userUid);
@@ -41,7 +40,7 @@ const updateUserController: RouteController = async (
 
         const updatedUser = await UsersDB.getUserByUid(userUid);
         io.to(`user:${userUid}`).emit(events.USER_UPDATED, updatedUser);
-        socket.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, updatedUser);
+        io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, updatedUser);
 
         return res.sendResponse({
             status: 200,
