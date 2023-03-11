@@ -1,7 +1,7 @@
 import { isLocal } from "@functions";
 import { User, events } from "messaging-app-globals";
 import axios from "axios";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 
 const httpURL = isLocal() 
     ? "http://127.0.0.1:5001/screen-recorder-b7354/us-central1/default" 
@@ -41,25 +41,40 @@ const Api = {
         await httpEndpoint.get("/ping");
     },
 
-    onConnect(callback: () => void) {
-        socketEndpoint.on("connect", callback);
+    onConnect(callback: (socket: Socket) => void) {
+        const onConnect = () => {
+            httpEndpoint.defaults.headers.common["socket-id"] = socketEndpoint.id;
+            callback(socketEndpoint);
+        };
+        socketEndpoint.on("connect", onConnect);
     },
-    offConnect(callback: () => void) {
-        socketEndpoint.off("connect", callback);
+    offConnect(callback: (socket: Socket) => void) {
+        const offConnect = () => {
+            httpEndpoint.defaults.headers.common["socket-id"] = "";
+            callback(socketEndpoint);
+        };
+        socketEndpoint.off("connect", offConnect);
     },
 
-    onDisconnect(callback: () => void) {
-        socketEndpoint.on("disconnect", callback);
+    onDisconnect(callback: (socket: Socket) => void) {
+        const onDisconnect = () => {
+            httpEndpoint.defaults.headers.common["socket-id"] = "";
+            callback(socketEndpoint);
+        };
+        socketEndpoint.on("disconnect", onDisconnect);
     },
-    offDisconnect(callback: () => void) {
-        socketEndpoint.off("disconnect", callback);
+    offDisconnect(callback: (socket: Socket) => void) {
+        const offDisconnect = () => {
+            httpEndpoint.defaults.headers.common["socket-id"] = "";
+            callback(socketEndpoint);
+        };
+        socketEndpoint.off("disconnect", offDisconnect);
     },
 
     auth: {
         recoverSession: async () => {
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
-                const rememberMeToken = localStorage.getItem("rememberMeToken");
                 
                 const { data } = await httpEndpoint.post("/refresh/session", { refreshToken });
                 
@@ -68,6 +83,7 @@ const Api = {
 
                 return user;
             } catch {
+                localStorage.removeItem("refreshToken");
                 return undefined;
             }
         },
@@ -83,6 +99,7 @@ const Api = {
             localStorage.setItem("rememberMeToken", rememberMeToken);
 
             return new User(data.user);
+
         },
         logout: async (userUid: string) => {
             await httpEndpoint.post(`/logout/${userUid}`);
