@@ -1,5 +1,5 @@
 import { isLocal } from "@functions";
-import { User, events } from "messaging-app-globals";
+import { User, Chat, events } from "messaging-app-globals";
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
 
@@ -128,6 +128,19 @@ const Api = {
         },
         offFriendUpdated: (callback: (friend: User) => void) => {
             socketEndpoint.off(events.FRIEND_UPDATED, callback);
+        }
+    },
+    chats: {
+        getUserChats: async () => {
+            const { data } = await httpEndpoint.get("/get/chats");
+            return (data.chats as any[]).map(friend => new Chat(friend));
+        },
+
+        onChatUpdated: (callback: (friend: User) => void) => {
+            socketEndpoint.on(events.CHAT_UPDATED, callback);
+        },
+        offChatUpdated: (callback: (friend: User) => void) => {
+            socketEndpoint.off(events.CHAT_UPDATED, callback);
         }
     }
 };

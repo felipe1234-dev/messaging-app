@@ -1,1 +1,1 @@
-export { default as Api } from "./Api.object";
+export { default as Api } from "./Api";
