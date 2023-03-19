@@ -1,19 +1,17 @@
-import { Columns, Column } from "@styles/layout";
-import { useAuth } from "@providers";
+import { UserSearchProvider, ChatsProvider } from "./providers";
+import Page from "./Page";
+import { Composer } from "@components";
 
 function Home() {
-    const { user } = useAuth();
-
-    if (!user) return <></>;
-
     return (
-        <Columns>
-            <Column>
-                {user.name}
-            </Column>
-            <Column>
-            </Column>
-        </Columns>
+        <Composer
+            components={[
+                ChatsProvider,
+                UserSearchProvider
+            ]}
+        >
+            <Page />
+        </Composer>
     );
 }
 
