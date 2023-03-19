@@ -22,3 +22,5 @@ export type { RowsProps } from "./Rows";
 
 export { default as Row } from "./Row";
 export type { RowProps } from "./Row";
+
+export { default as Whitespace } from "./Whitespace";
