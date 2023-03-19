@@ -8,7 +8,8 @@ import {
     getChatMessagesController,
     deleteChatController,
     updateChatController,
-    removeChatMemberController
+    removeChatMemberController,
+    getUserChatsController
 } from "@controllers/routes/chats";
 
 const chatsRouter: HTTPRouter = (api, io) => {
@@ -46,6 +47,11 @@ const chatsRouter: HTTPRouter = (api, io) => {
         "/remove/chat/member",
         useRouteMiddleware(authenticationMiddleware, io), 
         useRouteController(removeChatMemberController, io)
+    );
+    api.get(
+        "/get/chats",
+        useRouteMiddleware(authenticationMiddleware, io),
+        useRouteController(getUserChatsController, io)
     );
 };
 
