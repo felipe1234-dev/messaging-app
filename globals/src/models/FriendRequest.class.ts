@@ -1,4 +1,4 @@
-import generateUid from "../functions/generateUid";
+import { generateUid, toDate } from "../functions";
 
 class FriendRequest {
     public uid: string;
@@ -32,12 +32,12 @@ class FriendRequest {
         this.from = from;
         this.to = to;
         this.accepted = accepted;
-        if (acceptedAt) this.acceptedAt = acceptedAt;
+        if (acceptedAt) this.acceptedAt = toDate(acceptedAt);
         this.rejected = rejected;
-        if (rejectedAt) this.rejectedAt = rejectedAt;
-        this.sentAt = sentAt;
+        if (rejectedAt) this.rejectedAt = toDate(rejectedAt);
+        this.sentAt = toDate(sentAt);
         this.deleted = deleted;
-        if (deletedAt) this.deletedAt = deletedAt;
+        if (deletedAt) this.deletedAt = toDate(deletedAt);
         if (deletedBy) this.deletedBy = deletedBy;
     }
 }

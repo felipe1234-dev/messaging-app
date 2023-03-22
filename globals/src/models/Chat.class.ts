@@ -1,4 +1,4 @@
-import generateUid from "../functions/generateUid";
+import { generateUid, toDate } from "../functions";
 
 class Chat {
     public uid: string;
@@ -39,10 +39,10 @@ class Chat {
         this.admins = admins;
 
         this.deleted = deleted;
-        if (deletedAt) this.deletedAt = deletedAt;
+        if (deletedAt) this.deletedAt = toDate(deletedAt);
         if (deletedBy) this.deletedBy = deletedBy;
         
-        this.createdAt = createdAt;
+        this.createdAt = toDate(createdAt);
         this.createdBy = createdBy;
         
     }

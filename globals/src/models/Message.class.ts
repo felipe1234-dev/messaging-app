@@ -1,4 +1,4 @@
-import generateUid from "../functions/generateUid";
+import { generateUid, toDate } from "../functions";
 
 class Message {
     public uid: string;
@@ -33,11 +33,14 @@ class Message {
         this.sentBy = sentBy;
 
         this.deleted = deleted;
-        if (deletedAt) this.deletedAt = deletedAt;
+        if (deletedAt) this.deletedAt = toDate(deletedAt);
         if (deletedBy) this.deletedBy = deletedBy;
         
-        this.createdAt = createdAt;
-        this.views = views;
+        this.createdAt = toDate(createdAt);
+        this.views = views.map(view => ({
+            ...view,
+            viewedAt: toDate(view.viewedAt)
+        }));
     }
 }
 

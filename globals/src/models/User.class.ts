@@ -1,4 +1,4 @@
-import generateUid from "../functions/generateUid";
+import { generateUid, toDate } from "../functions";
 
 class User {
     public uid: string;
@@ -69,23 +69,23 @@ class User {
         this.admin = admin;
        
         this.deleted = deleted;
-        if (deletedAt) this.deletedAt = deletedAt;
+        if (deletedAt) this.deletedAt = toDate(deletedAt);
         if (deletedBy) this.deletedBy = deletedBy;
 
         this.blocked = blocked;
-        if (blockedAt) this.blockedAt = blockedAt;
+        if (blockedAt) this.blockedAt = toDate(blockedAt);
         if (blockedBy) this.blockedBy = blockedBy;
-        if (unblockedAt) this.unblockedAt = unblockedAt;
+        if (unblockedAt) this.unblockedAt = toDate(unblockedAt);
         if (unblockedBy) this.unblockedBy = unblockedBy;
 
         this.online = online;
         this.friends = friends;
-        this.createdAt = createdAt;
+        this.createdAt = toDate(createdAt);
 
         if (token) this.token = token;
         if (refreshToken) this.refreshToken = refreshToken;
-        if (sessionStart) this.sessionStart = sessionStart;
-        if (sessionEnd) this.sessionEnd = sessionEnd;
+        if (sessionStart) this.sessionStart = toDate(sessionStart);
+        if (sessionEnd) this.sessionEnd = toDate(sessionEnd);
         if (recoveryToken) this.recoveryToken = recoveryToken;
         if (rememberMeToken) this.rememberMeToken = rememberMeToken;
     }
