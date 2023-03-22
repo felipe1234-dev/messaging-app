@@ -24,7 +24,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "prestart": "npm i messaging-app-globals@latest",
+    "update:globals": "npm i messaging-app-globals@latest",
+    "prestart": "npm run update:globals",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
