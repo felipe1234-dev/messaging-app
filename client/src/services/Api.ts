@@ -1,5 +1,13 @@
 import { isLocal } from "@functions";
-import { User, Chat, events } from "messaging-app-globals";
+import { 
+    events, 
+    User, 
+    Chat, 
+    Message,
+    TextMessage, 
+    AudioMessage, 
+    VideoMessage
+} from "messaging-app-globals";
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
 
@@ -136,11 +144,33 @@ const Api = {
             return (data.chats as any[]).map(friend => new Chat(friend));
         },
 
-        onChatUpdated: (callback: (friend: User) => void) => {
+        onChatUpdated: (callback: (chat: Chat) => void) => {
             socketEndpoint.on(events.CHAT_UPDATED, callback);
         },
-        offChatUpdated: (callback: (friend: User) => void) => {
+        offChatUpdated: (callback: (chat: Chat) => void) => {
             socketEndpoint.off(events.CHAT_UPDATED, callback);
+        }
+    },
+    messages: {
+        getChatMessages: async (
+            chatUid: string, 
+            limit?: number, 
+            startAfter?: string
+        ) => {
+            const { data } = await httpEndpoint.get(
+                `/chat/${chatUid}/messages/?limit=${limit}&startAfter=${startAfter}`
+            );
+            return (data.messages as any[]).map(message => {
+                if (message.type === "text") {
+                    return new TextMessage(message);
+                } else if (message.type === "audio") {
+                    return new AudioMessage(message);
+                } else if (message.type === "video") {
+                    return new VideoMessage(message);
+                } else {
+                    return new Message(message);
+                }
+            });
         }
     }
 };
