@@ -26,3 +26,6 @@ export type { AvatarProps } from "./Avatar";
 
 export { default as Switch } from "./Switch";
 export type { SwitchProps } from "./Switch";
+
+export { default as Card } from "./Card";
+export type { CardProps } from "./Card";
