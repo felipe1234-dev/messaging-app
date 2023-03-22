@@ -8,6 +8,10 @@ interface ParagraphProps {
     mr?: number;
     mt?: number;
     mb?: number;
+    pt?: number;
+    pl?: number;
+    pr?: number;
+    pb?: number;
 }
 
 const Paragraph = styled.p<ParagraphProps>`
@@ -18,6 +22,11 @@ const Paragraph = styled.p<ParagraphProps>`
     margin-right: ${({ mr }) => mr}px;
     margin-top: ${({ mt }) => mt}px;
     margin-bottom: ${({ mb }) => mb}px;
+
+    padding-top: ${({ pt }) => pt}px;
+    padding-left: ${({ pl }) => pl}px;
+    padding-right: ${({ pr }) => pr}px;
+    padding-bottom: ${({ pb }) => pb}px;
 `;
 
 Paragraph.defaultProps = {
@@ -26,7 +35,11 @@ Paragraph.defaultProps = {
     ml: 0,
     mr: 0,
     mt: 0,
-    mb: 0
+    mb: 0,
+    pt: 0,
+    pl: 0,
+    pr: 0,
+    pb: 0
 };
 
 export default Paragraph;

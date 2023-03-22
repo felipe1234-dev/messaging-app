@@ -16,21 +16,21 @@ interface ContainerProps {
 }
 
 const Container = styled.div<ContainerProps>`
-  display: flex;
-  flex-direction: ${({ direction }) => direction};
-  align-items: ${({ align }) => align};
-  justify-content: ${({ justify }) => justify};
-  gap: ${({ gap }) => gap}px;
-  width: 100%;
-  height: 100%;
-  margin-top: ${({ mt }) => mt}px;
-  margin-left: ${({ ml }) => ml}px;
-  margin-right: ${({ mr }) => mr}px;
-  margin-bottom: ${({ mb }) => mb}px;
-  padding-top: ${({ pt }) => pt}px;
-  padding-left: ${({ pl }) => pl}px;
-  padding-right: ${({ pr }) => pr}px;
-  padding-bottom: ${({ pb }) => pb}px;
+    display: flex;
+    flex-direction: ${({ direction }) => direction};
+    align-items: ${({ align }) => align};
+    justify-content: ${({ justify }) => justify};
+    gap: ${({ gap }) => gap}px;
+    width: 100%;
+    height: 100%;
+    margin-top: ${({ mt }) => mt}px;
+    margin-left: ${({ ml }) => ml}px;
+    margin-right: ${({ mr }) => mr}px;
+    margin-bottom: ${({ mb }) => mb}px;
+    padding-top: ${({ pt }) => pt}px;
+    padding-left: ${({ pl }) => pl}px;
+    padding-right: ${({ pr }) => pr}px;
+    padding-bottom: ${({ pb }) => pb}px;
 `;
 
 Container.defaultProps = {
@@ -49,3 +49,4 @@ Container.defaultProps = {
 };
 
 export default Container;
+export type { ContainerProps };

@@ -7,6 +7,7 @@ export { default as Column } from "./Column";
 export type { ColumnProps } from "./Column";
 
 export { default as Container } from "./Container";
+export type { ContainerProps } from "./Container";
 
 export { default as Title } from "./Title";
 export type { TitleProps } from "./Title";
