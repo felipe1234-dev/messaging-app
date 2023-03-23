@@ -5,7 +5,6 @@ import { useUnmount } from "@hooks";
 
 interface AuthValue {
     user?: User;
-    friends: User[];
     login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -19,16 +18,12 @@ function AuthProvider(props: { children: React.ReactNode }) {
     const login = async (email: string, password: string, rememberMe: boolean) => {
         const response = await Api.auth.login(email, password, rememberMe);
         setUser(response);
-
-        const friendList = await Api.friends.getUserFriends();
-        setFriends(friendList);
     };
 
     const logout = async () => {
         if (!user) return;
         await Api.auth.logout(user.uid);
         setUser(undefined);
-        setFriends([]);
     };
 
     const onFriendUpdated = async (updatedFriend: User) => {
@@ -71,7 +66,7 @@ function AuthProvider(props: { children: React.ReactNode }) {
     });
 
     return (
-        <AuthContext.Provider value={{ user, friends, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout }}>
             {props.children}
         </AuthContext.Provider>
     );
