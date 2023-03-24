@@ -9,7 +9,8 @@ import {
     deleteChatController,
     updateChatController,
     removeChatMemberController,
-    getUserChatsController
+    getUserChatsController,
+    getChatMembersController
 } from "@controllers/routes/chats";
 
 const chatsRouter: HTTPRouter = (api, io) => {
@@ -23,6 +24,11 @@ const chatsRouter: HTTPRouter = (api, io) => {
         useRouteMiddleware(authenticationMiddleware, io), 
         useRouteController(getChatMessagesController, io)
     );
+    api.get(
+        "/chat/:chatUid/members",
+        useRouteMiddleware(authenticationMiddleware, io),
+        useRouteController(getChatMembersController, io)
+    )
     api.patch(
         "/add/chat/admin",
         useRouteMiddleware(authenticationMiddleware, io), 
