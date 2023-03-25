@@ -1,5 +1,15 @@
+import { fileUrlToFile, getVideoDuration } from "@utils";
 import { Request, RouteController } from "@typings";
-import { codes } from "messaging-app-globals";
+import { FileStorage } from "@services";
+import { MessagesDB, ChatsDB } from "@databases";
+import { 
+    codes, 
+    events,
+    User, 
+    TextMessage, 
+    VideoMessage, 
+    Message
+} from "messaging-app-globals";
 import { 
     InvalidParam, 
     MissingPostParam, 
@@ -8,10 +18,6 @@ import {
     ServerError, 
     Unauthorized 
 } from "@errors";
-import { TextMessage, User, VideoMessage } from "messaging-app-globals";
-import { MessagesDB, ChatsDB } from "@databases";
-import { FileStorage } from "@services";
-import { fileUrlToFile, getVideoDuration } from "@utils";
 
 interface TextMessageBody {
     text: string;
@@ -23,7 +29,7 @@ interface VideoMessageBody {
     chat: string;
 }
 
-async function createTextMessage(params: TextMessageBody & { user: User }) {
+async function createTextMessage(params: TextMessageBody & { user: User }): Promise<TextMessage> {
     const { text, chat, user } = params;
 
     if (!text) throw new MissingPostParam("text");
@@ -35,9 +41,11 @@ async function createTextMessage(params: TextMessageBody & { user: User }) {
     });
 
     await MessagesDB.createMessage(textMessage);
+
+    return textMessage;
 }
 
-async function createVideoMessage(params: VideoMessageBody & { user: User }) {
+async function createVideoMessage(params: VideoMessageBody & { user: User }): Promise<VideoMessage> {
     const { videoURL, chat, user } = params;
 
     if (!videoURL) throw new MissingPostParam("videoURL");
@@ -54,6 +62,8 @@ async function createVideoMessage(params: VideoMessageBody & { user: User }) {
     });
 
     await MessagesDB.createMessage(videoMessage);
+
+    return videoMessage;
 }
 
 const sendMessageController: RouteController = async (
@@ -63,18 +73,18 @@ const sendMessageController: RouteController = async (
         };
         body: Partial<TextMessageBody | VideoMessageBody>
     },
-    res
+    res,
+    next,
+    io
 ) => {
     try {
-        const { type } = req.params;
-        
+        const { type } = req.params; 
         if (!type) throw new MissingURLParam("type");
 
         const currentUser = req.user;
         if (!currentUser) throw new Unauthorized("You're not authenticated");
         
         const { chat: chatUid } = req.body;
-
         if (!chatUid) throw new MissingPostParam("chat");
         
         const chat = await ChatsDB.getChatByUid(chatUid);
@@ -83,18 +93,25 @@ const sendMessageController: RouteController = async (
         if (!chat.members.includes(currentUser.uid)) throw new Unauthorized("You don't participate in this chat");
         if (chat.blocked.includes(currentUser.uid)) throw new Unauthorized("You were blocked");
 
+        let sentMessage: Message;
+        const chatRoom = `chat:${chatUid}`;
+
         switch (type) {
             case "text":
                 const { text } = req.body;
-                await createTextMessage({ text, chat: chatUid, user: currentUser });
+                sentMessage = await createTextMessage({ text, chat: chatUid, user: currentUser });
+                io.to(chatRoom).emit(events.TEXT_MESSAGE_SENT, sentMessage);
                 break;
             case "video":
                 const { videoURL } = req.body;
-                await createVideoMessage({ videoURL, chat: chatUid, user: currentUser });
+                sentMessage = await createVideoMessage({ videoURL, chat: chatUid, user: currentUser });
+                io.to(chatRoom).emit(events.VIDEO_MESSAGE_SENT, sentMessage);
                 break;
             default:
                 throw new InvalidParam("Invalid message type");
         }
+
+        io.to(chatRoom).emit(events.MESSAGE_SENT, sentMessage);
 
         return res.sendResponse({
             status: 200,
