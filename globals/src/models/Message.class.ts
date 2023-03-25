@@ -1,8 +1,11 @@
 import { generateUid, toDate } from "../functions";
 
+const messageTypes = ["text", "audio", "video", "link"] as const;
+type MessageType = typeof messageTypes[number];
+
 class Message {
     public uid: string;
-    public type: "text" | "audio" | "video" | "link";
+    public type: MessageType;
     public chat: string;
     public sentBy: string;
     public deleted: boolean;
@@ -42,6 +45,27 @@ class Message {
             viewedAt: toDate(view.viewedAt)
         }));
     }
+
+    public static isMessage(obj: any): obj is Message { 
+        return obj instanceof Message || (
+            obj instanceof Object &&
+            typeof obj.uid === "string" &&
+            typeof obj.type === "string" &&
+            messageTypes.includes(obj.type) &&
+            typeof obj.chat === "string" &&
+            typeof obj.sentBy === "string" &&
+            typeof obj.deleted === "boolean" &&
+            (obj.deletedAt === undefined || obj.deletedAt instanceof Date) &&
+            (obj.deletedBy === undefined || typeof obj.deletedBy === "string") &&
+            obj.createdAt instanceof Date &&
+            obj.views instanceof Array &&
+            obj.views.every((view: any) => (
+                view instanceof Object &&
+                typeof view.viewedBy === "string" &&
+                view.viewedAt instanceof Date
+            ))
+        );
+    }
 }
 
 class TextMessage extends Message {
@@ -54,6 +78,15 @@ class TextMessage extends Message {
         const { text = "" } = data;
         this.type = "text";
         this.text = text;
+    }
+
+    public static isTextMessage(obj: any): obj is TextMessage {
+        return obj instanceof TextMessage || (
+            obj instanceof Object &&
+            obj.type === "text" &&
+            typeof obj.text === "string" &&
+            Message.isMessage(obj)
+        );
     }
 }
 
@@ -76,6 +109,17 @@ class AudioMessage extends Message {
         this.audioDuration = audioDuration;
         this.audioDurationUnit = "ms";
     }
+
+    public static isAudioMessage(obj: any): obj is AudioMessage {
+        return obj instanceof AudioMessage || (
+            obj instanceof Object &&
+            obj.type === "audio" &&
+            typeof obj.audioURL === "string" &&
+            typeof obj.audioDuration === "number" &&
+            obj.audioDurationUnit === "ms" &&
+            Message.isMessage(obj)
+        );
+    }
 }
 
 class VideoMessage extends Message {
@@ -96,6 +140,17 @@ class VideoMessage extends Message {
         this.videoURL = videoURL;
         this.videoDuration = videoDuration;
         this.videoDurationUnit = "ms";
+    }
+
+    public static isVideoMessage(obj: any): obj is VideoMessage {
+        return obj instanceof VideoMessage || (
+            obj instanceof Object &&
+            obj.type === "video" &&
+            typeof obj.videoURL === "string" &&
+            typeof obj.videoDuration === "number" &&
+            obj.videoDurationUnit === "ms" &&
+            Message.isMessage(obj)
+        );
     }
 }
 
