@@ -1,7 +1,7 @@
 import { Request, RouteController } from "@typings";
 import { codes, events } from "messaging-app-globals";
 import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
-import { UsersDB } from "@databases";
+import { ChatsDB, UsersDB } from "@databases";
 
 const deleteUserController: RouteController = async (
     req: Request & {
@@ -32,6 +32,11 @@ const deleteUserController: RouteController = async (
         const updatedUser = await UsersDB.getUserByUid(userUid);
         io.to(`user:${userUid}`).emit(events.USER_UPDATED, updatedUser);
         io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, updatedUser);
+
+        const chats = await ChatsDB.getUserChats(userUid);
+        for (const chat of chats) {
+            io.to(`chat:${chat.uid}`).emit(events.USER_UPDATED, updatedUser);
+        }
 
         return res.sendResponse({
             status: 200,

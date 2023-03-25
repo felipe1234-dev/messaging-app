@@ -5,7 +5,7 @@ import {
     ServerError, 
     Unauthorized 
 } from "@errors";
-import { UsersDB } from "@databases";
+import { ChatsDB, UsersDB } from "@databases";
 import { codes, events } from "messaging-app-globals";
 
 const blockUserController: RouteController = async (
@@ -37,6 +37,11 @@ const blockUserController: RouteController = async (
         const blockedUser = await UsersDB.getUserByUid(userUid);        
         io.to(`user:${userUid}`).emit(events.USER_UPDATED, blockedUser);
         io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, blockedUser);
+
+        const chats = await ChatsDB.getUserChats(userUid);
+        for (const chat of chats) {
+            io.to(`chat:${chat.uid}`).emit(events.USER_UPDATED, blockedUser);
+        }
 
         return res.sendResponse({
             status: 200,

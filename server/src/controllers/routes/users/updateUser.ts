@@ -6,7 +6,7 @@ import {
     ServerError, 
     Unauthorized 
 } from "@errors";
-import { UsersDB } from "@databases";
+import { ChatsDB, UsersDB } from "@databases";
 import { User } from "messaging-app-globals";
 
 const updateUserController: RouteController = async (
@@ -41,6 +41,11 @@ const updateUserController: RouteController = async (
         const updatedUser = await UsersDB.getUserByUid(userUid);
         io.to(`user:${userUid}`).emit(events.USER_UPDATED, updatedUser);
         io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, updatedUser);
+
+        const chats = await ChatsDB.getUserChats(userUid);
+        for (const chat of chats) {
+            io.to(`chat:${chat.uid}`).emit(events.USER_UPDATED, updatedUser);
+        }
 
         return res.sendResponse({
             status: 200,
