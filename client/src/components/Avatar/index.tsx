@@ -1,39 +1,76 @@
 import { StyledAvatar } from "./styles";
 import { stringToAvatar } from "@functions";
 
-interface AvatarProps {
-    src?: string | string[];
+interface SingleAvatarProps {
+    src?: string;
     alt?: string;
+    multiple?: false;
 }
 
-function Avatar(props: AvatarProps) {
+function isSingleAvatarProps(obj: any): obj is SingleAvatarProps {
+    return (
+        typeof obj.src === "string" && 
+        typeof obj.alt === "string" && 
+        (obj.multiple === false || obj.multiple === undefined)
+    );
+}
+
+function SingleAvatar(props: SingleAvatarProps) {
     const { src, alt = "Avatar" } = props;
-    const multiple = src instanceof Array && src.length > 1;
     const colorAvatar = stringToAvatar(alt);
 
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
-        <StyledAvatar 
+    return (
+        <StyledAvatar
             backgroundColor={colorAvatar.color}
-            multiple={multiple}    
+            multiple={false} 
         >
-            {children}
+            {src ? <img src={src} alt={alt} /> : colorAvatar.shortName}
         </StyledAvatar>
     );
+}
 
-    if (multiple) {
-        return (
-            <Wrapper>
-                {src.map(src => <img src={src} alt={alt} />)}
-            </Wrapper>
-        );
-    } 
+interface MultipleAvatarProps {
+    src?: string[];
+    alt?: string[];
+    multiple?: true;
+}
+
+function isMultipleAvatarProps(obj: any): obj is MultipleAvatarProps {
+    return (
+        obj.src instanceof Array && 
+        obj.alt instanceof Array && 
+        obj.multiple === true
+    );
+}
+
+function MultipleAvatar(props: MultipleAvatarProps) {
+    const { src: srcs = [], alt: alts = [] } = props;
+    const colorAvatar = stringToAvatar(alts[0]);
 
     return (
-        <Wrapper>
-            {src ? <img src={src as string} alt={alt} /> : colorAvatar.shortName}
-        </Wrapper>
+        <StyledAvatar
+            backgroundColor={colorAvatar.color}
+            multiple
+        >
+            {alts?.map((alt, i) => {
+                const src = srcs[i];
+                const colorAvatar = stringToAvatar(alt);
+
+                return src ? <img src={src} alt={alt} /> : colorAvatar.shortName;
+            })}
+        </StyledAvatar>
     );
+}
+
+function Avatar(props: SingleAvatarProps | MultipleAvatarProps) {
+    if (isSingleAvatarProps(props)) {
+        return <SingleAvatar {...props} />
+    } else if (isMultipleAvatarProps(props)) {
+        return <MultipleAvatar {...props} />
+    } else {
+        return <></>;
+    }
 }
 
 export default Avatar;
-export type { AvatarProps };
+export type { SingleAvatarProps, MultipleAvatarProps };
