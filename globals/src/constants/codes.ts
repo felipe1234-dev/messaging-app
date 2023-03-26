@@ -11,6 +11,7 @@ const codes = {
     LOGGED_OUT: "LOGGED_OUT" as const,
     SESSION_RECOVERED: "SESSION_RECOVERED" as const,
     USER_FETCHED: "USER_FETCHED" as const,
+    USERS_FETCHED: "USERS_FETCHED" as const,
     USER_CREATED: "USER_CREATED" as const,
     USER_BLOCKED: "USER_BLOCKED" as const,
     USER_UNBLOCKED: "USER_UNBLOCKED" as const,
