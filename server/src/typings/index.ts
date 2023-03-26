@@ -16,17 +16,6 @@ export interface SocketServer extends socketIo.Server {}
 
 export type Code = keyof typeof codes;
 
-export type Operator = "<"
-    | "<="
-    | "=="
-    | "!="
-    | ">="
-    | ">"
-    | "array-contains"
-    | "in"
-    | "not-in"
-    | "array-contains-any";
-
 export interface Request extends Omit<ExpressRequest, "socket"> {
     headers: {
         authorization?: string;
@@ -66,12 +55,6 @@ export type ResponseType =
     | "json"
     | "text"
     | "stream";
-
-export interface FilterParams {
-    wheres?: Array<[field: string, operator: Operator, value: any]>;
-    limit?: number;
-    startAfter?: string;
-}
 
 export type HTTPRouter = (
     app: App,
