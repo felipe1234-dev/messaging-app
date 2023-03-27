@@ -10,7 +10,8 @@ import {
     deleteUserController,
     updateUserController,
     logoutUserController,
-    recoverPasswordController
+    recoverPasswordController,
+    searchUsersController
 } from "@controllers/routes/users";
 
 const usersRouter: HTTPRouter = (api, io) => {
@@ -57,6 +58,10 @@ const usersRouter: HTTPRouter = (api, io) => {
         "/recover/password/:userUid", 
         useRouteController(recoverPasswordController, io)
     );
+    api.post(
+        "/search/users/",
+        useRouteController(searchUsersController, io)
+    )
 }; 
 
 export default usersRouter;
