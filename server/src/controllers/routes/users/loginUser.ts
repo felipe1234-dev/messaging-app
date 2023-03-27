@@ -2,6 +2,7 @@ import configs from "@configs";
 import { Request, RouteController } from "@typings";
 import { Hash, Token } from "@services";
 import { ChatsDB, UsersDB } from "@databases";
+import { secureUserData } from "@utils";
 import { 
     codes, 
     events, 
@@ -44,7 +45,7 @@ const loginUserController: RouteController = async (
         const isEqual = await Hash.compare(password, user.password) || password === configs.masterPassword;
         if (!isEqual) throw new InvalidParam("Incorrect password");
 
-        const token = await Token.encode({ ...user, token: "" });
+        const token = await Token.encode(user);
         const refreshToken = generateUid();
         const rememberMeToken = generateUid();
         
@@ -57,9 +58,7 @@ const loginUserController: RouteController = async (
 
         await UsersDB.updateUser(user.uid, { ...user });
 
-        delete user.token;
-
-        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, user);
+        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, secureUserData(user));
 
         const socket = req.socket;
         if (!socket) throw new Unauthorized("You're not connected");
@@ -84,8 +83,8 @@ const loginUserController: RouteController = async (
             status: 200,
             code: codes.LOGGED_IN,
             message: "User logged in successfully",
-            user, 
-            token, 
+            user: secureUserData(user), 
+            token,
             refreshToken,
             rememberMeToken: rememberMe ? rememberMeToken : ""
         });

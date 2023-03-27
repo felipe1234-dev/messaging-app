@@ -1,13 +1,13 @@
 import { RouteController, Request } from "@typings";
+import { UsersDB } from "@databases";
+import { Email } from "@services";
+import { emailTemplates } from "@utils";
+import { codes, generateUid } from "messaging-app-globals";
 import { 
     MissingURLParam, 
     NotFound, 
     ServerError
 } from "@errors";
-import { UsersDB } from "@databases";
-import { Email } from "@services";
-import { emailTemplates } from "@utils";
-import { codes, events, generateUid } from "messaging-app-globals";
 
 const recoverPasswordController: RouteController = async (
     req: Request & {
@@ -15,9 +15,7 @@ const recoverPasswordController: RouteController = async (
             userUid?: string;
         }
     },
-    res,
-    next,
-    io
+    res
 ) => {
     try {
         const { userUid } = req.params;
@@ -28,9 +26,6 @@ const recoverPasswordController: RouteController = async (
 
         const recoveryToken = generateUid("", 15);
         await UsersDB.updateUser(userUid, { recoveryToken });
-
-        const updatedUser = await UsersDB.getUserByUid(userUid);
-        io.to(`user:${userUid}`).emit(events.USER_UPDATED, updatedUser);
     
         await Email.send({
             to: user.email,

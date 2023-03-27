@@ -1,5 +1,8 @@
 import { Request, RouteController } from "@typings";
 import { codes } from "messaging-app-globals";
+import { UsersDB } from "@databases";
+import { Token } from "@services";
+import { secureUserData } from "@utils";
 import {
     Forbidden,
     MissingPostParam, 
@@ -7,8 +10,6 @@ import {
     ServerError, 
     Unauthenticated
 } from "@errors";
-import { UsersDB } from "@databases";
-import { Token } from "@services";
 
 const refreshSessionController: RouteController = async (
     req: Request & {
@@ -36,7 +37,7 @@ const refreshSessionController: RouteController = async (
             status: 200,
             code: codes.SESSION_RECOVERED,
             message: "User session recovered successfully",
-            user
+            user: secureUserData(user)
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);

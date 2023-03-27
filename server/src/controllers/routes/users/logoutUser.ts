@@ -1,12 +1,13 @@
 import { Request, RouteController } from "@typings";
 import { codes, events } from "messaging-app-globals";
+import { secureUserData } from "@utils";
+import { UsersDB } from "@databases";
 import { 
     MissingHeaderParam, 
     NotFound, 
     ServerError,
     Unauthorized 
 } from "@errors";
-import { UsersDB } from "@databases";
 
 const logoutUserController: RouteController = async (
     req: Request & {
@@ -36,7 +37,7 @@ const logoutUserController: RouteController = async (
 
         await UsersDB.updateUser(user.uid, { ...user });
 
-        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, user);
+        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, secureUserData(user));
 
         const socket = req.socket;
         if (!socket) throw new Unauthorized("You're not connected");

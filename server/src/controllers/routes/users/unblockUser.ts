@@ -1,12 +1,13 @@
 import { RouteController, Request } from "@typings";
+import { ChatsDB, UsersDB } from "@databases";
+import { codes, events } from "messaging-app-globals";
+import { secureUserData } from "@utils";
 import { 
     MissingURLParam, 
     NotFound, 
     ServerError, 
     Unauthorized 
 } from "@errors";
-import { ChatsDB, UsersDB } from "@databases";
-import { codes, events } from "messaging-app-globals";
 
 const unblockUserController: RouteController = async (
     req: Request & {
@@ -35,12 +36,16 @@ const unblockUserController: RouteController = async (
         });
 
         const unblockedUser = await UsersDB.getUserByUid(userUid);
-        io.to(`user:${userUid}`).emit(events.USER_UPDATED, unblockedUser);
-        io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, unblockedUser);
+        if (unblockedUser) {
+            const safeData = secureUserData(unblockedUser);
 
-        const chats = await ChatsDB.getUserChats(userUid);
-        for (const chat of chats) {
-            io.to(`chat:${chat.uid}`).emit(events.USER_UPDATED, unblockedUser);
+            io.to(`user:${userUid}`).emit(events.USER_UPDATED, safeData);
+            io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, safeData);
+
+            const chats = await ChatsDB.getUserChats(userUid);
+            for (const chat of chats) {
+                io.to(`chat:${chat.uid}`).emit(events.USER_UPDATED, safeData);
+            }
         }
 
         return res.sendResponse({

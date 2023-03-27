@@ -2,6 +2,7 @@ import { codes, FilterParams } from "messaging-app-globals";
 import { UsersDB } from "@databases";
 import { RouteController, Request } from "@typings";
 import { ServerError, Unauthorized } from "@errors";
+import { secureUserData } from "@utils";
 
 const searchUsersController: RouteController = async (
     req: Request & {
@@ -20,7 +21,7 @@ const searchUsersController: RouteController = async (
             status: 200,
             code: codes.USERS_FETCHED,
             message: "Users fetched successfully",
-            users
+            users: users.map(user => secureUserData(user))
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);
