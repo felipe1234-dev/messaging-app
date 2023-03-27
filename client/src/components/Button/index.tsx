@@ -11,6 +11,7 @@ interface ButtonProps {
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>;
     disabled?: boolean;
     loading?: boolean;
+    iconed?: boolean;
 }
 
 function Button(props: ButtonProps) {
@@ -23,6 +24,7 @@ function Button(props: ButtonProps) {
         onClick,
         disabled = false,
         loading = false,
+        iconed = false,
         children
     } = props;
 
@@ -36,6 +38,7 @@ function Button(props: ButtonProps) {
             onClick={onClick}
             disabled={disabled}
             loading={loading}
+            iconed={iconed}
         >
             {!loading ? children : <></>}
         </StyledButton>

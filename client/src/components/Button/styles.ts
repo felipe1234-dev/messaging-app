@@ -8,6 +8,7 @@ interface ButtonProps {
     uppercase: boolean;
     size: number;
     loading: boolean;
+    iconed: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -86,6 +87,15 @@ const Button = styled.button<ButtonProps>`
         &::after {
             opacity: 1;
         }
+    `}
+
+    ${({ iconed }) => iconed && css`
+        border-radius: 50%;
+        min-width: auto;
+        min-height: auto;
+        width: fit-content;
+        height: fit-content;
+        padding: 10px;
     `}
 `;
 
