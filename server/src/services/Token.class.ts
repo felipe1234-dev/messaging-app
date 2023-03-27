@@ -1,18 +1,20 @@
 import configs from "@configs";
 import { app } from "@databases";
+import { secureUserData } from "@utils";
 import { User } from "messaging-app-globals";
 import HTTPReq from "./HTTPReq.class";
 
 class Token {
     static async decode(token: string): Promise<User> {
         const decodedData = await app.auth().verifyIdToken(token);
-        const user = new User(decodedData);
+        const user = secureUserData(new User(decodedData));
         return user;
     }
 
     static async encode(user: User): Promise<string> {
-        const customToken = await app.auth().createCustomToken(user.uid, user);
+        const customToken = await app.auth().createCustomToken(user.uid, secureUserData(user));
         const token = await getIdToken(customToken);
+        
         return token;
     }
 
