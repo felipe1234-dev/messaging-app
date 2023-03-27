@@ -1,15 +1,12 @@
-import { UserSearchProvider, ChatsProvider } from "./providers";
-import Page from "./Page";
+import { UserSearchProvider } from "./providers";
 import { Composer } from "@components";
+import Page from "./Page";
 
 function Home() {
+    const providers = [UserSearchProvider];
+
     return (
-        <Composer
-            components={[
-                ChatsProvider,
-                UserSearchProvider
-            ]}
-        >
+        <Composer components={providers}>
             <Page />
         </Composer>
     );
