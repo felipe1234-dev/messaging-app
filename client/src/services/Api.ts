@@ -1,6 +1,7 @@
 import { isLocal } from "@functions";
 import { 
-    events, 
+    events,
+    FilterParams, 
     User, 
     Chat, 
     Message,
@@ -41,6 +42,16 @@ const socketEndpoint = io(
     { withCredentials: true }
 );
 
+const onConnect = (callback: (socket: Socket) => void) => {
+    httpEndpoint.defaults.headers.common["socket-id"] = socketEndpoint.id;
+    callback(socketEndpoint);
+};
+
+const onDisconnect = (callback: (socket: Socket) => void) => {
+    httpEndpoint.defaults.headers.common["socket-id"] = "";
+    callback(socketEndpoint);
+};
+
 const Api = {
     httpEndpoint,
     socketEndpoint,
@@ -50,33 +61,10 @@ const Api = {
     },
 
     onConnect(callback: (socket: Socket) => void) {
-        const onConnect = () => {
-            httpEndpoint.defaults.headers.common["socket-id"] = socketEndpoint.id;
-            callback(socketEndpoint);
-        };
-        socketEndpoint.on("connect", onConnect);
+        socketEndpoint.on("connect", () => onConnect(callback));
     },
-    offConnect(callback: (socket: Socket) => void) {
-        const offConnect = () => {
-            httpEndpoint.defaults.headers.common["socket-id"] = "";
-            callback(socketEndpoint);
-        };
-        socketEndpoint.off("connect", offConnect);
-    },
-
     onDisconnect(callback: (socket: Socket) => void) {
-        const onDisconnect = () => {
-            httpEndpoint.defaults.headers.common["socket-id"] = "";
-            callback(socketEndpoint);
-        };
-        socketEndpoint.on("disconnect", onDisconnect);
-    },
-    offDisconnect(callback: (socket: Socket) => void) {
-        const offDisconnect = () => {
-            httpEndpoint.defaults.headers.common["socket-id"] = "";
-            callback(socketEndpoint);
-        };
-        socketEndpoint.off("disconnect", offDisconnect);
+        socketEndpoint.on("disconnect", () => onDisconnect(callback));
     },
 
     auth: {
@@ -87,7 +75,7 @@ const Api = {
                 const { data } = await httpEndpoint.post("/refresh/session", { refreshToken });
                 
                 const user = new User(data.user);
-                httpEndpoint.defaults.headers.common.authorization = user.token;
+                httpEndpoint.defaults.headers.common.authorization = data.token;
 
                 return user;
             } catch {
@@ -141,17 +129,12 @@ const Api = {
     chats: {
         getUserChats: async () => {
             const { data } = await httpEndpoint.get("/get/chats");
-            return (data.chats as any[]).map(friend => new Chat(friend));
+            return (data.chats as any[]).map(chat => new Chat(chat));
         },
-
-        onChatUpdated: (callback: (chat: Chat) => void) => {
-            socketEndpoint.on(events.CHAT_UPDATED, callback);
+        getChatMembers: async (chatUid: string) => {
+            const { data } = await httpEndpoint.get(`/get/${chatUid}/members`);
+            return (data.members as any[]).map(member => new User(member));
         },
-        offChatUpdated: (callback: (chat: Chat) => void) => {
-            socketEndpoint.off(events.CHAT_UPDATED, callback);
-        }
-    },
-    messages: {
         getChatMessages: async (
             chatUid: string, 
             limit?: number, 
@@ -171,6 +154,54 @@ const Api = {
                     return new Message(message);
                 }
             });
+        },
+
+        onChatUpdated: (callback: (chat: Chat) => void) => {
+            socketEndpoint.on(events.CHAT_UPDATED, callback);
+        },
+        offChatUpdated: (callback: (chat: Chat) => void) => {
+            socketEndpoint.off(events.CHAT_UPDATED, callback);
+        }
+    },
+    messages: {
+        onMessageSent: (callback: (message: Message) => void) => {
+            socketEndpoint.on(events.MESSAGE_SENT, callback);
+        },
+        offMessageSent: (callback: (message: Message) => void) => {
+            socketEndpoint.off(events.MESSAGE_SENT, callback);
+        },
+
+        onTextMessageSent: (callback: (message: TextMessage) => void) => {
+            socketEndpoint.on(events.TEXT_MESSAGE_SENT, callback);
+        },
+        offTextMessageSent: (callback: (message: TextMessage) => void) => {
+            socketEndpoint.off(events.TEXT_MESSAGE_SENT, callback);
+        },
+
+        onVideoMessageSent: (callback: (message: VideoMessage) => void) => {
+            socketEndpoint.on(events.VIDEO_MESSAGE_SENT, callback);
+        },
+        offVideoMessageSent: (callback: (message: VideoMessage) => void) => {
+            socketEndpoint.off(events.VIDEO_MESSAGE_SENT, callback);
+        },
+
+        onAudioMessageSent: (callback: (message: AudioMessage) => void) => {
+            socketEndpoint.on(events.AUDIO_MESSAGE_SENT, callback);
+        },
+        offAudioMessageSent: (callback: (message: AudioMessage) => void) => {
+            socketEndpoint.off(events.AUDIO_MESSAGE_SENT, callback);
+        }
+    },
+    users: {
+        searchUsers: async (filters: FilterParams) => {
+            const { data } = await httpEndpoint.post("/search/users", { filters });
+            return (data.user as any[]).map(user => new User(user));
+        },
+        onUserUpdated: (callback: (user: User) => void) => {
+            socketEndpoint.on(events.USER_UPDATED, callback);
+        },
+        offUserUpdated: (callback: (user: User) => void) => {
+            socketEndpoint.on(events.USER_UPDATED, callback);
         }
     }
 };
