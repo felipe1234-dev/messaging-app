@@ -3,7 +3,7 @@ import {
     Query
 } from "@google-cloud/firestore";
 import { firestore } from "@databases";
-import { Operator } from "@typings";
+import { Operator } from "messaging-app-globals";
 
 class DBAccess {
     protected _collection: CollectionReference;

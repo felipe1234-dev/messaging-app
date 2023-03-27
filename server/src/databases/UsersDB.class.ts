@@ -1,6 +1,5 @@
 import DBAccess from "@services/DBAccess.class";
-import { User } from "messaging-app-globals";
-import { FilterParams } from "@typings";
+import { User, FilterParams } from "messaging-app-globals";
 
 const userCollection = new DBAccess("users");
 
