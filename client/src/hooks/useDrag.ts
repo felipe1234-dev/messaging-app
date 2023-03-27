@@ -11,7 +11,7 @@ function useDrag() {
     };
 
     const dragStop = () => {
-        // NOTE: need some delay so item under cursor won't be clicked
+        // NOTE: it needs some delay so the item under the cursor won't be clicked
         window.requestAnimationFrame(() => {
             setDragging(false);
             setClicked(false);
