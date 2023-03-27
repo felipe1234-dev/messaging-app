@@ -46,6 +46,18 @@ const getChatMessagesController: RouteController = async (
             messages = messages.filter(msg => !msg.deleted);
         } 
 
+        messages = messages.sort((msg1, msg2) => {
+            if (msg1.createdAt > msg2.createdAt) {
+                return 1;
+            }
+                
+            if (msg1.createdAt < msg2.createdAt) {
+                return -1;
+            }
+            
+            return 0;
+        });
+
         return res.sendResponse({
             status: 200,
             code: codes.MESSAGES_FETCHED,
