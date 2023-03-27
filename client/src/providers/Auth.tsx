@@ -1,10 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { 
+    createContext, 
+    useContext, 
+    useState, 
+    useEffect 
+} from "react";
 import { User, codes } from "messaging-app-globals";
 import { Api } from "@services";
-import { useUnmount } from "@hooks";
+import { WrapperUser } from "@types";
 
 interface AuthValue {
-    user?: User;
+    user?: WrapperUser;
     login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -18,19 +23,21 @@ function AuthProvider(props: { children: React.ReactNode }) {
     const login = async (email: string, password: string, rememberMe: boolean) => {
         const response = await Api.auth.login(email, password, rememberMe);
         setUser(response);
+        setFriends(await Api.friends.getUserFriends());
     };
 
     const logout = async () => {
         if (!user) return;
         await Api.auth.logout(user.uid);
         setUser(undefined);
+        setFriends([]);
     };
 
     const onFriendUpdated = async (updatedFriend: User) => {
         setFriends(prev => prev.map(friend => {
             if (friend.uid === updatedFriend.uid) return updatedFriend;
             return friend;
-        }))
+        }));
     };
 
     const onConnect = async () => {
@@ -60,13 +67,17 @@ function AuthProvider(props: { children: React.ReactNode }) {
         Api.onDisconnect(onDisconnect);
     }, []);
 
-    useUnmount(() => {
-        Api.offConnect(onConnect);
-        Api.offDisconnect(onDisconnect);
-    });
+    const wrapperUser = user ? {
+        ...user,
+        friends
+    } : undefined;
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ 
+            user: wrapperUser, 
+            login,
+            logout 
+        }}>
             {props.children}
         </AuthContext.Provider>
     );

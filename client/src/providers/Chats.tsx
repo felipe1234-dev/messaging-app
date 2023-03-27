@@ -4,81 +4,112 @@ import React, {
     useEffect, 
     useState
 } from "react";
-import { Chat, Message } from "messaging-app-globals";
+import { 
+    Chat, 
+    Message, 
+    User 
+} from "messaging-app-globals";
 import { useAuth } from "@providers";
-import { useAsyncEffect, useUnmount } from "@hooks";
+import { useAsyncEffect } from "@hooks";
 import { Api } from "@services";
+import { WrapperChat } from "@types";
 
 interface ChatsValue {
-    chats: Chat[];
-    selectedChat: Chat | undefined;
-    selectChat(chatUid: string): void;
-    unselectChat(): void;
+    chats: WrapperChat[];
+    messages: Message[];
+    members: User[];
 }
 
 const ChatsContext = createContext<ChatsValue | undefined>(undefined);
 
 function ChatsProvider(props: { children: React.ReactNode }) {
     const { user } = useAuth();
+    
     const [chats, setChats] = useState<Chat[]>([]);
+    const [members, setMembers] = useState<User[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
-    const [selectedChat, setSelectedChat] = useState<Chat>();
-
-    const selectChat = (chatUid: string) => {
-        const chat = chats.find(chat => chat.uid === chatUid);
-        setSelectedChat(chat);
-    };
-
-    const unselectChat = () => {
-        setSelectedChat(undefined);
-    };
 
     const onChatUpdated = (updatedChat: Chat) => {
         setChats(prev => prev.map(chat => {
             if (chat.uid === updatedChat.uid) return updatedChat;
             return chat;
         }));
+    };
 
-        if (updatedChat.uid === selectedChat?.uid) {
-            setSelectedChat(updatedChat);
-        }
+    const onUserUpdated = (updatedUser: User) => {
+        const userUid = updatedUser.uid;
+        
+        const userInChats = !!members.find(member => member.uid === userUid);
+        if (!userInChats) return;
+
+        setMembers(prev => prev.map(member => {
+            if (member.uid === userUid) return updatedUser;
+            return member;
+        }));
+    };
+
+    const onMessageSent = (message: Message) => {
+        setMessages(prev => [...prev, message]);
     };
 
     const onConnect = () => {
         Api.chats.onChatUpdated(onChatUpdated);
+        Api.users.onUserUpdated(onUserUpdated);
+        Api.messages.onMessageSent(onMessageSent);
     };
 
     const onDisconnect = () => {
         Api.chats.offChatUpdated(onChatUpdated);
+        Api.users.offUserUpdated(onUserUpdated);
+        Api.messages.offMessageSent(onMessageSent);
     };
+
+    useAsyncEffect(async () => {
+        if (!user) {
+            setChats([]);
+            setMembers([]);
+            setMessages([]);
+        } else {
+            const chats = await Api.chats.getUserChats();
+            setChats(chats);
+
+            for (const chat of chats) {
+                const memberList = await Api.chats.getChatMembers(chat.uid);
+                setMembers(memberList);
+            }
+        }
+    }, [user]);
 
     useEffect(() => {
         Api.onConnect(onConnect);
         Api.onDisconnect(onDisconnect);
     }, []);
 
-    useUnmount(() => {
-        Api.offConnect(onConnect);
-        Api.offDisconnect(onDisconnect);
-    });
-
-    useAsyncEffect(async () => {
-        if (!user) {
-            setChats([]);
-            unselectChat();
-        } else {
-            const chats = await Api.chats.getUserChats();
-            setChats(chats);
-        }
-    }, [user]);
+    const wrapperChats = chats.map(chat => ({
+        ...chat,
+        members: members.filter(member => {
+            return chat.members.includes(member.uid);
+        }),
+        blocked: members.filter(member => {
+            return chat.blocked.includes(member.uid);
+        }),
+        admins: members.filter(member => {
+            return chat.admins.includes(member.uid);
+        }),
+        createdBy: members.find(member => {
+            return member.uid === chat.createdBy
+        }) as User,
+        messages: messages.filter(message => {
+            return message.chat === chat.uid
+        })
+    }));
 
     return (
         <ChatsContext.Provider
             value={{
-                chats,
-                selectedChat,
-                selectChat,
-                unselectChat
+                chats: wrapperChats,
+                members,
+                messages
             }}
         >
             {props.children}

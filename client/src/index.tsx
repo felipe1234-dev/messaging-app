@@ -4,7 +4,8 @@ import { BrowserRouter } from "react-router-dom";
 
 import reportWebVitals from "./reportWebVitals";
 import { 
-    AuthProvider, 
+    AuthProvider,
+    ChatsProvider,
     ThemeProvider, 
     LoaderProvider,
     AlertProvider
@@ -21,7 +22,8 @@ const root = ReactDOM.createRoot(
 
 const providers = [
     BrowserRouter, 
-    AuthProvider, 
+    AuthProvider,
+    ChatsProvider,
     ThemeProvider, 
     LoaderProvider,
     AlertProvider
