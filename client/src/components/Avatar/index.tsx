@@ -62,7 +62,9 @@ function MultipleAvatar(props: MultipleAvatarProps) {
     );
 }
 
-function Avatar(props: SingleAvatarProps | MultipleAvatarProps) {
+type AvatarProps = SingleAvatarProps | MultipleAvatarProps;
+
+function Avatar(props: AvatarProps) {
     if (isSingleAvatarProps(props)) {
         return <SingleAvatar {...props} />
     } else if (isMultipleAvatarProps(props)) {
@@ -73,4 +75,4 @@ function Avatar(props: SingleAvatarProps | MultipleAvatarProps) {
 }
 
 export default Avatar;
-export type { SingleAvatarProps, MultipleAvatarProps };
+export type { AvatarProps, SingleAvatarProps, MultipleAvatarProps };

@@ -22,7 +22,7 @@ export { default as Link } from "./Link";
 export type { LinkProps } from "./Link";
 
 export { default as Avatar } from "./Avatar";
-export type { AvatarProps } from "./Avatar";
+export type { AvatarProps, SingleAvatarProps, MultipleAvatarProps } from "./Avatar";
 
 export { default as Switch } from "./Switch";
 export type { SwitchProps } from "./Switch";
