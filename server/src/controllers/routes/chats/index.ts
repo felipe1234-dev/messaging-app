@@ -1,4 +1,4 @@
-export { default as createChatController } from "./createMessage";
+export { default as createChatController } from "./createChat";
 export { default as getChatMessagesController } from "./getMessages";
 export { default as addChatAdminController } from "./addChatAdmin";
 export { default as addChatMemberController } from "./addChatMember";
