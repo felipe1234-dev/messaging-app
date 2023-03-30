@@ -37,7 +37,8 @@ const refreshSessionController: RouteController = async (
             status: 200,
             code: codes.SESSION_RECOVERED,
             message: "User session recovered successfully",
-            user: secureUserData(user)
+            user: secureUserData(user),
+            token: user.token
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);
