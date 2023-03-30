@@ -9,6 +9,8 @@ interface ButtonProps {
     size: number;
     loading: boolean;
     iconed: boolean;
+    noInteraction: boolean;
+    transparent: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -38,7 +40,6 @@ const Button = styled.button<ButtonProps>`
     letter-spacing: 0.02857em;
 
     ${props => props.uppercase && "text-transform: uppercase;"}
-    min-width: 64px;
     min-height: 40px;
     padding: 6px 16px;
     border-radius: 8px;
@@ -97,6 +98,13 @@ const Button = styled.button<ButtonProps>`
         height: fit-content;
         padding: 10px;
     `}
+
+    ${({ noInteraction }) => noInteraction && css`
+        pointer-events: none;
+        cursor: default;
+    `}
+
+    ${({ transparent }) => transparent && "background-color: transparent;"}
 `;
 
 export { Button as StyledButton };

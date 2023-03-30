@@ -12,6 +12,8 @@ interface ButtonProps {
     disabled?: boolean;
     loading?: boolean;
     iconed?: boolean;
+    noInteraction?: boolean;
+    transparent?: boolean;
 }
 
 function Button(props: ButtonProps) {
@@ -25,6 +27,8 @@ function Button(props: ButtonProps) {
         disabled = false,
         loading = false,
         iconed = false,
+        noInteraction = false,
+        transparent = false,
         children
     } = props;
 
@@ -39,6 +43,8 @@ function Button(props: ButtonProps) {
             disabled={disabled}
             loading={loading}
             iconed={iconed}
+            noInteraction={noInteraction}
+            transparent={transparent}
         >
             {!loading ? children : <></>}
         </StyledButton>
