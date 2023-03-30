@@ -22,6 +22,7 @@ class MessagesDB {
         startAfter?: string
     ): Promise<Message[]> {
         let query = msgCollection.where("chat", "==", chatUid);
+        query = query.orderBy("createdAt", "asc");
         
         if (limit) query = query.limit(limit);
         if (startAfter) query = query.startAfter(startAfter);

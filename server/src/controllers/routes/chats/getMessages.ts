@@ -44,19 +44,7 @@ const getChatMessagesController: RouteController = async (
         const canSeeDeletedMessages = currentUser.admin || chat.admins.includes(currentUser.uid);
         if (!canSeeDeletedMessages) {
             messages = messages.filter(msg => !msg.deleted);
-        } 
-
-        messages = messages.sort((msg1, msg2) => {
-            if (msg1.createdAt > msg2.createdAt) {
-                return 1;
-            }
-                
-            if (msg1.createdAt < msg2.createdAt) {
-                return -1;
-            }
-            
-            return 0;
-        });
+        }
 
         return res.sendResponse({
             status: 200,

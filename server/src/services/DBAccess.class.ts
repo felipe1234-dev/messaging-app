@@ -11,6 +11,7 @@ class DBAccess {
     protected _wheres: Array<[field: string, operator: Operator, value: any]>;
     protected _startAfter?: string;
     protected _limit?: number;
+    protected _orders: Array<[field: string, direction: "asc" | "desc"]>;
 
     constructor(dbName: string) {
         this._collection = firestore.collection(dbName);
@@ -18,6 +19,7 @@ class DBAccess {
         this._wheres = [];
         this._startAfter = undefined;
         this._limit = undefined;
+        this._orders = [];
     }
 
     protected restartAllStates() {
@@ -44,6 +46,11 @@ class DBAccess {
 
     public limit(limit = 1000): DBAccess {
         this._limit = limit;
+        return this;
+    }
+
+    public orderBy(field: string, direction: "asc" | "desc"): DBAccess {
+        this._orders.push([field, direction]);
         return this;
     }
 
@@ -100,6 +107,11 @@ class DBAccess {
             for (const where of this._wheres) {
                 const [field, operator, value] = where;
                 query = query.where(field, operator, value);
+            }
+
+            for (const order of this._orders) {
+                const [field, direction] = order;
+                query = query.orderBy(field, direction);
             }
     
             if (lastDoc) {
