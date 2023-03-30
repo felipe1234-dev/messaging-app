@@ -18,7 +18,7 @@ const darkPalette = {
         success: "#E7E7E7"
     },
     link: {
-        primary: "#464775",
+        primary: "#FF6839",
         secondary: "#989898",
         highlight: "#ff8000",
         error: "#f44336",
@@ -27,19 +27,19 @@ const darkPalette = {
         success: "#4caf50"
     },
     button: {
-        primary: "#464775",
+        primary: "#FF6839",
         secondary: "#d3d3d3",
         highlight: "#ff8000",
         disabled: "#2D2C2C"
     },
     checkbox: {
-        primary: "#464775",
+        primary: "#FF6839",
         secondary: "#d3d3d3",
         highlight: "#ff8000",
         disabled: "#2D2C2C"
     },
     hover: {
-        primary: "#8a88c7",
+        primary: "#FF8253",
         secondary: "#a9a9a9",
         highlight: "#ffa726"
     },
