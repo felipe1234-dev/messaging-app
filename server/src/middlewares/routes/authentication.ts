@@ -32,7 +32,7 @@ const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
 
     try {
         if (await Token.isExpired(token)) {
-            return res.sendResponse(new Unauthenticated("You're not authenticated"));
+            return res.sendResponse(new Unauthenticated("Session expired"));
         }
 
         const decodedUser = await Token.decode(token);
