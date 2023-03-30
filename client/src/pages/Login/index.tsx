@@ -14,8 +14,8 @@ import { ShowItem } from "@styles/animations";
 
 import { Input, Button, Checkbox, Link } from "@components";
 import { useAuth, useAlert } from "@providers";
+import { appName } from "@constants";
 
-import { ReactComponent as ChatIcon } from "@images/Begin-chat.svg";
 import { EmailOutline as EmailIcon } from "@styled-icons/evaicons-outline";
 import { EyeOff2 as EyeCloseIcon } from "@styled-icons/evaicons-solid";
 import { Eye as EyeOpenIcon } from "@styled-icons/fluentui-system-filled";
@@ -57,17 +57,17 @@ function Login() {
     };
 
     return (
-        <Container pt={15} pb={15} justify="start">
+        <Container 
+            justify="center" align="center"
+            pt={15} pb={15} 
+            height="100vh"
+        >
             <ShowItem>
                 <Title level={3}>
-                    Chatify
+                    {appName}
                 </Title>
             </ShowItem>
-            <Icon
-                icon={<ChatIcon />}
-                variant="highlight"
-                size={21}
-            />
+
             <ShowItem>
                 <Paragraph variant="secondary" size={1.2}>
                     Please login to continue
