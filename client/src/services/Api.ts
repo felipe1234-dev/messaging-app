@@ -1,5 +1,5 @@
-import { isLocal } from "@functions";
 import { 
+    codes,
     events,
     FilterParams, 
     User, 
@@ -9,7 +9,10 @@ import {
     AudioMessage, 
     VideoMessage
 } from "messaging-app-globals";
-import axios from "axios";
+import { isLocal } from "@functions";
+import { ResponseError, isResponseError } from "@types";
+
+import axios, { AxiosError } from "axios";
 import io, { Socket } from "socket.io-client";
 
 const httpURL = isLocal() 
@@ -26,14 +29,26 @@ const httpEndpoint = axios.create({
 
 httpEndpoint.interceptors.response.use(
     (response) => response,
-    (error) => {
-        const response = error.response;
+    (error: AxiosError) => {
+        const originalRequest = error.config;
+        const responseData = error.response?.data;
 
-        if (response) {
-            error = { ...response.data };
+        if (isResponseError(responseData)) {
+            const responseError: ResponseError = { 
+                ...error,
+                ...responseData
+            };
+
+            if (responseError.code === codes.SOCKET_NOT_FOUND && originalRequest) {
+                httpEndpoint.defaults.headers.common["socket-id"] = socketEndpoint.id;
+                originalRequest.headers["socket-id"] = socketEndpoint.id;
+                return Promise.resolve(axios.request(originalRequest));
+            }
+
+            return Promise.reject(responseError);
+        } else {
+            return Promise.reject(error);
         }
-
-        return Promise.reject(error);
     }
 );
 
@@ -132,7 +147,7 @@ const Api = {
             return (data.chats as any[]).map(chat => new Chat(chat));
         },
         getChatMembers: async (chatUid: string) => {
-            const { data } = await httpEndpoint.get(`/get/${chatUid}/members`);
+            const { data } = await httpEndpoint.get(`/chat/${chatUid}/members`);
             return (data.members as any[]).map(member => new User(member));
         },
         getChatMessages: async (
