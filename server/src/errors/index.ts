@@ -1,3 +1,4 @@
+export { default as SocketNotFound } from "./SocketNotFound.class";
 export { default as ServerError } from "./ServerError.class";
 export { default as MissingHeaderParam } from "./MissingHeaderParam.class";
 export { default as Unauthenticated } from "./Unauthenticated.class";
