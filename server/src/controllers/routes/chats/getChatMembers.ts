@@ -1,12 +1,13 @@
 import { Request, RouteController } from "@typings";
 import { codes, User } from "messaging-app-globals";
+import { ChatsDB, UsersDB } from "@databases";
+import { secureUserData } from "@utils";
 import { 
     MissingURLParam, 
     NotFound, 
     ServerError, 
     Unauthorized 
 } from "@errors";
-import { ChatsDB, UsersDB } from "@databases";
 
 const getChatMembersController: RouteController = async (
     req: Request & {
@@ -36,7 +37,7 @@ const getChatMembersController: RouteController = async (
         for (const userUid of chat.members) {
             const user = await UsersDB.getUserByUid(userUid);
             if (!user) continue;
-            members.push(user);
+            members.push(secureUserData(user));
         }
 
         return res.sendResponse({
