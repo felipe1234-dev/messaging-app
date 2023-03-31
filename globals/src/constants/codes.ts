@@ -1,12 +1,13 @@
 const codes = {
+    SOCKET_NOT_FOUND: "SOCKET_NOT_FOUND" as const,
     BAD_REQUEST: "BAD_REQUEST" as const,
     UNAUTHORIZED: "UNAUTHORIZED" as const,
     UNAUTHENTICATED: "UNAUTHENTICATED" as const,
     FORBIDDEN: "FORBIDDEN" as const,
     NOT_FOUND: "NOT_FOUND" as const,
     INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR" as const,
-    ADMIN_ADDED: "ADMIN_ADDED" as const,
 
+    ADMIN_ADDED: "ADMIN_ADDED" as const,
     LOGGED_IN: "LOGGED_IN" as const,
     LOGGED_OUT: "LOGGED_OUT" as const,
     SESSION_RECOVERED: "SESSION_RECOVERED" as const,
