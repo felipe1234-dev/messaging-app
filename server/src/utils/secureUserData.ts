@@ -1,14 +1,16 @@
 import { User } from "messaging-app-globals";
 
 function secureUserData(user: User): User {
-    delete user.token;
-    user.salt = "";
-    user.password = "";
-    delete user.refreshToken;
-    delete user.recoveryToken;
-    delete user.rememberMeToken;
+    const secureUser = new User(user);
 
-    return user;
+    delete secureUser.token;
+    secureUser.salt = "";
+    secureUser.password = "";
+    delete secureUser.refreshToken;
+    delete secureUser.recoveryToken;
+    delete secureUser.rememberMeToken;
+
+    return secureUser;
 }
 
 export default secureUserData;
