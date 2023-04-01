@@ -4,6 +4,7 @@ class Chat {
     public uid: string;
     public title: string;
     public description: string;
+    public thumbnail: string;
     public cover: string;
     public blocked: string[];
     public members: string[];
@@ -19,6 +20,7 @@ class Chat {
             uid = generateUid("chat-", 5 + 25),
             title = "",
             description = "",
+            thumbnail = "",
             cover = "",
             blocked = [],
             members = [],
@@ -33,6 +35,7 @@ class Chat {
         this.uid = uid;
         this.title = title;
         this.description = description;
+        this.thumbnail = thumbnail;
         this.cover = cover;
         this.blocked = blocked;
         this.members = members;
@@ -52,6 +55,7 @@ class Chat {
             typeof obj.uid === "string" &&
             typeof obj.title === "string" &&
             typeof obj.description === "string" &&
+            typeof obj.thumbnail === "string" &&
             typeof obj.cover === "string" &&
             
             obj.blocked instanceof Array &&
