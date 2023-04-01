@@ -18,7 +18,7 @@ interface HorizontalScrollProps extends Omit<ScrollMenuProps, "children" | "Righ
     loopScroll?: boolean;
     items: {
         id: string;
-        Component: () => JSX.Element
+        Component: (props: CardComponentProps) => JSX.Element
     }[];
     RightArrow?: ArrowProps["Component"];
     LeftArrow?: ArrowProps["Component"];
