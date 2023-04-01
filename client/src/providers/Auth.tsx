@@ -23,7 +23,22 @@ function AuthProvider(props: { children: React.ReactNode }) {
     const login = async (email: string, password: string, rememberMe: boolean) => {
         const response = await Api.auth.login(email, password, rememberMe);
         setUser(response);
-        setFriends(await Api.friends.getUserFriends());
+        setFriends((await Api.friends.getUserFriends()).sort((a, b) => {
+            if (a.online && !b.online) return -1;
+            if (b.online && !a.online) return 1;
+            
+            if (a.online && b.online && a.sessionStart && b.sessionStart) {
+                if (a.sessionStart > b.sessionStart) return -1;
+                if (a.sessionStart < b.sessionStart) return 1;
+            }
+
+            if (!a.online && !b.online && a.sessionEnd && b.sessionEnd) {
+                if (a.sessionEnd > b.sessionEnd) return -1;
+                if (a.sessionEnd < b.sessionEnd) return 1;
+            }
+            
+            return 0;
+        }));
     };
 
     const logout = async () => {
