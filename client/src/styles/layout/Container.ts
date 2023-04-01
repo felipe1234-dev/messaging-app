@@ -4,7 +4,7 @@ import { Variant } from "@types";
 interface ContainerProps {
     direction?: "row" | "column";
     align?: "start" | "end" | "center";
-    justify?: "center" | "start" | "end" | "spcae-between" | "space-around" | "space-evenly";
+    justify?: "center" | "start" | "end" | "space-between" | "space-around" | "space-evenly";
     gap?: number;
     width?: string;
     height?: string;
