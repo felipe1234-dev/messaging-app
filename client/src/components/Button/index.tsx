@@ -1,19 +1,11 @@
 import { Variant } from "@types";
-import { StyledButton } from "./styles";
+import { StyledButton, StyledButtonProps } from "./styles";
 
-interface ButtonProps {
+interface ButtonProps extends Partial<StyledButtonProps> {
     type?: "button" | "submit" | "reset";
-    variant?: Variant;
-    fullWidth?: boolean;
-    uppercase?: boolean;
-    size?: number;
     children: React.ReactNode;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>;
     disabled?: boolean;
-    loading?: boolean;
-    iconed?: boolean;
-    noInteraction?: boolean;
-    transparent?: boolean;
 }
 
 function Button(props: ButtonProps) {
@@ -29,6 +21,7 @@ function Button(props: ButtonProps) {
         iconed = false,
         noInteraction = false,
         transparent = false,
+        round = false,
         children
     } = props;
 
@@ -45,6 +38,7 @@ function Button(props: ButtonProps) {
             iconed={iconed}
             noInteraction={noInteraction}
             transparent={transparent}
+            round={round}
         >
             {!loading ? children : <></>}
         </StyledButton>

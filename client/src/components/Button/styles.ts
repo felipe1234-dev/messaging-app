@@ -11,6 +11,7 @@ interface ButtonProps {
     iconed: boolean;
     noInteraction: boolean;
     transparent: boolean;
+    round: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -53,9 +54,11 @@ const Button = styled.button<ButtonProps>`
     background-color: ${({ variant, theme }) => theme.button[variant]};
     box-shadow: none;
 
-    ${({ loading, variant, theme }) => !loading && css`
+    ${({ loading, variant, transparent, theme }) => !loading && css`
+        ${transparent && "background-color: transparent;"}
+
         &:hover {
-            background-color: ${theme.hover[variant]};
+            background-color: ${transparent ? "rgba(255,255,255,0.05);" : theme.hover[variant]};
         }
     `}
 
@@ -104,7 +107,10 @@ const Button = styled.button<ButtonProps>`
         cursor: default;
     `}
 
-    ${({ transparent }) => transparent && "background-color: transparent;"}
+    ${({ round }) => round && css`
+        border-radius: 50%;
+    `}
 `;
 
 export { Button as StyledButton };
+export type { ButtonProps as StyledButtonProps };
