@@ -11,7 +11,7 @@ const darkPalette = {
     text: {
         primary: "#E7E7E7",
         secondary: "#989898",
-        highlight: "#464775",
+        highlight: "#FF6839",
         error: "#E7E7E7",
         warning: "#E7E7E7",
         info: "#E7E7E7",
