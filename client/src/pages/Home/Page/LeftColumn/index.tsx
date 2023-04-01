@@ -1,15 +1,26 @@
 import { Container } from "@styles/layout";
+import { useAuth } from "@providers";
+
+import Actions from "./Actions";
+import Search from "./Search";
+import Friends from "./Friends";
+import Chats from "./Chats";
 
 function LeftColumn() {
+    const { user } = useAuth();
+    if (!user) return <></>;
+
     return (
         <Container
-            variant="secondary"
+            direction="column"
             justify="start"
             align="center"
-            direction="column"
-            borderRadius="10px"
+            p={10}
         >
-
+            <Actions />
+            <Search />
+            {user.friends.length > 0 && <Friends />}
+            <Chats />
         </Container>
     );
 }

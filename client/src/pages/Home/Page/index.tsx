@@ -1,6 +1,7 @@
 import { Columns, Column } from "@styles/layout";
 import { useAuth } from "@providers";
 
+import LeftColumn from "./LeftColumn";
 
 function Page() {
     const { user } = useAuth();
@@ -9,10 +10,10 @@ function Page() {
 
     return (
         <Columns>
-            <Column>
-                
+            <Column sm={3}>
+                <LeftColumn />
             </Column>
-            <Column>
+            <Column sm={8}>
             </Column>
         </Columns>
     );
