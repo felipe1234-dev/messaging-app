@@ -25,6 +25,7 @@ const StyledAvatar = styled.div<StyledAvatarProps>`
     user-select: none;
 
     ${({ backgroundColor }) => backgroundColor && `background-color: ${backgroundColor};`}
+    color: #fff;
 `;
 
 export { StyledAvatar };
