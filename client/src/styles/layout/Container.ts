@@ -15,10 +15,12 @@ interface ContainerProps {
     ml?: number;
     mr?: number;
     mb?: number;
+    m?: number;
     pt?: number;
     pl?: number;
     pr?: number;
     pb?: number;
+    p?: number;
 }
 
 const Container = styled.div<ContainerProps>`
@@ -35,11 +37,13 @@ const Container = styled.div<ContainerProps>`
     margin-left: ${({ ml }) => ml}px;
     margin-right: ${({ mr }) => mr}px;
     margin-bottom: ${({ mb }) => mb}px;
+    ${({ m }) => m && `margin: ${m}px;`}
 
     padding-top: ${({ pt }) => pt}px;
     padding-left: ${({ pl }) => pl}px;
     padding-right: ${({ pr }) => pr}px;
     padding-bottom: ${({ pb }) => pb}px;
+    ${({ p }) => p && `padding: ${p}px;`}
 
     ${({ transparent }) => transparent && "background-color: transparent;"}
     ${({ variant, theme }) => variant && `background-color: ${theme.background[variant]};`}
