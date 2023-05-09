@@ -24,7 +24,7 @@ interface CardProps extends ContainerProps, TitleProps, ParagraphProps {
 function ChatCard(props: CardProps) {
     const {
         direction = "row",
-        justify = "spcae-between",
+        justify = "space-between",
         align = "center",
         gap = 10,
         
