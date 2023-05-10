@@ -1,4 +1,6 @@
 import { Request, RouteController } from "@typings";
+import { ChatsDB, UsersDB } from "@databases";
+import { codes } from "messaging-app-globals";
 import { 
     Forbidden, 
     MissingPostParam, 
@@ -6,8 +8,6 @@ import {
     ServerError, 
     Unauthorized 
 } from "@errors";
-import { ChatsDB, UsersDB } from "@databases";
-import { codes } from "messaging-app-globals";
 
 const addChatAdminController: RouteController = async (
     req: Request & {

@@ -1,7 +1,13 @@
 import { RouteController, Request } from "@typings";
-import { FriendRequest, codes, events } from "messaging-app-globals";
+import { FriendRequest, codes } from "messaging-app-globals";
 import { UsersDB, FriendRequestsDB } from "@databases";
-import { InvalidParam, MissingPostParam, NotFound, ServerError, Unauthorized } from "@errors";
+import { 
+    InvalidParam, 
+    MissingPostParam, 
+    NotFound, 
+    ServerError, 
+    Unauthorized 
+} from "@errors";
 
 const sendFriendRequestController: RouteController = async (
     req: Request & {
@@ -9,9 +15,7 @@ const sendFriendRequestController: RouteController = async (
             friendUid?: string
         }
     },
-    res,
-    next,
-    io
+    res
 ) => {
     try {
         const { user } = req;
@@ -33,8 +37,6 @@ const sendFriendRequestController: RouteController = async (
 
         const friendRequest = new FriendRequest({ from, to });
         await FriendRequestsDB.createFriendRequest(friendRequest);
-
-        io.to(`user:${friend.uid}`).emit(events.FRIEND_REQUEST_SENT, friendRequest);
 
         res.sendResponse({
             status: 200,

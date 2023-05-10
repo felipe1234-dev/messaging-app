@@ -1,7 +1,6 @@
-import { secureUserData } from '@utils';
 import { Request, RouteController } from "@typings";
-import { codes, events } from "messaging-app-globals";
-import { ChatsDB, UsersDB } from "@databases";
+import { codes} from "messaging-app-globals";
+import { UsersDB } from "@databases";
 import { 
     MissingURLParam, 
     NotFound, 
@@ -15,9 +14,7 @@ const deleteUserController: RouteController = async (
             userUid?: string;
         }
     },
-    res,
-    next,
-    io
+    res
 ) => {
     try {
         const currentUser = req.user;
@@ -34,20 +31,6 @@ const deleteUserController: RouteController = async (
             deletedAt: new Date(),
             deletedBy: currentUser.uid
         });
-
-        const updatedUser = await UsersDB.getUserByUid(userUid);
-
-        if (updatedUser) {
-            const safeData = secureUserData(updatedUser);
-
-            io.to(`user:${userUid}`).emit(events.USER_UPDATED, safeData);
-            io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, safeData);
-
-            const chats = await ChatsDB.getUserChats(userUid);
-            for (const chat of chats) {
-                io.to(`chat:${chat.uid}`).emit(events.USER_UPDATED, safeData);
-            }
-        }
 
         return res.sendResponse({
             status: 200,

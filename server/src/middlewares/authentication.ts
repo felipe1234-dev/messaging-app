@@ -1,6 +1,7 @@
 import configs from "@configs";
 import { RouteMiddleware } from "@typings";
 import { Token } from "@services";
+import { UsersDB } from "@databases";
 import { User } from "messaging-app-globals";
 import { 
     Unauthenticated, 
@@ -8,7 +9,6 @@ import {
     NotFound,
     Unauthorized
 } from "@errors";
-import { UsersDB } from "@databases";
 
 const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
     const token = req.headers.authorization;

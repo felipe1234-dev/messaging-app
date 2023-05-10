@@ -1,13 +1,13 @@
 import { HTTPRouter } from "@typings";
 import { useRouteController, useRouteMiddleware } from "@utils";
-import { authenticationMiddleware } from "@middlewares/routes";
-import { sendMessageController } from "@controllers/routes/messages";
+import { authenticationMiddleware } from "@middlewares";
+import { sendMessageController } from "@controllers/messages";
 
-const messagesRouter: HTTPRouter = (api, io) => {
+const messagesRouter: HTTPRouter = (api) => {
     api.put(
-        "/send/:type/message", 
-        useRouteMiddleware(authenticationMiddleware, io), 
-        useRouteController(sendMessageController, io)
+        "/send/:type/message",
+        useRouteMiddleware(authenticationMiddleware), 
+        useRouteController(sendMessageController)
     );
 };
 

@@ -3,12 +3,10 @@ import { Request, RouteController } from "@typings";
 import { FileStorage } from "@services";
 import { MessagesDB, ChatsDB } from "@databases";
 import { 
-    codes, 
-    events,
+    codes,
     User, 
     TextMessage, 
-    VideoMessage, 
-    Message
+    VideoMessage
 } from "messaging-app-globals";
 import { 
     InvalidParam, 
@@ -29,7 +27,7 @@ interface VideoMessageBody {
     chat: string;
 }
 
-async function createTextMessage(params: TextMessageBody & { user: User }): Promise<TextMessage> {
+async function createTextMessage(params: TextMessageBody & { user: User }) {
     const { text, chat, user } = params;
 
     if (!text) throw new MissingPostParam("text");
@@ -41,11 +39,9 @@ async function createTextMessage(params: TextMessageBody & { user: User }): Prom
     });
 
     await MessagesDB.createMessage(textMessage);
-
-    return textMessage;
 }
 
-async function createVideoMessage(params: VideoMessageBody & { user: User }): Promise<VideoMessage> {
+async function createVideoMessage(params: VideoMessageBody & { user: User }) {
     const { videoURL, chat, user } = params;
 
     if (!videoURL) throw new MissingPostParam("videoURL");
@@ -62,8 +58,6 @@ async function createVideoMessage(params: VideoMessageBody & { user: User }): Pr
     });
 
     await MessagesDB.createMessage(videoMessage);
-
-    return videoMessage;
 }
 
 const sendMessageController: RouteController = async (
@@ -73,9 +67,7 @@ const sendMessageController: RouteController = async (
         };
         body: Partial<TextMessageBody | VideoMessageBody>
     },
-    res,
-    next,
-    io
+    res
 ) => {
     try {
         const { type } = req.params; 
@@ -93,25 +85,18 @@ const sendMessageController: RouteController = async (
         if (!chat.members.includes(currentUser.uid)) throw new Unauthorized("You don't participate in this chat");
         if (chat.blocked.includes(currentUser.uid)) throw new Unauthorized("You were blocked");
 
-        let sentMessage: Message;
-        const chatRoom = `chat:${chatUid}`;
-
         switch (type) {
             case "text":
                 const { text } = req.body;
-                sentMessage = await createTextMessage({ text, chat: chatUid, user: currentUser });
-                io.to(chatRoom).emit(events.TEXT_MESSAGE_SENT, sentMessage);
+                await createTextMessage({ text, chat: chatUid, user: currentUser });
                 break;
             case "video":
                 const { videoURL } = req.body;
-                sentMessage = await createVideoMessage({ videoURL, chat: chatUid, user: currentUser });
-                io.to(chatRoom).emit(events.VIDEO_MESSAGE_SENT, sentMessage);
+                await createVideoMessage({ videoURL, chat: chatUid, user: currentUser });
                 break;
             default:
                 throw new InvalidParam("Invalid message type");
         }
-
-        io.to(chatRoom).emit(events.MESSAGE_SENT, sentMessage);
 
         return res.sendResponse({
             status: 200,

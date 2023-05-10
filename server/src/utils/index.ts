@@ -4,10 +4,6 @@ export { default as fileToBuffer } from "./fileToBuffer";
 export { default as getVideoDuration } from "./getVideoDuration";
 export { default as fileUrlToFile } from "./fileUrlToFile";
 export { default as secureUserData } from "./secureUserData";
-
 export { default as useRouteMiddleware } from "./useRouteMiddleware";
 export { default as useRouteController } from "./useRouteController";
-export { default as useSocketMiddleware } from "./useSocketMiddleware";
-export { default as useSocketController } from "./useSocketController";
-
 export { default as emailTemplates } from "./emailTemplates";

@@ -1,9 +1,8 @@
 import { Request, RouteController } from "@typings";
-import { codes, events } from "messaging-app-globals";
-import { secureUserData } from "@utils";
+import { codes } from "messaging-app-globals";
 import { UsersDB } from "@databases";
 import { 
-    MissingHeaderParam, 
+    MissingHeaderParam,
     NotFound, 
     ServerError,
     Unauthorized 
@@ -15,9 +14,7 @@ const logoutUserController: RouteController = async (
             userUid?: string;
         };
     },
-    res,
-    next,
-    io
+    res
 ) => {
     try {
         const { userUid } = req.params;
@@ -36,15 +33,6 @@ const logoutUserController: RouteController = async (
         user.rememberMeToken = "";
 
         await UsersDB.updateUser(user.uid, { ...user });
-
-        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, secureUserData(user));
-
-        const socket = req.socket;
-        if (!socket) throw new Unauthorized("You're not connected");
-
-        for (const room of socket.rooms) {
-            if (room !== socket.id) socket.leave(room);
-        }
         
         return res.sendResponse({
             status: 200,

@@ -1,12 +1,12 @@
 import { Request, RouteController } from "@typings";
 import { codes, Chat } from "messaging-app-globals";
+import { ChatsDB } from "@databases";
 import { 
     MissingURLParam, 
     NotFound, 
     ServerError, 
     Unauthorized 
 } from "@errors";
-import { ChatsDB } from "@databases";
 
 const updateChatController: RouteController = async (
     req: Request & {

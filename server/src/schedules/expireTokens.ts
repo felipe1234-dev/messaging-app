@@ -1,11 +1,10 @@
-import { User, events } from "messaging-app-globals";
+import { User } from "messaging-app-globals";
 import { UsersDB } from "@databases";
 import { Token } from "@services";
-import * as socketIo from "socket.io";
 
 let expiresInExecutions = 0;
 
-async function expireTokens(io: socketIo.Server) {
+async function expireTokens() {
     if (expiresInExecutions > 0) return;
     
     expiresInExecutions++;
@@ -22,10 +21,6 @@ async function expireTokens(io: socketIo.Server) {
             sessionEnd: new Date(),
             token: ""
         });
-        
-        const updatedUser = await UsersDB.getUserByUid(user.uid);
-        io.to(`user:${user.uid}`).emit(events.USER_UPDATED, updatedUser);
-        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, updatedUser);
     };
 
     for (const user of onlineUsers) {
@@ -36,6 +31,11 @@ async function expireTokens(io: socketIo.Server) {
 
         if (await Token.isExpired(user.token)) {
             await logoutUser(user);
+            await UsersDB.updateUser(user.uid, {
+                online: false,
+                sessionEnd: new Date(),
+                token: ""
+            });
         }
     }
 

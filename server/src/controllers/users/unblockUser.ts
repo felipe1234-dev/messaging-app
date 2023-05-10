@@ -1,7 +1,6 @@
 import { RouteController, Request } from "@typings";
-import { ChatsDB, UsersDB } from "@databases";
-import { codes, events } from "messaging-app-globals";
-import { secureUserData } from "@utils";
+import { UsersDB } from "@databases";
+import { codes } from "messaging-app-globals";
 import { 
     MissingURLParam, 
     NotFound, 
@@ -15,9 +14,7 @@ const unblockUserController: RouteController = async (
             userUid?: string;
         }
     },
-    res,
-    next,
-    io
+    res
 ) => {
     try {
         const currentUser = req.user;
@@ -34,19 +31,6 @@ const unblockUserController: RouteController = async (
             unblockedAt: new Date(),
             unblockedBy: currentUser.uid
         });
-
-        const unblockedUser = await UsersDB.getUserByUid(userUid);
-        if (unblockedUser) {
-            const safeData = secureUserData(unblockedUser);
-
-            io.to(`user:${userUid}`).emit(events.USER_UPDATED, safeData);
-            io.to(`friend:${userUid}`).emit(events.FRIEND_UPDATED, safeData);
-
-            const chats = await ChatsDB.getUserChats(userUid);
-            for (const chat of chats) {
-                io.to(`chat:${chat.uid}`).emit(events.USER_UPDATED, safeData);
-            }
-        }
 
         return res.sendResponse({
             status: 200,

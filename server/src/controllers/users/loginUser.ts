@@ -1,11 +1,10 @@
 import configs from "@configs";
 import { Request, RouteController } from "@typings";
 import { Hash, Token } from "@services";
-import { ChatsDB, UsersDB } from "@databases";
+import { UsersDB } from "@databases";
 import { secureUserData } from "@utils";
 import { 
-    codes, 
-    events, 
+    codes,
     generateUid, 
     validateEmail 
 } from "messaging-app-globals";
@@ -13,8 +12,7 @@ import {
     Forbidden, 
     InvalidParam, 
     MissingPostParam, 
-    ServerError, 
-    Unauthorized
+    ServerError
 } from "@errors";
 
 const loginUserController: RouteController = async (
@@ -27,9 +25,7 @@ const loginUserController: RouteController = async (
             rememberMeToken?: string;
         }
     },
-    res,
-    next,
-    io
+    res
 ) => {
     try {
         const { email, password, rememberMe = false } = req.body;
@@ -57,27 +53,6 @@ const loginUserController: RouteController = async (
         if (rememberMe) user.rememberMeToken = rememberMeToken;
 
         await UsersDB.updateUser(user.uid, { ...user });
-
-        io.to(`friend:${user.uid}`).emit(events.FRIEND_UPDATED, secureUserData(user));
-
-        const socket = req.socket;
-        if (!socket) throw new Unauthorized("You're not connected");
-
-        // Watch for changes in user's data
-        socket.join(`user:${user.uid}`);
-
-        // Watch for changes in friends' data
-        for (const friendUid of user.friends) {
-            const friendRoom = `friend:${friendUid}`;
-            socket.join(friendRoom);
-        }
-        
-        // Listen for new messages
-        const userChats = await ChatsDB.getUserChats(user.uid);
-        for (const chat of userChats) {
-            const chatRoom = `chat:${chat.uid}`;
-            socket.join(chatRoom);
-        }
 
         return res.sendResponse({
             status: 200,

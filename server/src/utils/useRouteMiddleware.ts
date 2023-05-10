@@ -7,13 +7,11 @@ import {
     Request,
     Response,
     NextFunction,
-    RouteMiddleware,
-    SocketServer
+    RouteMiddleware
 } from "@typings";
 
 const useRouteMiddleware = (
-    middleware: RouteMiddleware,
-    io: SocketServer
+    middleware: RouteMiddleware
 ) => async (
     req: ExpressRequest,
     res: ExpressResponse,
@@ -27,8 +25,7 @@ const useRouteMiddleware = (
     await middleware(
         request, 
         response, 
-        nextFunc,
-        io
+        nextFunc
     );
 };
 

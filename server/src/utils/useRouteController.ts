@@ -1,4 +1,3 @@
-import * as socketIo from "socket.io";
 import { 
     Request as ExpressRequest, 
     Response as ExpressResponse,
@@ -8,13 +7,11 @@ import {
     Request,
     Response,
     NextFunction,
-    RouteController,
-    SocketServer
+    RouteController
 } from "@typings";
 
 const useRouteController = (
-    controller: RouteController,
-    io: socketIo.Server
+    controller: RouteController
 ) => async (
     req: ExpressRequest, 
     res: ExpressResponse,
@@ -24,13 +21,11 @@ const useRouteController = (
     const request = req as Request;
     const response = res as Response;
     const nextFunc = next as NextFunction;
-    const socketServer = io as SocketServer;
     
     await controller(
         request, 
         response, 
-        nextFunc,
-        socketServer
+        nextFunc
     );
 };
 
