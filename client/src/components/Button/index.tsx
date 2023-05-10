@@ -1,4 +1,3 @@
-import { Variant } from "@types";
 import { StyledButton, StyledButtonProps } from "./styles";
 
 interface ButtonProps extends Partial<StyledButtonProps> {

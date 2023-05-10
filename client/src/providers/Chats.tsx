@@ -85,6 +85,22 @@ function ChatsProvider(props: { children: React.ReactNode }) {
         Api.onDisconnect(onDisconnect);
     }, []);
 
+    const sortMessages = (messages: Message[]) => {
+        return messages.sort((a, b) => {
+            if (a.createdAt > b.createdAt) return 1;
+            if (a.createdAt < b.createdAt) return -1;
+            return 0;
+        });
+    };
+
+    const getLastMessage = (chat: Chat) => () => {
+        const chatMessages = sortMessages(messages.filter(message => {
+            return message.chat === chat.uid;
+        }));
+
+        return chatMessages[chatMessages.length - 1];
+    };
+
     const wrapperChats = chats.map(chat => ({
         ...chat,
         members: members.filter(member => {
@@ -99,10 +115,19 @@ function ChatsProvider(props: { children: React.ReactNode }) {
         createdBy: members.find(member => {
             return member.uid === chat.createdBy
         }) as User,
-        messages: messages.filter(message => {
+        messages: sortMessages(messages.filter(message => {
             return message.chat === chat.uid
-        })
-    }));
+        })),
+
+        getLastMessage: getLastMessage(chat)
+    })).sort((a, b) => {
+        const aLastMessage = a.getLastMessage();
+        const bLastMessage = b.getLastMessage();
+
+        if (aLastMessage.createdAt > bLastMessage.createdAt) return -1;
+        if (aLastMessage.createdAt < bLastMessage.createdAt) return 1;
+        return 0;
+    });
 
     return (
         <ChatsContext.Provider

@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 interface StyledAvatarProps {
     backgroundColor?: string;
+    size: number;
     multiple: boolean;
 }
 
@@ -14,10 +15,11 @@ const StyledAvatar = styled.div<StyledAvatarProps>`
     flex-shrink: 0;
     ${({ multiple }) => multiple && "gap: 3px;"}
 
-    width: 40px;
-    height: 40px;
+    width: fit-content;
+    height: fit-content;
+    padding: 10px;
 
-    font-size: 1.25rem;
+    font-size: ${props => props.size}em;
     line-height: 1;
     border-radius: 50%;
 

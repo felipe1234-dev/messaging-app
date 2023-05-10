@@ -94,7 +94,6 @@ const Button = styled.button<ButtonProps>`
     `}
 
     ${({ iconed }) => iconed && css`
-        border-radius: 50%;
         min-width: auto;
         min-height: auto;
         width: fit-content;

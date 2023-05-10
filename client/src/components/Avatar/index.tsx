@@ -5,6 +5,7 @@ interface SingleAvatarProps {
     src?: string;
     alt?: string;
     multiple?: false;
+    size?: number;
 }
 
 function isSingleAvatarProps(obj: any): obj is SingleAvatarProps {
@@ -16,12 +17,17 @@ function isSingleAvatarProps(obj: any): obj is SingleAvatarProps {
 }
 
 function SingleAvatar(props: SingleAvatarProps) {
-    const { src, alt = "Avatar" } = props;
+    const { 
+        src, 
+        alt = "Avatar",
+        size = 1
+    } = props;
     const colorAvatar = stringToAvatar(alt);
 
     return (
         <StyledAvatar
             backgroundColor={colorAvatar.color}
+            size={size}
             multiple={false} 
         >
             {src ? <img src={src} alt={alt} /> : colorAvatar.shortName}
@@ -33,6 +39,7 @@ interface MultipleAvatarProps {
     src?: string[];
     alt?: string[];
     multiple?: true;
+    size?: number;
 }
 
 function isMultipleAvatarProps(obj: any): obj is MultipleAvatarProps {
@@ -44,12 +51,17 @@ function isMultipleAvatarProps(obj: any): obj is MultipleAvatarProps {
 }
 
 function MultipleAvatar(props: MultipleAvatarProps) {
-    const { src: srcs = [], alt: alts = [] } = props;
+    const { 
+        src: srcs = [], 
+        alt: alts = [],
+        size = 1
+    } = props;
     const colorAvatar = stringToAvatar(alts[0]);
 
     return (
         <StyledAvatar
             backgroundColor={colorAvatar.color}
+            size={size}
             multiple
         >
             {alts?.map((alt, i) => {

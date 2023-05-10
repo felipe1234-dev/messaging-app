@@ -1,5 +1,4 @@
-import { 
-    codes,
+import {
     events,
     FilterParams, 
     User, 
@@ -10,27 +9,26 @@ import {
     VideoMessage
 } from "messaging-app-globals";
 import { isLocal } from "@functions";
-import { ResponseError, isResponseError } from "@types";
-
+import { 
+    ResponseError, 
+    isResponseError, 
+    Unsubscribe
+} from "@types";
 import axios, { AxiosError } from "axios";
-import io, { Socket } from "socket.io-client";
+import { chatCollection, messageCollection, userCollection } from "./firebase";
 
-const httpURL = isLocal() 
+const apiURL = isLocal() 
     ? "http://127.0.0.1:5001/screen-recorder-b7354/us-central1/default" 
-    : "";
-const socketURL = isLocal()
-    ? "http://127.0.0.1:5000/"
     : "";
 
 const httpEndpoint = axios.create({
-    baseURL: httpURL,
+    baseURL: apiURL,
     timeout: 0
 });
 
 httpEndpoint.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
-        const originalRequest = error.config;
         const responseData = error.response?.data;
 
         if (isResponseError(responseData)) {
@@ -39,12 +37,6 @@ httpEndpoint.interceptors.response.use(
                 ...responseData
             };
 
-            if (responseError.code === codes.SOCKET_NOT_FOUND && originalRequest) {
-                httpEndpoint.defaults.headers.common["socket-id"] = socketEndpoint.id;
-                originalRequest.headers["socket-id"] = socketEndpoint.id;
-                return Promise.resolve(axios.request(originalRequest));
-            }
-
             return Promise.reject(responseError);
         } else {
             return Promise.reject(error);
@@ -52,34 +44,11 @@ httpEndpoint.interceptors.response.use(
     }
 );
 
-const socketEndpoint = io(
-    socketURL, 
-    { withCredentials: true }
-);
-
-const onConnect = (callback: (socket: Socket) => void) => {
-    httpEndpoint.defaults.headers.common["socket-id"] = socketEndpoint.id;
-    callback(socketEndpoint);
-};
-
-const onDisconnect = (callback: (socket: Socket) => void) => {
-    httpEndpoint.defaults.headers.common["socket-id"] = "";
-    callback(socketEndpoint);
-};
-
 const Api = {
     httpEndpoint,
-    socketEndpoint,
     
     ping: async () => {
         await httpEndpoint.get("/ping");
-    },
-
-    onConnect(callback: (socket: Socket) => void) {
-        socketEndpoint.on("connect", () => onConnect(callback));
-    },
-    onDisconnect(callback: (socket: Socket) => void) {
-        socketEndpoint.on("disconnect", () => onDisconnect(callback));
     },
 
     auth: {
@@ -119,13 +88,6 @@ const Api = {
         },
         register: async (name: string, email: string, password: string) => {
             await httpEndpoint.put("/register", { name, email, password });
-        },
-
-        onUserUpdated: (callback: (user: User) => void) => {
-            socketEndpoint.on(events.USER_UPDATED, callback);
-        },
-        offUserUpdated: (callback: (user: User) => void) => {
-            socketEndpoint.off(events.USER_UPDATED, callback);
         }
     },
     friends: {
@@ -134,11 +96,19 @@ const Api = {
             return (data.friends as any[]).map(friend => new User(friend));
         },
 
-        onFriendUpdated: (callback: (friend: User) => void) => {
-            socketEndpoint.on(events.FRIEND_UPDATED, callback);
-        },
-        offFriendUpdated: (callback: (friend: User) => void) => {
-            socketEndpoint.off(events.FRIEND_UPDATED, callback);
+        onFriendUpdated: (userUid: string, callback: (friend: User) => void): Unsubscribe => {
+            return userCollection.where("friends", "array-contains", userUid).onSnapshot((snapshot) => {
+                for (const change of snapshot.docChanges()) {
+                    const type = change.type;
+                    if (type !== "modified") continue;
+
+                    const doc = change.doc;
+                    if (!doc.exists) throw new Error("Friend not found");
+
+                    const friend = new User(doc.data());
+                    callback(friend);
+                }
+            });
         }
     },
     chats: {
@@ -170,41 +140,86 @@ const Api = {
                 }
             });
         },
+        onUserChatUpdated: (userUid: string, callback: (chat: Chat) => void): Unsubscribe => {
+            return chatCollection.where("members", "array-contains", userUid).onSnapshot((snapshot) => {
+                for (const change of snapshot.docChanges()) {
+                    const type = change.type;
+                    if (type !== "modified") continue;
+                    
+                    const doc = change.doc;
+                    if (!doc.exists) throw new Error("Chat not found");
 
-        onChatUpdated: (callback: (chat: Chat) => void) => {
-            socketEndpoint.on(events.CHAT_UPDATED, callback);
-        },
-        offChatUpdated: (callback: (chat: Chat) => void) => {
-            socketEndpoint.off(events.CHAT_UPDATED, callback);
+                    const chat = new Chat(doc.data());
+                    callback(chat);
+                }
+            });
         }
     },
     messages: {
-        onMessageSent: (callback: (message: Message) => void) => {
-            socketEndpoint.on(events.MESSAGE_SENT, callback);
-        },
-        offMessageSent: (callback: (message: Message) => void) => {
-            socketEndpoint.off(events.MESSAGE_SENT, callback);
-        },
+        onMessageSentToChat: (chatUid: string, callback: (message: Message) => void): Unsubscribe => {
+            return messageCollection.where("chat", "==", chatUid).onSnapshot((snapshot) => {
+                for (const change of snapshot.docChanges()) {
+                    const type = change.type;
+                    if (type !== "added") continue;
+                    
+                    const doc = change.doc;
+                    if (!doc.exists) throw new Error("Message not found");
 
-        onTextMessageSent: (callback: (message: TextMessage) => void) => {
-            socketEndpoint.on(events.TEXT_MESSAGE_SENT, callback);
+                    const msg = new Message(doc.data());
+                    callback(msg);
+                }
+            });
         },
-        offTextMessageSent: (callback: (message: TextMessage) => void) => {
-            socketEndpoint.off(events.TEXT_MESSAGE_SENT, callback);
-        },
+        onTextMessageSentToChat: (chatUid: string, callback: (message: TextMessage) => void) => {
+            return messageCollection.where("chat", "==", chatUid).onSnapshot((snapshot) => {
+                for (const change of snapshot.docChanges()) {
+                    const type = change.type;
+                    if (type !== "added") continue;
+                    
+                    const doc = change.doc;
+                    if (!doc.exists) throw new Error("Message not found");
 
-        onVideoMessageSent: (callback: (message: VideoMessage) => void) => {
-            socketEndpoint.on(events.VIDEO_MESSAGE_SENT, callback);
-        },
-        offVideoMessageSent: (callback: (message: VideoMessage) => void) => {
-            socketEndpoint.off(events.VIDEO_MESSAGE_SENT, callback);
-        },
+                    const data = doc.data();
+                    if (!TextMessage.isTextMessage(data)) continue;
 
-        onAudioMessageSent: (callback: (message: AudioMessage) => void) => {
-            socketEndpoint.on(events.AUDIO_MESSAGE_SENT, callback);
+                    const msg = new TextMessage(data);
+                    callback(msg);
+                }
+            });
         },
-        offAudioMessageSent: (callback: (message: AudioMessage) => void) => {
-            socketEndpoint.off(events.AUDIO_MESSAGE_SENT, callback);
+        onVideoMessageSentToChat: (chatUid: string, callback: (message: VideoMessage) => void) => {
+            return messageCollection.where("chat", "==", chatUid).onSnapshot((snapshot) => {
+                for (const change of snapshot.docChanges()) {
+                    const type = change.type;
+                    if (type !== "added") continue;
+                    
+                    const doc = change.doc;
+                    if (!doc.exists) throw new Error("Message not found");
+
+                    const data = doc.data();
+                    if (!VideoMessage.isVideoMessage(data)) continue;
+
+                    const msg = new VideoMessage(data);
+                    callback(msg);
+                }
+            });
+        },
+        onAudioMessageSentToChat: (chatUid: string, callback: (message: AudioMessage) => void) => {
+            return messageCollection.where("chat", "==", chatUid).onSnapshot((snapshot) => {
+                for (const change of snapshot.docChanges()) {
+                    const type = change.type;
+                    if (type !== "added") continue;
+                    
+                    const doc = change.doc;
+                    if (!doc.exists) throw new Error("Message not found");
+
+                    const data = doc.data();
+                    if (!AudioMessage.isAudioMessage(data)) continue;
+
+                    const msg = new AudioMessage(data);
+                    callback(msg);
+                }
+            });
         }
     },
     users: {
@@ -212,11 +227,13 @@ const Api = {
             const { data } = await httpEndpoint.post("/search/users", { filters });
             return (data.user as any[]).map(user => new User(user));
         },
-        onUserUpdated: (callback: (user: User) => void) => {
-            socketEndpoint.on(events.USER_UPDATED, callback);
-        },
-        offUserUpdated: (callback: (user: User) => void) => {
-            socketEndpoint.on(events.USER_UPDATED, callback);
+        onUserUpdated: (userUid: string, callback: (user: User) => void): Unsubscribe => {
+            return userCollection.doc(userUid).onSnapshot((snapshot) => {
+                if (!snapshot.exists) throw new Error("User not found");
+
+                const user = new User(snapshot.data());
+                callback(user);
+            });
         }
     }
 };
