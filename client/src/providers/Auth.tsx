@@ -1,11 +1,11 @@
 import React, { 
     createContext, 
     useContext, 
-    useState, 
-    useEffect 
+    useState
 } from "react";
 import { User, codes } from "messaging-app-globals";
 import { Api } from "@services";
+import { useAsyncEffect } from "@hooks";
 import { WrapperUser } from "@types";
 
 interface AuthValue {
@@ -55,21 +55,7 @@ function AuthProvider(props: { children: React.ReactNode }) {
         }));
     };
 
-    const onConnect = async () => {
-        const user = await Api.auth.recoverSession();
-        setUser(user);
-        
-        Api.auth.onUserUpdated(setUser);
-        Api.friends.onFriendUpdated(onFriendUpdated);
-    };
-
-    const onDisconnect = async () => {
-        await logout();
-        Api.auth.offUserUpdated(setUser);
-        Api.friends.offFriendUpdated(onFriendUpdated);
-    };
-
-    useEffect(() => {
+    useAsyncEffect(async () => {
         Api.httpEndpoint.interceptors.response.use(
             (response) => response,
             async (error) => {
@@ -78,8 +64,13 @@ function AuthProvider(props: { children: React.ReactNode }) {
             }
         );
         
-        Api.onConnect(onConnect);
-        Api.onDisconnect(onDisconnect);
+        const user = await Api.auth.recoverSession();
+        setUser(user);
+        
+        if (!user) return;
+
+        Api.users.onUserUpdated(user.uid, setUser);
+        Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
     }, []);
 
     const wrapperUser = user ? {

@@ -29,14 +29,14 @@ function ChatsProvider(props: { children: React.ReactNode }) {
     const [members, setMembers] = useState<User[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
 
-    const onChatUpdated = (updatedChat: Chat) => {
+    const onUserChatUpdated = (updatedChat: Chat) => {
         setChats(prev => prev.map(chat => {
             if (chat.uid === updatedChat.uid) return updatedChat;
             return chat;
         }));
     };
 
-    const onUserUpdated = (updatedUser: User) => {
+    const onMemberUpdated = (updatedUser: User) => {
         const userUid = updatedUser.uid;
         
         const userInChats = !!members.find(member => member.uid === userUid);
@@ -52,18 +52,6 @@ function ChatsProvider(props: { children: React.ReactNode }) {
         setMessages(prev => [...prev, message]);
     };
 
-    const onConnect = () => {
-        Api.chats.onChatUpdated(onChatUpdated);
-        Api.users.onUserUpdated(onUserUpdated);
-        Api.messages.onMessageSent(onMessageSent);
-    };
-
-    const onDisconnect = () => {
-        Api.chats.offChatUpdated(onChatUpdated);
-        Api.users.offUserUpdated(onUserUpdated);
-        Api.messages.offMessageSent(onMessageSent);
-    };
-
     useAsyncEffect(async () => {
         if (!user) {
             setChats([]);
@@ -76,14 +64,17 @@ function ChatsProvider(props: { children: React.ReactNode }) {
             for (const chat of chats) {
                 const memberList = await Api.chats.getChatMembers(chat.uid);
                 setMembers(memberList);
+
+                for (const member of memberList) {
+                    Api.users.onUserUpdated(member.uid, onMemberUpdated);
+                }
+
+                Api.messages.onMessageSentToChat(chat.uid, onMessageSent);
             }
+            
+            Api.chats.onUserChatUpdated(user.uid, onUserChatUpdated);
         }
     }, [user]);
-
-    useEffect(() => {
-        Api.onConnect(onConnect);
-        Api.onDisconnect(onDisconnect);
-    }, []);
 
     const sortMessages = (messages: Message[]) => {
         return messages.sort((a, b) => {
