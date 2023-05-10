@@ -1,8 +1,7 @@
-import { codes, FilterParams } from "messaging-app-globals";
+import { codes, FilterParams, secureUserData } from "messaging-app-globals";
 import { UsersDB } from "@databases";
 import { RouteController, Request } from "@typings";
 import { ServerError, Unauthorized } from "@errors";
-import { secureUserData } from "@utils";
 
 const searchUsersController: RouteController = async (
     req: Request & {

@@ -2,11 +2,11 @@ import configs from "@configs";
 import { Request, RouteController } from "@typings";
 import { Hash, Token } from "@services";
 import { UsersDB } from "@databases";
-import { secureUserData } from "@utils";
 import { 
     codes,
     generateUid, 
-    validateEmail 
+    validateEmail,
+    secureUserData
 } from "messaging-app-globals";
 import { 
     Forbidden, 

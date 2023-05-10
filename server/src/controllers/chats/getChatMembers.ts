@@ -1,7 +1,6 @@
 import { Request, RouteController } from "@typings";
-import { codes, User } from "messaging-app-globals";
+import { codes, User, secureUserData } from "messaging-app-globals";
 import { ChatsDB, UsersDB } from "@databases";
-import { secureUserData } from "@utils";
 import { 
     MissingURLParam, 
     NotFound, 

@@ -1,8 +1,7 @@
 import { Request, RouteController } from "@typings";
-import { codes } from "messaging-app-globals";
+import { codes, secureUserData } from "messaging-app-globals";
 import { UsersDB } from "@databases";
 import { Token } from "@services";
-import { secureUserData } from "@utils";
 import {
     Forbidden,
     MissingPostParam, 

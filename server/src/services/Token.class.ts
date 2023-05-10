@@ -1,7 +1,6 @@
 import configs from "@configs";
 import { app } from "@databases";
-import { secureUserData } from "@utils";
-import { User } from "messaging-app-globals";
+import { User, secureUserData } from "messaging-app-globals";
 import HTTPReq from "./HTTPReq.class";
 
 class Token {
