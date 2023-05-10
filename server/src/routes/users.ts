@@ -1,6 +1,6 @@
 import { HTTPRouter } from "@typings";
 import { useRouteController, useRouteMiddleware } from "@utils";
-import { authenticationMiddleware, getConnectedSocketMiddleware } from "@middlewares";
+import { authenticationMiddleware } from "@middlewares";
 import { 
     refreshSessionController,
     registerUserController, 
@@ -25,12 +25,10 @@ const usersRouter: HTTPRouter = (api) => {
     );
     api.post(
         "/login", 
-        useRouteMiddleware(getConnectedSocketMiddleware),
         useRouteController(loginUserController)
     );
     api.post(
         "/logout/:userUid", 
-        useRouteMiddleware(getConnectedSocketMiddleware),
         useRouteMiddleware(authenticationMiddleware), 
         useRouteController(logoutUserController)
     );
