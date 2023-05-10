@@ -5,7 +5,8 @@ import {
     Message,
     TextMessage, 
     AudioMessage, 
-    VideoMessage
+    VideoMessage,
+    secureUserData
 } from "messaging-app-globals";
 import { isLocal } from "@functions";
 import { 
@@ -113,7 +114,7 @@ const Api = {
                     const doc = change.doc;
                     if (!doc.exists) throw new Error("Friend not found");
 
-                    const friend = new User(doc.data());
+                    const friend = secureUserData(new User(doc.data()));
                     callback(friend);
                 }
             });
@@ -239,7 +240,7 @@ const Api = {
             return userCollection.doc(userUid).onSnapshot((snapshot) => {
                 if (!snapshot.exists) throw new Error("User not found");
                 
-                const user = new User(snapshot.data());
+                const user = secureUserData(new User(snapshot.data()));
                 callback(user);
             });
         }

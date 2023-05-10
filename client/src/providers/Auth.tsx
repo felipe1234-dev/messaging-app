@@ -1,6 +1,7 @@
 import React, { 
     createContext, 
     useContext, 
+    useEffect, 
     useState
 } from "react";
 import { User, codes } from "messaging-app-globals";
@@ -48,7 +49,14 @@ function AuthProvider(props: { children: React.ReactNode }) {
         setFriends([]);
     };
 
-    const onFriendUpdated = async (updatedFriend: User) => {
+    const onUserUpdated = (updatedUser: User) => {
+        const updatedUserJson = JSON.stringify(updatedUser);
+        const currentUserJson = JSON.stringify(user);
+
+        if (updatedUserJson !== currentUserJson) setUser(updatedUser);
+    };
+
+    const onFriendUpdated = (updatedFriend: User) => {
         setFriends(prev => prev.map(friend => {
             if (friend.uid === updatedFriend.uid) return updatedFriend;
             return friend;
@@ -66,12 +74,13 @@ function AuthProvider(props: { children: React.ReactNode }) {
         
         const user = await Api.auth.recoverSession();
         setUser(user);
-        
-        if (!user) return;
-
-        Api.users.onUserUpdated(user.uid, setUser);
-        Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
     }, []);
+    
+    useEffect(() => {
+        if (!user) return;
+        Api.users.onUserUpdated(user.uid, onUserUpdated);
+        Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
+    }, [user]);
 
     const wrapperUser = user ? {
         ...user,
