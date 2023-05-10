@@ -1,5 +1,4 @@
 import {
-    events,
     FilterParams, 
     User, 
     Chat, 
@@ -15,7 +14,12 @@ import {
     Unsubscribe
 } from "@types";
 import axios, { AxiosError } from "axios";
-import { chatCollection, messageCollection, userCollection } from "./firebase";
+import { 
+    auth,
+    chatCollection, 
+    messageCollection, 
+    userCollection 
+} from "./firebase";
 
 const apiURL = isLocal() 
     ? "http://127.0.0.1:5001/screen-recorder-b7354/us-central1/default" 
@@ -60,10 +64,12 @@ const Api = {
                 
                 const user = new User(data.user);
                 httpEndpoint.defaults.headers.common.authorization = data.token;
+                await auth.signInAnonymously();
 
                 return user;
             } catch {
                 localStorage.removeItem("refreshToken");
+                await auth.signOut();
                 return undefined;
             }
         },
@@ -77,6 +83,7 @@ const Api = {
             httpEndpoint.defaults.headers.common.authorization = token;
             localStorage.setItem("refreshToken", refreshToken);
             localStorage.setItem("rememberMeToken", rememberMeToken);
+            await auth.signInAnonymously();
 
             return new User(data.user);
 
@@ -85,6 +92,7 @@ const Api = {
             await httpEndpoint.post(`/logout/${userUid}`);
             httpEndpoint.defaults.headers.common.authorization = "";
             localStorage.removeItem("refreshToken");
+            await auth.signOut();
         },
         register: async (name: string, email: string, password: string) => {
             await httpEndpoint.put("/register", { name, email, password });
@@ -230,7 +238,7 @@ const Api = {
         onUserUpdated: (userUid: string, callback: (user: User) => void): Unsubscribe => {
             return userCollection.doc(userUid).onSnapshot((snapshot) => {
                 if (!snapshot.exists) throw new Error("User not found");
-
+                
                 const user = new User(snapshot.data());
                 callback(user);
             });

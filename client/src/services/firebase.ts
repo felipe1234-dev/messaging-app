@@ -17,10 +17,12 @@ const app = firebase.initializeApp(firebaseConfig, getEnv("PROJECT_ID"));
 const firestore = app.firestore();
 const storage = app.storage();
 const auth = app.auth();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+export { firestore, storage, auth };
 
 const userCollection = firestore.collection("users");
 const messageCollection = firestore.collection("messages");
 const chatCollection = firestore.collection("chats");
 
 export { userCollection, messageCollection, chatCollection };
-export { firestore, storage, auth };
