@@ -22,11 +22,11 @@ const root = ReactDOM.createRoot(
 
 const providers = [
     BrowserRouter, 
-    AuthProvider,
-    ChatsProvider,
     ThemeProvider, 
     LoaderProvider,
-    AlertProvider
+    AlertProvider,
+    AuthProvider,
+    ChatsProvider
 ];
 
 root.render(
