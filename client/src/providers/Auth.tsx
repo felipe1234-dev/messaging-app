@@ -6,8 +6,8 @@ import React, {
 } from "react";
 import { User, codes } from "messaging-app-globals";
 import { Api } from "@services";
-import { useAsyncEffect } from "@hooks";
 import { WrapperUser } from "@types";
+import { useLoader } from "./Loader";
 
 interface AuthValue {
     user?: WrapperUser;
@@ -20,6 +20,7 @@ const AuthContext = createContext<AuthValue | undefined>(undefined);
 function AuthProvider(props: { children: React.ReactNode }) {
     const [user, setUser] = useState<User>();
     const [friends, setFriends] = useState<User[]>([]);
+    const loader = useLoader();
 
     const login = async (email: string, password: string, rememberMe: boolean) => {
         const response = await Api.auth.login(email, password, rememberMe);
@@ -63,7 +64,7 @@ function AuthProvider(props: { children: React.ReactNode }) {
         }));
     };
 
-    useAsyncEffect(async () => {
+    useEffect(() => {
         Api.httpEndpoint.interceptors.response.use(
             (response) => response,
             async (error) => {
@@ -72,12 +73,13 @@ function AuthProvider(props: { children: React.ReactNode }) {
             }
         );
         
-        const user = await Api.auth.recoverSession();
-        setUser(user);
+        loader.show();
+        Api.auth.recoverSession().then(setUser).finally(loader.hide);
     }, []);
     
     useEffect(() => {
         if (!user) return;
+        
         Api.users.onUserUpdated(user.uid, onUserUpdated);
         Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
     }, [user]);
