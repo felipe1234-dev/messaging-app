@@ -22,7 +22,7 @@ export { default as Link } from "./Link";
 export type { LinkProps } from "./Link";
 
 export { default as Avatar } from "./Avatar";
-export type { AvatarProps, SingleAvatarProps, MultipleAvatarProps } from "./Avatar";
+export * from "./Avatar";
 
 export { default as Switch } from "./Switch";
 export type { SwitchProps } from "./Switch";
@@ -32,3 +32,6 @@ export type { CardProps } from "./Card";
 
 export { default as HorizontalScroll } from "./HorizontalScroll";
 export * from "./HorizontalScroll";
+
+export { default as Tabs } from "./Tabs";
+export * from "./Tabs";
