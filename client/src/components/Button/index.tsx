@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { StyledButton, StyledButtonProps } from "./styles";
 
 interface ButtonProps extends Partial<StyledButtonProps> {
@@ -7,7 +8,7 @@ interface ButtonProps extends Partial<StyledButtonProps> {
     disabled?: boolean;
 }
 
-function Button(props: ButtonProps) {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     const { 
         type = "button",
         variant = "primary",
@@ -26,6 +27,7 @@ function Button(props: ButtonProps) {
 
     return (
         <StyledButton
+            ref={ref}
             type={type}
             variant={variant}
             fullWidth={fullWidth}
@@ -42,7 +44,7 @@ function Button(props: ButtonProps) {
             {!loading ? children : <></>}
         </StyledButton>
     );
-}
+});
 
 export default Button;
 export type { ButtonProps };
