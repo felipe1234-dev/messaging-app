@@ -15,44 +15,46 @@ interface ButtonProps {
 }
 
 const Button = styled.button<ButtonProps>`
-    cursor: pointer;
-    width: ${props => props.fullWidth ? "100%" : "auto"};
-
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    width: ${props => props.fullWidth ? "100%" : "auto"};
+    min-height: 40px;
+    
     box-sizing: border-box;
-    background-color: transparent;
     outline: 0;
     border: 0;
+    border-radius: 8px;
     margin: 0;
+    padding: 6px 16px;
     vertical-align: middle;
     text-decoration: none;
     user-select: none;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
     cursor: pointer;
-    color: inherit;
-
+    
     font-weight: 500;
     font-size: ${props => props.size}em;
     line-height: 1.75;
     letter-spacing: 0.02857em;
-
+    box-shadow: none;
+    
+    color: ${({ variant, theme }) => theme.text[variant]};
     ${props => props.uppercase && "text-transform: uppercase;"}
-    min-height: 40px;
-    padding: 6px 16px;
-    border-radius: 8px;
+    background-color: ${({ variant, theme }) => theme.button[variant]};
+
     transition: 
         background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
         box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
         border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
         color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms
     ;
-    color: ${({ variant, theme }) => theme.text[variant]};
-    background-color: ${({ variant, theme }) => theme.button[variant]};
-    box-shadow: none;
+
+    * {
+        pointer-events: none;
+    }
 
     ${({ loading, variant, transparent, theme }) => !loading && css`
         ${transparent && "background-color: transparent;"}
