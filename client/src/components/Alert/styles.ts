@@ -11,6 +11,7 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 `;
 
 interface SnackbarProps {
@@ -23,14 +24,14 @@ const Snackbar = styled.div<SnackbarProps>`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 10px;
 
-    visibility: hidden;
+    padding: 16px;
     min-width: 100px;
+    visibility: hidden;
     text-align: center;
     border-radius: 8px;
-    padding: 16px;
     font-size: 1em;
 
     background-color: ${props => props.severity ? props.theme.background[props.severity] : "rgba(255, 255, 255, 0.09)"};
