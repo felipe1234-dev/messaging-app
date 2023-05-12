@@ -1,16 +1,60 @@
-import { Container, Icon } from "@styles/layout";
-import { Avatar, Button } from "@components";
-import { useAuth } from "@providers";
+import { useState } from "react";
 
-import { ChatDots, Telephone, CameraVideo } from "@styled-icons/bootstrap";
+import { Container, Icon } from "@styles/layout";
+import { Avatar, Button, Tabs } from "@components";
+import { useAuth } from "@providers";
+import { Variant, Position } from "@types";
+
 import { Settings } from "@styled-icons/feather";
+import { 
+    ChatDots, 
+    Telephone, 
+    CameraVideo 
+} from "@styled-icons/bootstrap";
 
 function Sidebar() {
-    const { user } = useAuth();
-    
+    const [tab, setTab] = useState("chats");
+
+    const { user } = useAuth()
     if (!user) return <></>;
 
     const padding = 5;
+
+    const baseTabButton = {
+        transparent: true,
+        iconed: true
+    };
+
+    const tabs = [
+        {
+            id: "chats",
+            button: { 
+                ...baseTabButton,
+                children: <Icon icon={<ChatDots />} />
+            }
+        },
+        {
+            id: "voiceCalls",
+            button: { 
+                ...baseTabButton,
+                children: <Icon icon={<Telephone />} />
+            }
+        },
+        {
+            id: "videoCalls",
+            button: { 
+                ...baseTabButton,
+                children: <Icon icon={<CameraVideo />} />
+            }
+        }
+    ];
+
+    const indicator = {
+        position: "center-left" as Position,
+        variant: "primary" as Variant,
+        scale: 0.8,
+        thickness: 1
+    };
     
     return (
         <Container
@@ -21,30 +65,15 @@ function Sidebar() {
             height={`calc(100vh - ${2*padding}px)`}
             p={padding}
         >
-            <Container 
-                direction="column" 
-                align="center" 
+            <Tabs
+                direction="column"
+                align="center"
                 justify="start"
-            >
-                <Button 
-                    iconed
-                    transparent 
-                >
-                    <Icon icon={<ChatDots />} />
-                </Button>
-                <Button 
-                    iconed
-                    transparent 
-                >
-                    <Icon icon={<Telephone />} />
-                </Button>
-                <Button 
-                    iconed
-                    transparent 
-                >
-                    <Icon icon={<CameraVideo />} />
-                </Button>
-            </Container>
+                active={tab}
+                tabs={tabs}
+                onSelect={selectedTab => setTab(selectedTab.id)}
+                indicator={indicator}
+            />
 
             <Container
                 direction="column" 

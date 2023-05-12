@@ -4,6 +4,18 @@ export * from "./is";
 
 export type Severity = "error" | "warning" | "info" | "success";
 export type Variant = "primary" | "secondary" | "highlight" | Severity;
+export type Position = 
+    "top-left" | 
+    "top-right" |
+    "top-center" |
+
+    "bottom-left" | 
+    "bottom-right" | 
+    "bottom-center" |
+
+    "center" | 
+    "center-left" | 
+    "center-right";
 export type Unsubscribe = () => void;
 
 export interface WrapperUser extends Omit<User, "friends"> {
