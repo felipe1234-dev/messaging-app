@@ -6,10 +6,10 @@ import { useAuth } from "@providers";
 import { Variant, Position } from "@types";
 
 import { Settings } from "@styled-icons/feather";
-import { 
-    ChatDots, 
-    Telephone, 
-    CameraVideo 
+import {
+    ChatDots,
+    Telephone,
+    CameraVideo
 } from "@styled-icons/bootstrap";
 
 function Sidebar() {
@@ -28,22 +28,25 @@ function Sidebar() {
     const tabs = [
         {
             id: "chats",
-            button: { 
+            button: {
                 ...baseTabButton,
+                selected: tab === "chats",
                 children: <Icon icon={<ChatDots />} />
             }
         },
         {
             id: "voiceCalls",
-            button: { 
+            button: {
                 ...baseTabButton,
+                selected: tab === "voiceCalls",
                 children: <Icon icon={<Telephone />} />
             }
         },
         {
             id: "videoCalls",
-            button: { 
+            button: {
                 ...baseTabButton,
+                selected: tab === "videoCalls",
                 children: <Icon icon={<CameraVideo />} />
             }
         }
@@ -52,23 +55,26 @@ function Sidebar() {
     const indicator = {
         position: "center-left" as Position,
         variant: "primary" as Variant,
-        scale: 0.8,
-        thickness: 1
+        offset: 20,
+        margin: 8,
+        thickness: 3,
+        borderRadius: 5
     };
-    
+
     return (
         <Container
             direction="column"
             align="center"
             justify="space-between"
-            width="fit-content" 
-            height={`calc(100vh - ${2*padding}px)`}
+            width="fit-content"
+            height={`calc(100vh - ${2 * padding}px)`}
             p={padding}
         >
             <Tabs
                 direction="column"
                 align="center"
                 justify="start"
+                gap={5}
                 active={tab}
                 tabs={tabs}
                 onSelect={selectedTab => setTab(selectedTab.id)}
@@ -76,20 +82,20 @@ function Sidebar() {
             />
 
             <Container
-                direction="column" 
-                align="center" 
+                direction="column"
+                align="center"
                 justify="end"
             >
-                <Button 
+                <Button
                     iconed
-                    transparent 
+                    transparent
                 >
                     <Icon icon={<Settings />} />
                 </Button>
 
                 <Button
                     iconed
-                    transparent 
+                    transparent
                 >
                     <Avatar
                         src={user.photo}
