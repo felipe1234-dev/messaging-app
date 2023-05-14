@@ -11,44 +11,41 @@ const TabButtons = styled(Container) <TabButtonsProps>`
 const positionToStyle = (
     position: Position,
     button: HTMLButtonElement,
-    spacing: number,
+    offset: number,
+    margin: number,
     thickness: number
 ) => {
     switch (position) {
-        case "top-left":
-        case "top-right":
         case "top-center":
             return css`
-                top: 0;
-                left: ${button.offsetLeft - spacing / 2}px;
-                width: ${button.offsetWidth - spacing}px;
+                top: ${margin};
+                left: ${button.offsetLeft + offset / 2}px;
+                width: ${button.offsetWidth - offset}px;
                 height: ${thickness}px;
             `;
 
-        case "bottom-left":
-        case "bottom-right":
         case "bottom-center":
             return css`
-                bottom: 0;
-                left: ${button.offsetLeft - spacing / 2}px;
-                width: ${button.offsetWidth - spacing}px;
+                bottom: ${margin};
+                left: ${button.offsetLeft + offset / 2}px;
+                width: ${button.offsetWidth - offset}px;
                 height: ${thickness}px;
             `;
         case "center":
         case "center-left":
             return css`
-                top: ${button.offsetTop - spacing / 2}px;
-                left: 0;
+                top: ${button.offsetTop + offset / 2}px;
+                left: ${margin}px;
                 width: ${thickness}px;
-                height: ${button.offsetHeight - spacing}px;
+                height: ${button.offsetHeight - offset}px;
             `;
         case "center-right":
         default:
             return css`
-                top: ${button.offsetTop - spacing / 2}px;
-                left: 0;
+                top: ${button.offsetTop + offset / 2}px;
+                right: ${margin};
                 width: ${thickness}px;
-                height: ${button.offsetHeight - spacing}px;
+                height: ${button.offsetHeight - offset}px;
             `;
     }
 };
@@ -56,17 +53,35 @@ const positionToStyle = (
 interface IndicatorProps {
     variant: Variant;
     selectedButton: HTMLButtonElement;
-    spacing: number;
+    offset: number;
+    margin: number;
     thickness: number;
     position: Position;
+    borderRadius: number;
 }
 
-const Indicator = styled.div<IndicatorProps>`
+const Indicator = styled.div<IndicatorProps>`${({
+    variant,
+    position,
+    selectedButton,
+    offset,
+    margin,
+    thickness,
+    borderRadius,
+    theme
+}) => css`
     position: absolute;
-    transition: all 0.5s ease-in-out;
-    background-color: ${({ variant, theme }) => theme.button[variant]};
-    ${({ position, selectedButton, spacing, thickness }) => positionToStyle(position, selectedButton, spacing, thickness)}
-`;
+    transition: all 0.3s ease-in-out;
+    background-color: ${theme.button[variant]};
+    border-radius: ${borderRadius}px;
+    ${positionToStyle(
+    position,
+    selectedButton,
+    offset,
+    margin,
+    thickness
+)}
+`}`;
 
 export { TabButtons, Indicator };
 export type { IndicatorProps };

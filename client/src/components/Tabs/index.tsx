@@ -19,8 +19,8 @@ interface TabsProps extends Partial<ContainerProps> {
 
 function Tabs(props: TabsProps) {
     const {
-        active, 
-        tabs, 
+        active,
+        tabs,
         onSelect,
         indicator = {},
         direction = "row",
@@ -32,9 +32,11 @@ function Tabs(props: TabsProps) {
 
     const {
         variant = "primary",
-        spacing = 1,
-        thickness = 1,
-        position = "center-left"
+        offset = 0,
+        margin = 0,
+        thickness = 2,
+        position = "center-left",
+        borderRadius = 0
     } = indicator;
 
     const [selectedButton, setSelectedButton] = useState<HTMLButtonElement | null>(null);
@@ -58,7 +60,7 @@ function Tabs(props: TabsProps) {
                     } = tab.button || {};
 
                     return (
-                        <Button 
+                        <Button
                             key={tab.id}
                             ref={tab.id === active ? (el) => setSelectedButton(el) : undefined}
                             onClick={() => onSelect(tab)}
@@ -71,12 +73,14 @@ function Tabs(props: TabsProps) {
                     );
                 })}
                 {selectedButton && (
-                    <Indicator 
-                        variant={variant} 
+                    <Indicator
+                        variant={variant}
                         selectedButton={selectedButton}
-                        spacing={spacing}
+                        margin={margin}
+                        offset={offset}
                         thickness={thickness}
                         position={position}
+                        borderRadius={borderRadius}
                     />
                 )}
             </TabButtons>
