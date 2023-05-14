@@ -1,4 +1,3 @@
-import { User } from "messaging-app-globals";
 import { UsersDB } from "@databases";
 import { Token } from "@services";
 
