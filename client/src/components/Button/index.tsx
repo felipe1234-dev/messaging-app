@@ -9,7 +9,7 @@ interface ButtonProps extends Partial<StyledButtonProps> {
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-    const { 
+    const {
         type = "button",
         variant = "primary",
         fullWidth = true,
@@ -22,6 +22,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         noInteraction = false,
         transparent = false,
         round = false,
+        selected = false,
         children
     } = props;
 
@@ -40,6 +41,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             noInteraction={noInteraction}
             transparent={transparent}
             round={round}
+            selected={selected}
         >
             {!loading ? children : <></>}
         </StyledButton>
