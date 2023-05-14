@@ -1,6 +1,7 @@
-import { Variant } from "@types";
-import { spinnerAnimation } from "@styles/animations";
 import styled, { css } from "styled-components";
+import { spinnerAnimation } from "@styles/animations";
+import { Variant } from "@types";
+import { shade } from "@functions";
 
 interface ButtonProps {
     variant: Variant;
@@ -70,14 +71,14 @@ const Button = styled.button<ButtonProps>`${({
     }
 
     ${!loading && css`
-        ${transparent && "background-color: transparent;"}
+        ${transparent && css`background-color: transparent;`}
 
         &:hover {
-            background-color: ${transparent ? "rgba(255,255,255,0.05)" : theme.hover[variant]};
+            background-color: ${transparent ? "rgba(255,255,255,0.05)" : shade(theme.hover[variant], 0.2)};
         }
 
         ${selected && css`
-            background-color: ${transparent ? "rgba(255,255,255,0.05)" : theme.hover[variant]};
+            background-color: ${transparent ? "rgba(255,255,255,0.05)" : shade(theme.hover[variant], 0.2)};
         `}
     `}
 

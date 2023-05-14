@@ -1,41 +1,59 @@
 import styled, { css } from "styled-components";
 import { Variant } from "@types";
-
-const backgroundColor = "rgba(255, 255, 255, 0.09)";
-const lightBackgroundColor = "rgba(255, 255, 255, 0.3)"
-const autoFillColor = "rgb(70, 70, 70)";
+import { shade } from "@functions";
 
 interface InputContainerProps {
     variant: Variant;
     fullWidth: boolean;
 }
 
-const InputContainer = styled.div<InputContainerProps>`
-    width: ${props => props.fullWidth ? "100%" : "auto"};
+const InputContainer = styled.div<InputContainerProps>`${({
+    variant,
+    fullWidth,
+    theme
+}) => css`
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background-color: ${theme.background[variant]};
+    color: ${theme.text[variant]};
+
+    cursor: text;
+    width: ${fullWidth ? "100%" : "auto"};
+    border-radius: 8px;
+    padding: 12px;
+    
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.4375em;
     letter-spacing: 0.00938em;
-    color: ${({ variant, theme }) => theme.text[variant]};
     box-sizing: border-box;
-    cursor: text;
-    display: inline-flex;
+    
     -webkit-box-align: center;
-    align-items: center;
-    position: relative;
-    background-color: ${backgroundColor};
-    border-radius: 8px;
     transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-    padding: 12px;
+
+    input:-internal-autofill-selected {
+        -webkit-box-shadow: 0 0 0 1000px ${theme.background[variant]} inset;
+        box-shadow: 0 0 0 1000px ${theme.background[variant]} inset;
+        -webkit-text-fill-color: ${theme.text[variant]};
+        transition: all 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    }
 
     &:has(input:focus), &:has(input:hover), &:hover {
-        background-color: ${lightBackgroundColor};
+        background-color: ${shade(theme.background[variant], 0.2)};
+        color: ${shade(theme.text[variant], 0.2)};
 
         input {
             background-color: transparent !important;
+
+            &:-internal-autofill-selected {
+                -webkit-box-shadow: 0 0 0 1000px ${shade(theme.background[variant], 0.2)} inset;
+                box-shadow: 0 0 0 1000px ${shade(theme.background[variant], 0.2)} inset;
+                -webkit-text-fill-color: ${shade(theme.text[variant], 0.2)};
+            }
         }
     }
-`;
+`}`;
 
 interface InputProps {
     variant: Variant;
@@ -43,30 +61,21 @@ interface InputProps {
     rightIcon: boolean;
 }
 
-const Input = styled.input<InputProps>`
+const Input = styled.input<InputProps>`${({
+    variant,
+    leftIcon,
+    rightIcon,
+    theme
+}) => css`
     width: 100%;
     height: 100%;
     background-color: transparent;
     border: none;
-    color: ${({ variant, theme }) => theme.text[variant]};
+    color: ${theme.text[variant]};
     font-size: 1em;
 
-    ${({ leftIcon }) => leftIcon && "padding-left: 10px;"}
-    ${({ rightIcon }) => rightIcon && "padding-right: 10px;"}
-
-    &:-internal-autofill-selected {
-        -webkit-box-shadow: 0 0 0 1000px ${autoFillColor} inset;
-        box-shadow: 0 0 0 1000px ${autoFillColor} inset;
-        -webkit-text-fill-color: ${({ variant, theme }) => theme.text[variant]};
-
-        &:hover,
-        &:focus,
-        &:active {
-            -webkit-box-shadow: 0 0 0 1000px ${autoFillColor} inset;
-            box-shadow: 0 0 0 1000px ${autoFillColor} inset;
-            -webkit-text-fill-color: ${({ variant, theme }) => theme.text[variant]};
-        }
-    }
+    ${leftIcon && css`padding-left: 10px;`}
+    ${rightIcon && css`padding-right: 10px;`}
 
     &:focus {
         outline: none;
@@ -75,7 +84,7 @@ const Input = styled.input<InputProps>`
     &[disabled] {
         cursor: not-allowed;
     }
-`;
+`}`;
 
 interface IconButtonProps {
 }
