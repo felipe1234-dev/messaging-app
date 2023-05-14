@@ -1,17 +1,17 @@
-import { Columns, Column, Container } from "@styles/layout";
+import { Columns } from "@styles/layout";
 import { useAuth } from "@providers";
 
-import LeftColumn from "./LeftColumn";
 import Sidebar from "./Sidebar";
+import Chats from "./Chats";
 
 function Page() {
     const { user } = useAuth();
-
     if (!user) return <></>;
 
     return (
-        <Columns align="start" justify="start">
+        <Columns align="start" justify="start" gap={0}>
             <Sidebar />
+            <Chats />
         </Columns>
     );
 }
