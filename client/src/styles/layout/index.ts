@@ -1,4 +1,5 @@
 export { default as Page } from "./Page";
+export { default as Whitespace } from "./Whitespace";
 
 export { default as Columns } from "./Columns";
 export type { ColumnsProps } from "./Columns";
@@ -24,4 +25,5 @@ export type { RowsProps } from "./Rows";
 export { default as Row } from "./Row";
 export type { RowProps } from "./Row";
 
-export { default as Whitespace } from "./Whitespace";
+export { default as Divider } from "./Divider";
+export type { DividerProps } from "./Divider";
