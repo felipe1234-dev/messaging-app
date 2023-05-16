@@ -99,7 +99,19 @@ Container.defaultProps = {
     gap: 15,
     width: "100%",
     height: "100%",
-    transparent: false
+    transparent: false,
+    pl: 0,
+    pr: 0,
+    pb: 0,
+    pt: 0,
+    ml: 0,
+    mr: 0,
+    mt: 0,
+    mb: 0,
+    roundedTL: "0",
+    roundedTR: "0",
+    roundedBL: "0",
+    roundedBR: "0"
 };
 
 export default Container;

@@ -1,6 +1,7 @@
-import { Columns } from "@styles/layout";
+import { Container } from "@styles/layout";
 import { useAuth } from "@providers";
 
+import Topbar from "./Topbar";
 import Sidebar from "./Sidebar";
 import Chats from "./Chats";
 
@@ -9,10 +10,17 @@ function Page() {
     if (!user) return <></>;
 
     return (
-        <Columns align="start" justify="start" gap={0}>
+        <Container
+            variant="secondary"
+            direction="row"
+            justify="start"
+            align="start"
+            height="100vh"
+            width="100vw"
+            gap={2.5}
+        >
             <Sidebar />
-            <Chats />
-        </Columns>
+        </Container>
     );
 }
 

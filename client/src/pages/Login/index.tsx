@@ -27,7 +27,7 @@ function Login() {
     const [viewPassword, setViewPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
-    
+
     const alert = useAlert();
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ function Login() {
 
     const disabled = !email || !password;
 
-    const handleTogglePasswordView = () => ( 
+    const handleTogglePasswordView = () => (
         setViewPassword(prev => !prev)
     );
 
@@ -47,7 +47,7 @@ function Login() {
 
             await login(email, password, rememberMe);
             alert.success("Login successful");
-            
+
             setTimeout(() => navigate("/"), 3000);
         } catch (error) {
             alert.error((error as Error).message);
@@ -57,9 +57,9 @@ function Login() {
     };
 
     return (
-        <Container 
+        <Container
             justify="center" align="center"
-            pt={15} pb={15} 
+            pt={15} pb={15}
             height="100vh"
         >
             <ShowItem>
@@ -73,7 +73,7 @@ function Login() {
                     Please login to continue
                 </Paragraph>
             </ShowItem>
-            
+
             <Columns>
                 <Column />
                 <Column xs={9} sm={4} md={0.2}>
@@ -81,6 +81,7 @@ function Login() {
                         <Rows gap={15}>
                             <Input
                                 fullWidth
+                                variant="secondary"
                                 leftIcon={<Icon icon={<EmailIcon />} size={1.5} />}
                                 type="email"
                                 placeholder="Email"
@@ -89,6 +90,7 @@ function Login() {
                             />
                             <Input
                                 fullWidth
+                                variant="secondary"
                                 leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
                                 rightIcon={<Icon icon={passwordIcon} size={1.5} />}
                                 onRightIconClick={handleTogglePasswordView}
@@ -98,7 +100,7 @@ function Login() {
                                 value={password}
                             />
                             <Rows align="end">
-                                <Checkbox 
+                                <Checkbox
                                     variant="primary"
                                     label="Remember me"
                                     onChange={evt => setRememberMe(evt.target.checked)}

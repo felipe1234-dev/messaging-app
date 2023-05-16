@@ -1,17 +1,26 @@
 const lightPalette = {
     background: {
-        primary: "#201F1F",
-        secondary: "#2D2C2C",
-        highlight: "#464775",
+        primary: "#fff",
+        secondary: "#ececec",
+        highlight: "#48a0f3",
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
         success: "#4caf50"
     },
     text: {
-        primary: "#E7E7E7",
+        primary: "#2C2C2C",
         secondary: "#989898",
-        highlight: "#464775",
+        highlight: "#48a0f3",
+        error: "#E7E7E7",
+        warning: "#E7E7E7",
+        info: "#E7E7E7",
+        success: "#E7E7E7"
+    },
+    icon: {
+        primary: "#2C2C2C",
+        secondary: "#989898",
+        highlight: "#48a0f3",
         error: "#E7E7E7",
         warning: "#E7E7E7",
         info: "#E7E7E7",

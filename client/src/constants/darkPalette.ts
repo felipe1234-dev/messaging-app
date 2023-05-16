@@ -17,6 +17,15 @@ const darkPalette = {
         info: "#E7E7E7",
         success: "#E7E7E7"
     },
+    icon: {
+        primary: "#E7E7E7",
+        secondary: "#989898",
+        highlight: "#FF6839",
+        error: "#E7E7E7",
+        warning: "#E7E7E7",
+        info: "#E7E7E7",
+        success: "#E7E7E7"
+    },
     link: {
         primary: "#FF6839",
         secondary: "#989898",

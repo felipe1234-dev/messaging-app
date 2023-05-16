@@ -72,7 +72,7 @@ const Indicator = styled.div<IndicatorProps>`${({
 }) => css`
     position: absolute;
     transition: all 0.3s ease-in-out;
-    background-color: ${theme.button[variant]};
+    background-color: ${theme.background[variant]};
     border-radius: ${borderRadius}px;
     ${positionToStyle(
     position,
