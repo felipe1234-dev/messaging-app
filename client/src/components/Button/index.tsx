@@ -12,6 +12,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     const {
         type = "button",
         variant = "primary",
+        textVariant = "primary",
+        iconVariant = "primary",
         fullWidth = true,
         uppercase = false,
         size = 1,
@@ -31,6 +33,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             ref={ref}
             type={type}
             variant={variant}
+            textVariant={textVariant}
+            iconVariant={iconVariant}
             fullWidth={fullWidth}
             uppercase={uppercase}
             size={size}

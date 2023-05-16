@@ -5,6 +5,8 @@ import { shade } from "@functions";
 
 interface ButtonProps {
     variant: Variant;
+    textVariant: Variant;
+    iconVariant: Variant;
     fullWidth: boolean;
     uppercase: boolean;
     size: number;
@@ -18,6 +20,8 @@ interface ButtonProps {
 
 const Button = styled.button<ButtonProps>`${({
     variant,
+    textVariant,
+    iconVariant,
     fullWidth,
     uppercase,
     size,
@@ -55,8 +59,8 @@ const Button = styled.button<ButtonProps>`${({
     line-height: 1.75;
     letter-spacing: 0.02857em;
     
-    color: ${theme.text[variant]};
-    ${uppercase && "text-transform: uppercase;"}
+    color: ${theme.text[textVariant]};
+    ${uppercase && css`text-transform: uppercase;`}
     background-color: ${theme.button[variant]};
 
     transition: 
@@ -98,7 +102,8 @@ const Button = styled.button<ButtonProps>`${({
         bottom: 0;
         margin: auto;
         border: 4px solid transparent;
-        border-top-color: ${theme.hover[variant]};;
+        border-color: ${shade(theme.background[variant], 0.1)};
+        border-top-color: ${shade(theme.background[variant], 0.2)};
         border-radius: 50%;
         animation-name: ${spinnerAnimation};
         animation-duration: 1s;
@@ -119,6 +124,10 @@ const Button = styled.button<ButtonProps>`${({
         width: fit-content;
         height: fit-content;
         padding: 10px;
+
+        svg {
+            color: ${theme.icon[iconVariant]};
+        }
     `}
 
     ${noInteraction && css`
