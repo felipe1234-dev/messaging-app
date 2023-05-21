@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { shade } from "@functions";
 
 interface LabelProps {
     disabled: boolean;
@@ -20,7 +21,7 @@ const Label = styled.label<LabelProps>`${({ disabled, theme }) => css`
     user-select: none;
 
     &:hover input ~ span {
-        background-color: ${theme.hover.secondary};
+        background-color: ${shade(theme.checkbox.secondary, 0.2)};
     }
 
     input[type="checkbox"] {
