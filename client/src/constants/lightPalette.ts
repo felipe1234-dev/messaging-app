@@ -1,8 +1,8 @@
 const lightPalette = {
     background: {
-        primary: "#fff",
+        primary: "#ffffff",
         secondary: "#ececec",
-        highlight: "#48a0f3",
+        highlight: "#444791",
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
@@ -11,16 +11,16 @@ const lightPalette = {
     text: {
         primary: "#2C2C2C",
         secondary: "#989898",
-        highlight: "#48a0f3",
+        highlight: "#ffffff",
         error: "#E7E7E7",
         warning: "#E7E7E7",
-        info: "#E7E7E7",
+        info: "#E7E7E7     ",
         success: "#E7E7E7"
     },
     icon: {
-        primary: "#2C2C2C",
-        secondary: "#989898",
-        highlight: "#48a0f3",
+        primary: "#989898",
+        secondary: "#444791",
+        highlight: "#ffffff",
         error: "#E7E7E7",
         warning: "#E7E7E7",
         info: "#E7E7E7",
@@ -36,7 +36,7 @@ const lightPalette = {
         success: "#4caf50"
     },
     button: {
-        primary: "#464775",
+        primary: "#48a0f3",
         secondary: "#d3d3d3",
         highlight: "#ff8000",
         disabled: "#2D2C2C"
@@ -46,11 +46,6 @@ const lightPalette = {
         secondary: "#d3d3d3",
         highlight: "#ff8000",
         disabled: "#2D2C2C"
-    },
-    hover: {
-        primary: "#8a88c7",
-        secondary: "#a9a9a9",
-        highlight: "#ffa726"
     },
     breakpoints: {
         xs: 0,
