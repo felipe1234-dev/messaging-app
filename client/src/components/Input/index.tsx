@@ -5,7 +5,10 @@ interface InputProps {
     label?: string;
     type?: string;
     variant?: Variant;
+    textVariant?: Variant;
+    iconVariant?: Variant;
     placeholder?: string;
+    disableHover?: boolean;
     autofill?: boolean;
     disabled?: boolean;
     required?: boolean;
@@ -24,8 +27,11 @@ function Input(props: InputProps) {
         type = "text",
         label = "",
         variant = "primary",
+        textVariant = "primary",
+        iconVariant = "primary",
         placeholder = "",
 
+        disableHover = false,
         autofill = false,
         disabled = false,
         required = false,
@@ -56,16 +62,24 @@ function Input(props: InputProps) {
     return (
         <InputContainer
             variant={variant}
+            textVariant={textVariant}
             fullWidth={fullWidth}
+            disableHover={disableHover}
         >
             {(leftIcon && onLeftIconClick) && (
-                <IconButton type="button" title="left-icon" onClick={onLeftIconClick}>
+                <IconButton 
+                    iconVariant={iconVariant}
+                    type="button" 
+                    title="left-icon" 
+                    onClick={onLeftIconClick}    
+                >
                     {leftIcon}
                 </IconButton>
             )}
             {(leftIcon && !onLeftIconClick) && leftIcon}
             <StyledInput
                 variant={variant}
+                textVariant={textVariant}
                 type={type}
                 disabled={disabled}
                 placeholder={placeholder}
@@ -78,7 +92,12 @@ function Input(props: InputProps) {
                 value={value}
             />
             {(rightIcon && onRightIconClick) && (
-                <IconButton type="button" title="right-icon" onClick={onRightIconClick}>
+                <IconButton 
+                    iconVariant={iconVariant}
+                    type="button" 
+                    title="left-icon" 
+                    onClick={onLeftIconClick}    
+                >
                     {rightIcon}
                 </IconButton>
             )}

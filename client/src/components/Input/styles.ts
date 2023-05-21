@@ -4,19 +4,23 @@ import { shade } from "@functions";
 
 interface InputContainerProps {
     variant: Variant;
+    textVariant: Variant;
     fullWidth: boolean;
+    disableHover: boolean;
 }
 
 const InputContainer = styled.div<InputContainerProps>`${({
     variant,
+    textVariant,
     fullWidth,
+    disableHover,
     theme
 }) => css`
     position: relative;
     display: inline-flex;
     align-items: center;
     background-color: ${theme.background[variant]};
-    color: ${theme.text[variant]};
+    color: ${theme.text[textVariant]};
 
     cursor: text;
     width: ${fullWidth ? "100%" : "auto"};
@@ -35,34 +39,37 @@ const InputContainer = styled.div<InputContainerProps>`${({
     input:-internal-autofill-selected {
         -webkit-box-shadow: 0 0 0 1000px ${theme.background[variant]} inset;
         box-shadow: 0 0 0 1000px ${theme.background[variant]} inset;
-        -webkit-text-fill-color: ${theme.text[variant]};
+        -webkit-text-fill-color: ${theme.text[textVariant]};
         transition: all 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
     }
 
-    &:has(input:focus), &:has(input:hover), &:hover {
-        background-color: ${shade(theme.background[variant], 0.2)};
-        color: ${shade(theme.text[variant], 0.2)};
+    ${!disableHover && css`
+        &:has(input:focus), &:has(input:hover), &:hover {
+            background-color: ${shade(theme.background[variant], 0.2)};
+            color: ${shade(theme.text[textVariant], 0.2)};
 
-        input {
-            background-color: transparent !important;
+            input {
+                background-color: transparent !important;
 
-            &:-internal-autofill-selected {
-                -webkit-box-shadow: 0 0 0 1000px ${shade(theme.background[variant], 0.2)} inset;
-                box-shadow: 0 0 0 1000px ${shade(theme.background[variant], 0.2)} inset;
-                -webkit-text-fill-color: ${shade(theme.text[variant], 0.2)};
+                &:-internal-autofill-selected {
+                    -webkit-box-shadow: 0 0 0 1000px ${shade(theme.background[variant], 0.2)} inset;
+                    box-shadow: 0 0 0 1000px ${shade(theme.background[variant], 0.2)} inset;
+                    -webkit-text-fill-color: ${shade(theme.text[textVariant], 0.2)};
+                }
             }
         }
-    }
+    `}
 `}`;
 
 interface InputProps {
     variant: Variant;
+    textVariant: Variant;
     leftIcon: boolean;
     rightIcon: boolean;
 }
 
 const Input = styled.input<InputProps>`${({
-    variant,
+    textVariant,
     leftIcon,
     rightIcon,
     theme
@@ -71,7 +78,7 @@ const Input = styled.input<InputProps>`${({
     height: 100%;
     background-color: transparent;
     border: none;
-    color: ${theme.text[variant]};
+    color: ${theme.text[textVariant]};
     font-size: 1em;
 
     ${leftIcon && css`padding-left: 10px;`}
@@ -87,9 +94,10 @@ const Input = styled.input<InputProps>`${({
 `}`;
 
 interface IconButtonProps {
+    iconVariant: Variant;
 }
 
-const IconButton = styled.button<IconButtonProps>`
+const IconButton = styled.button<IconButtonProps>`${({ iconVariant, theme }) => css`
     cursor: pointer;
     background-color: transparent;
     display: flex;
@@ -101,6 +109,10 @@ const IconButton = styled.button<IconButtonProps>`
     &:hover {
         background-color: rgba(0, 0, 0, 0.1);
     }
-`;
+
+    svg {
+        color: ${theme.icon[iconVariant]};
+    }
+`}`;
 
 export { Input as StyledInput, InputContainer, IconButton };
