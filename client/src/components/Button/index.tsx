@@ -17,6 +17,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         fullWidth = true,
         uppercase = false,
         size = 1,
+        pt = 6, pb = 6,
+        pl = 16, pr = 16,
+        p,
         onClick,
         disabled = false,
         loading = false,
@@ -27,7 +30,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         selected = false,
         children
     } = props;
-
+    
     return (
         <StyledButton
             ref={ref}
@@ -38,6 +41,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             fullWidth={fullWidth}
             uppercase={uppercase}
             size={size}
+            pt={pt} pb={pb}
+            pl={pl} pr={pr}
+            p={p}
             onClick={onClick}
             disabled={disabled}
             loading={loading}

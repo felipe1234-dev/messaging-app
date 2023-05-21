@@ -10,6 +10,11 @@ interface ButtonProps {
     fullWidth: boolean;
     uppercase: boolean;
     size: number;
+    pt?: number;
+    pl?: number;
+    pr?: number;
+    pb?: number;
+    p?: number;
     loading: boolean;
     iconed: boolean;
     noInteraction: boolean;
@@ -25,6 +30,9 @@ const Button = styled.button<ButtonProps>`${({
     fullWidth,
     uppercase,
     size,
+    pt, pb,
+    pl, pr,
+    p,
     loading,
     iconed,
     noInteraction,
@@ -46,7 +54,14 @@ const Button = styled.button<ButtonProps>`${({
     outline: 0;
     border: 0;
     margin: 0;
-    padding: 6px 16px;
+    
+    ${p ? css`padding: ${p}px;` : css`
+        padding-top: ${pt}px;
+        padding-left: ${pl}px;
+        padding-right: ${pr}px;
+        padding-bottom: ${pb}px;
+    `}
+
     border-radius: 8px;
     box-sizing: border-box;
     vertical-align: middle;
@@ -78,11 +93,11 @@ const Button = styled.button<ButtonProps>`${({
         ${transparent && css`background-color: transparent;`}
 
         &:hover {
-            background-color: ${transparent ? "rgba(255,255,255,0.05)" : shade(theme.hover[variant], 0.2)};
+            background-color: ${transparent ? "rgba(255, 255, 255, 0.05)" : shade(theme.button[variant], 0.2)};
         }
 
         ${selected && css`
-            background-color: ${transparent ? "rgba(255,255,255,0.05)" : shade(theme.hover[variant], 0.2)};
+            background-color: ${transparent ? "rgba(255, 255, 255, 0.05)" : shade(theme.button[variant], 0.2)};
         `}
     `}
 
@@ -102,8 +117,8 @@ const Button = styled.button<ButtonProps>`${({
         bottom: 0;
         margin: auto;
         border: 4px solid transparent;
-        border-color: ${shade(theme.background[variant], 0.1)};
-        border-top-color: ${shade(theme.background[variant], 0.2)};
+        border-color: ${shade(theme.button[variant], 0.1)};
+        border-top-color: ${shade(theme.button[variant], 0.2)};
         border-radius: 50%;
         animation-name: ${spinnerAnimation};
         animation-duration: 1s;
