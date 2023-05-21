@@ -43,7 +43,7 @@ function Tabs(props: TabsProps) {
     const activeTab = tabs.find(tab => tab.id === active);
 
     return (
-        <Container>
+        <Container transparent>
             <TabButtons
                 direction={direction}
                 justify={justify}

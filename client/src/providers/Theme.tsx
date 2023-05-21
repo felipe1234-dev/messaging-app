@@ -16,7 +16,7 @@ interface ThemeValue {
 const ThemeContext = createContext<ThemeValue | undefined>(undefined);
 
 function ThemeProvider(props: { children: React.ReactNode }) {
-    const [lightTheme, setLightTheme] = useState(true);
+    const [lightTheme, setLightTheme] = useState(false);
 
     const toggleTheme = () => setLightTheme(prev => !prev);
 

@@ -1,9 +1,10 @@
 import { Container } from "@styles/layout";
 import { useAuth } from "@providers";
 
-import Topbar from "./Topbar";
 import Sidebar from "./Sidebar";
 import Chats from "./Chats";
+
+export const gap = 3;
 
 function Page() {
     const { user } = useAuth();
@@ -17,9 +18,10 @@ function Page() {
             align="start"
             height="100vh"
             width="100vw"
-            gap={2.5}
+            gap={gap}
         >
             <Sidebar />
+            <Chats />
         </Container>
     );
 }

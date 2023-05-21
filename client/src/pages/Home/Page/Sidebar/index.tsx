@@ -1,51 +1,42 @@
 import { useState } from "react";
 
-import { Container, Icon, Divider } from "@styles/layout";
-import { Avatar, Button, Tabs } from "@components";
-import { useAuth } from "@providers";
-import { Variant, Position } from "@types";
+import {
+    Container,
+    Icon,
+    Whitespace,
+    Title
+} from "@styles/layout";
+import { appName } from "@constants";
+import { Button, Tabs } from "@components";
+import { useTheme } from "@providers";
+import { Variant } from "@types";
 
-import { ChatSquareDotsFill, PeopleFill } from "@styled-icons/bootstrap";
-import { Phone } from "@styled-icons/boxicons-solid";
-import { VideoChat } from "@styled-icons/fluentui-system-filled";
-import { NewMessage } from "@styled-icons/entypo";
-
-const icons = {
-    textChats: <ChatSquareDotsFill />,
-    voiceChats: <Phone />,
-    videoChats: <VideoChat />,
-    friendRequests: <PeopleFill />
-};
-
-const baseTabButton = {
-    transparent: true,
-    iconed: true
-};
-
-const indicator = {
-    position: "center-left" as Position,
-    variant: "highlight" as Variant,
-    offset: 0,
-    margin: 1,
-    thickness: 3,
-    borderRadius: 5
-};
+import { Sun, Moon, People } from "@styled-icons/bootstrap";
+import { Call, ChatMultiple, VideoChat } from "@styled-icons/fluentui-system-regular";
 
 function Sidebar() {
+    const { theme, toggleTheme } = useTheme();
     const [tab, setTab] = useState("textChats");
 
-    const { user } = useAuth()
-    if (!user) return <></>;
+    const iconSize = 1.5;
+
+    const icons = {
+        textChats: <ChatMultiple />,
+        voiceChats: <Call />,
+        videoChats: <VideoChat />,
+        friendRequests: <People />
+    };
 
     const generateTabProps = (id: keyof typeof icons) => ({
         id,
         button: {
-            ...baseTabButton,
-            iconVariant: (tab === id ? "highlight" : "secondary") as Variant,
-            selected: tab === id,
+            iconed: true,
+            transparent: true,
+            size: iconSize,
+            iconVariant: (tab === id ? "primary" : "secondary") as Variant,
             children: <Icon icon={icons[id]} />
         }
-    })
+    });
 
     const tabs = [
         generateTabProps("textChats"),
@@ -56,49 +47,43 @@ function Sidebar() {
 
     return (
         <Container
-            direction="column"
-            align="center"
-            justify="space-between"
-            width="fit-content"
+            variant="primary"
             height="100%"
+            width="fit-content"
         >
             <Container
+                transparent
                 direction="column"
-                justify="start"
-                align="center"
-                height="fit-content"
+                justify="space-between"
+                height="100%"
+                width="fit-content"
+                gap={0}
+                p={5}
             >
-                <Button
-                    iconed
-                    transparent
-                >
-                    <Avatar
-                        src={user.photo}
-                        alt={user.name}
-                        size={0.55}
-                    />
-                </Button>
-
-                <Divider size={0.6} thickness={2.8} />
+                <Title level={3}>
+                    {appName[0]}.
+                </Title>
 
                 <Tabs
                     direction="column"
                     align="center"
                     justify="start"
+                    height="fit-content"
                     gap={5}
                     active={tab}
                     tabs={tabs}
                     onSelect={selectedTab => setTab(selectedTab.id)}
-                    indicator={indicator}
+                    indicator={{ thickness: 0 }}
                 />
 
-                <Divider size={0.6} thickness={2.8} />
-
-                <Button iconVariant="secondary" transparent iconed>
-                    <Icon icon={<NewMessage />} />
+                <Button
+                    transparent iconed round
+                    onClick={toggleTheme}
+                    size={iconSize}
+                >
+                    <Icon icon={theme === "light" ? <Moon /> : <Sun />} />
                 </Button>
             </Container>
-
         </Container>
     );
 }
