@@ -1,7 +1,7 @@
-import React, { 
-    createContext, 
-    useContext, 
-    useEffect, 
+import React, {
+    createContext,
+    useContext,
+    useEffect,
     useState
 } from "react";
 import { User, codes } from "messaging-app-globals";
@@ -28,7 +28,7 @@ function AuthProvider(props: { children: React.ReactNode }) {
         setFriends((await Api.friends.getUserFriends()).sort((a, b) => {
             if (a.online && !b.online) return -1;
             if (b.online && !a.online) return 1;
-            
+
             if (a.online && b.online && a.sessionStart && b.sessionStart) {
                 if (a.sessionStart > b.sessionStart) return -1;
                 if (a.sessionStart < b.sessionStart) return 1;
@@ -38,7 +38,7 @@ function AuthProvider(props: { children: React.ReactNode }) {
                 if (a.sessionEnd > b.sessionEnd) return -1;
                 if (a.sessionEnd < b.sessionEnd) return 1;
             }
-            
+
             return 0;
         }));
     };
@@ -72,17 +72,17 @@ function AuthProvider(props: { children: React.ReactNode }) {
                 return Promise.reject(error);
             }
         );
-        
+
         loader.show();
         Api.auth.recoverSession().then(setUser).finally(loader.hide);
     }, []);
-    
+
     useEffect(() => {
         if (!user) return;
-        
+
         Api.users.onUserUpdated(user.uid, onUserUpdated);
         Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
-    }, [user]);
+    }, [user?.uid]);
 
     const wrapperUser = user ? {
         ...user,
@@ -90,10 +90,10 @@ function AuthProvider(props: { children: React.ReactNode }) {
     } : undefined;
 
     return (
-        <AuthContext.Provider value={{ 
-            user: wrapperUser, 
+        <AuthContext.Provider value={{
+            user: wrapperUser,
             login,
-            logout 
+            logout
         }}>
             {props.children}
         </AuthContext.Provider>

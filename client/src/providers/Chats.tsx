@@ -74,7 +74,7 @@ function ChatsProvider(props: { children: React.ReactNode }) {
             
             Api.chats.onUserChatUpdated(user.uid, onUserChatUpdated);
         }
-    }, [user]);
+    }, [user?.uid]);
 
     const sortMessages = (messages: Message[]) => {
         return messages.sort((a, b) => {
