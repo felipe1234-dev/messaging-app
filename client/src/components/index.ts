@@ -30,6 +30,9 @@ export type { SwitchProps } from "./Switch";
 export { default as Card } from "./Card";
 export type { CardProps } from "./Card";
 
+export { default as Badge } from "./Badge";
+export type { BadgeProps } from "./Badge";
+
 export { default as HorizontalScroll } from "./HorizontalScroll";
 export * from "./HorizontalScroll";
 
