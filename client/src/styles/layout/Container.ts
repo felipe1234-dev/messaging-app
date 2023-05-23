@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { Variant } from "@types";
+import { shade } from "@functions";
 
 interface ContainerProps {
     direction?: "row" | "column";
@@ -13,16 +14,22 @@ interface ContainerProps {
     transparent?: boolean;
     variant?: Variant;
 
+    light?: number;
+
     mt?: number;
     ml?: number;
     mr?: number;
     mb?: number;
+    mx?: number;
+    my?: number;
     m?: number;
 
     pt?: number;
     pl?: number;
     pr?: number;
     pb?: number;
+    px?: number;
+    py?: number;
     p?: number;
 
     roundedTL?: string;
@@ -41,12 +48,16 @@ const Container = styled.div<ContainerProps>`${({
     width,
     height,
 
+    light,
+
     mt, mb,
     ml, mr,
+    mx, my,
     m,
 
     pt, pb,
     pl, pr,
+    px, py,
     p,
 
     roundedTL,
@@ -67,20 +78,20 @@ const Container = styled.div<ContainerProps>`${({
 
     width: ${width};
     height: ${height};
-    background-color: ${transparent || !variant ? "transparent" : theme.background[variant]};
+    background-color: ${transparent || !variant ? "transparent" : shade(theme.background[variant], light || 0)};
     
     ${p ? css`padding: ${p}px;` : css`
-        padding-top: ${pt}px;
-        padding-left: ${pl}px;
-        padding-right: ${pr}px;
-        padding-bottom: ${pb}px;
+        padding-top: ${py ?? pt}px;
+        padding-left: ${px ?? pl}px;
+        padding-right: ${px ?? pr}px;
+        padding-bottom: ${py ?? pb}px;
     `}
 
     ${m ? css`margin: ${m}px;` : css`
-        margin-top: ${mt}px;
-        margin-left: ${ml}px;
-        margin-right: ${mr}px;
-        margin-bottom: ${mb}px;
+        margin-top: ${my ?? mt}px;
+        margin-left: ${mx ?? ml}px;
+        margin-right: ${mx ?? mr}px;
+        margin-bottom: ${my ?? mb}px;
     `}
 
     ${rounded ? css`border-radius: ${rounded};` : css`
@@ -100,6 +111,7 @@ Container.defaultProps = {
     width: "100%",
     height: "100%",
     transparent: false,
+    light: 0,
     pl: 0,
     pr: 0,
     pb: 0,

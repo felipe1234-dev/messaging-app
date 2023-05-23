@@ -1,23 +1,22 @@
-import { Container } from "@styles/layout";
-
-import { gap } from "../index";
+import { Container, Divider } from "@styles/layout";
 
 import Profile from "./Profile";
-import Search from "./Search";
+import Friends from "./Friends";
 
 function Chats() {
     return (
         <Container
-            transparent
+            variant="secondary"
             direction="column"
             justify="start"
-            align="center"
+            align="start"
             width="fit-content"
             height="100%"
-            gap={gap}
+            gap={0}
         >
             <Profile />
-            <Search />
+            <Divider light={0.08} thickness={0.5} />
+            <Friends />
         </Container>
     );
 }

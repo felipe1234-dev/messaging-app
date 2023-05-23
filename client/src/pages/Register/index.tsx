@@ -29,7 +29,7 @@ function Register() {
     const [viewPassword, setViewPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    
+
     const alert = useAlert();
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -39,7 +39,7 @@ function Register() {
 
     const disabled = !name || !email || !password || !confirmPassword;
 
-    const handleTogglePasswordView = () => ( 
+    const handleTogglePasswordView = () => (
         setViewPassword(prev => !prev)
     );
 
@@ -54,9 +54,9 @@ function Register() {
 
             await Api.auth.register(name, email, password);
             await login(email, password, false);
-            
+
             alert.success("Login successful");
-            
+
             setTimeout(() => navigate("/"), 3000);
         } catch (error) {
             alert.error((error as Error).message);
@@ -66,78 +66,84 @@ function Register() {
     };
 
     return (
-        <Container 
-            justify="center" align="center"
-            pt={15} pb={15} 
-            height="100vh"
-        >
-            <ShowItem>
-                <Title level={3}>
-                    {appName}
-                </Title>
-            </ShowItem>
-            <ShowItem>
-                <Paragraph variant="secondary" size={1.2}>
-                    Please register to continue
-                </Paragraph>
-            </ShowItem>
-            
-            <Columns>
-                <Column />
-                <Column xs={9} sm={4} md={0.2}>
-                    <ShowItem>
-                        <Rows gap={15}>
-                            <Input
-                                fullWidth
-                                type="text"
-                                placeholder="Name"
-                                onChange={evt => setName(evt.target.value)}
-                                value={name}
-                            />
-                            <Input
-                                fullWidth
-                                leftIcon={<Icon icon={<EmailIcon />} size={1.5} />}
-                                type="email"
-                                placeholder="Email"
-                                onChange={evt => setEmail(evt.target.value)}
-                                value={email}
-                            />
-                            <Input
-                                fullWidth
-                                leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
-                                rightIcon={<Icon icon={passwordIcon} size={1.5} />}
-                                onRightIconClick={handleTogglePasswordView}
-                                type={passwordType}
-                                placeholder="Password"
-                                onChange={evt => setPassword(evt.target.value)}
-                                value={password}
-                            />
-                            <Input
-                                fullWidth
-                                leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
-                                rightIcon={<Icon icon={passwordIcon} size={1.5} />}
-                                onRightIconClick={handleTogglePasswordView}
-                                type={passwordType}
-                                placeholder="Confirm password"
-                                onChange={evt => setConfirmPassword(evt.target.value)}
-                                value={confirmPassword}
-                            />
-                            <Button
-                                variant="primary"
-                                onClick={handleRegister}
-                                disabled={disabled}
-                                loading={loading}
-                            >
-                                Register
-                            </Button>
-                            <Rows align="center">
-                                <Link to="/login">I already have an account</Link>
+        <Container height="100vh">
+            <Container
+                justify="center"
+                align="center"
+                pt={15} pb={15}
+            >
+                <ShowItem>
+                    <Title level={3}>
+                        {appName}
+                    </Title>
+                </ShowItem>
+                <ShowItem>
+                    <Paragraph variant="secondary" size={1.2}>
+                        Please register to continue
+                    </Paragraph>
+                </ShowItem>
+
+                <Columns>
+                    <Column />
+                    <Column xs={9} sm={4} md={0.2}>
+                        <ShowItem>
+                            <Rows gap={15}>
+                                <Input
+                                    fullWidth
+                                    variant="secondary"
+                                    type="text"
+                                    placeholder="Name"
+                                    onChange={evt => setName(evt.target.value)}
+                                    value={name}
+                                />
+                                <Input
+                                    fullWidth
+                                    variant="secondary"
+                                    leftIcon={<Icon icon={<EmailIcon />} size={1.5} />}
+                                    type="email"
+                                    placeholder="Email"
+                                    onChange={evt => setEmail(evt.target.value)}
+                                    value={email}
+                                />
+                                <Input
+                                    fullWidth
+                                    variant="secondary"
+                                    leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
+                                    rightIcon={<Icon icon={passwordIcon} size={1.5} />}
+                                    onRightIconClick={handleTogglePasswordView}
+                                    type={passwordType}
+                                    placeholder="Password"
+                                    onChange={evt => setPassword(evt.target.value)}
+                                    value={password}
+                                />
+                                <Input
+                                    fullWidth
+                                    variant="secondary"
+                                    leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
+                                    rightIcon={<Icon icon={passwordIcon} size={1.5} />}
+                                    onRightIconClick={handleTogglePasswordView}
+                                    type={passwordType}
+                                    placeholder="Confirm password"
+                                    onChange={evt => setConfirmPassword(evt.target.value)}
+                                    value={confirmPassword}
+                                />
+                                <Button
+                                    variant="highlight"
+                                    onClick={handleRegister}
+                                    disabled={disabled}
+                                    loading={loading}
+                                >
+                                    Register
+                                </Button>
+                                <Rows align="center">
+                                    <Link to="/login">I already have an account</Link>
+                                </Rows>
                             </Rows>
-                        </Rows>
-                    </ShowItem>
-                </Column>
-                <Column />
-            </Columns>
+                        </ShowItem>
+                    </Column>
+                    <Column />
+                </Columns>
+            </Container>
         </Container>
     );
 }

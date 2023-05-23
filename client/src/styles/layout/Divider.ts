@@ -1,11 +1,13 @@
 import styled, { css } from "styled-components";
 import { Variant } from "@types";
+import { shade } from "@functions";
 
 interface DividerProps {
     variant?: Variant;
     thickness?: number;
     vertical?: boolean;
     size?: number;
+    light?: number;
     mt?: number;
     ml?: number;
     mr?: number;
@@ -18,6 +20,7 @@ const Divider = styled.hr<DividerProps>`${({
     thickness = 2,
     vertical = false,
     size = 1,
+    light = 0,
     mt = 0, mb = 0,
     ml = 0, mr = 0,
     m = 0,
@@ -26,7 +29,7 @@ const Divider = styled.hr<DividerProps>`${({
     size *= 100;
 
     return css`
-        background-color: ${theme.background[variant]};
+        background-color: ${shade(theme.background[variant], light)};
         height: ${vertical ? `${size}%` : `${thickness}px`};
         width: ${vertical ? `${thickness}px` : `${size}%`};
         border: none;

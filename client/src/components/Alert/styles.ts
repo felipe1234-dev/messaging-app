@@ -20,10 +20,14 @@ interface SnackbarProps {
     autoHideTime: number;
 }
 
-const Snackbar = styled.div<SnackbarProps>`
+const Snackbar = styled.div<SnackbarProps>`${({
+    severity,
+    show,
+    autoHideTime,
+    theme
+}) => css`
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
 
@@ -34,16 +38,16 @@ const Snackbar = styled.div<SnackbarProps>`
     border-radius: 8px;
     font-size: 1em;
 
-    background-color: ${props => props.severity ? props.theme.background[props.severity] : "rgba(255, 255, 255, 0.09)"};
-    color: ${props => props.severity ? props.theme.text[props.severity] : props.theme.text.primary};
+    background-color: ${severity ? theme.background[severity] : "rgba(255, 255, 255, 0.09)"};
+    color: ${theme.text.primary};
     
-    ${props => props.show && css`
+    ${show && css`
         visibility: visible;
         animation-name: ${fadeInAnimation("from-top")}, ${fadeOutAnimation("to-top")};
         animation-duration: 500ms, 500ms;
-        animation-delay: 0ms, ${props.autoHideTime + 500}ms;
+        animation-delay: 0ms, ${autoHideTime + 500}ms;
         animation-iteration-count: 1, 1;
     `}
-`;
+`}`;
 
 export { Container, Snackbar };

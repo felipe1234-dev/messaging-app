@@ -1,50 +1,49 @@
 const lightPalette = {
     background: {
-        primary: "#ffffff",
-        secondary: "#ececec",
-        highlight: "#444791",
+        primary: "#FFFFFF",
+        secondary: "#FAFAFE",
+        highlight: "#1556FF",
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
         success: "#4caf50"
     },
     text: {
-        primary: "#2C2C2C",
+        primary: "#E6E7E8",
         secondary: "#989898",
-        highlight: "#ffffff",
-        error: "#E7E7E7",
-        warning: "#E7E7E7",
-        info: "#E7E7E7     ",
-        success: "#E7E7E7"
+        highlight: "#FFFFFF",
+        error: "#f44336",
+        warning: "#ffa726",
+        info: "#2196f3",
+        success: "#4caf50"
     },
     icon: {
-        primary: "#989898",
-        secondary: "#444791",
-        highlight: "#ffffff",
-        error: "#E7E7E7",
-        warning: "#E7E7E7",
-        info: "#E7E7E7",
-        success: "#E7E7E7"
+        primary: "#E7E7E7",
+        secondary: "#989898",
+        highlight: "#1556FF",
+        error: "#f44336",
+        warning: "#ffa726",
+        info: "#2196f3",
+        success: "#4caf50"
     },
     link: {
-        primary: "#464775",
+        primary: "#1556FF",
         secondary: "#989898",
-        highlight: "#ff8000",
+        highlight: "#1556FF",
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
         success: "#4caf50"
     },
     button: {
-        primary: "#48a0f3",
-        secondary: "#d3d3d3",
-        highlight: "#ff8000",
-        disabled: "#2D2C2C"
+        primary: "#FFFFFF",
+        secondary: "#FAFAFE",
+        highlight: "#1556FF",
     },
     checkbox: {
-        primary: "#464775",
+        primary: "#1556FF",
         secondary: "#d3d3d3",
-        highlight: "#ff8000",
+        highlight: "#1556FF",
         disabled: "#2D2C2C"
     },
     breakpoints: {

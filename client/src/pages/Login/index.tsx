@@ -37,9 +37,10 @@ function Login() {
 
     const disabled = !email || !password;
 
-    const handleTogglePasswordView = () => (
-        setViewPassword(prev => !prev)
-    );
+    const handleTogglePasswordView = () => {
+        console.log("test");
+        setViewPassword(prev => !prev);
+    };
 
     const handleLogin = async () => {
         try {
@@ -57,72 +58,74 @@ function Login() {
     };
 
     return (
-        <Container
-            justify="center" align="center"
-            pt={15} pb={15}
-            height="100vh"
-        >
-            <ShowItem>
-                <Title level={3}>
-                    {appName}
-                </Title>
-            </ShowItem>
+        <Container height="100vh">
+            <Container
+                justify="center"
+                align="center"
+                pt={15} pb={15}
+            >
+                <ShowItem>
+                    <Title level={3}>
+                        {appName}
+                    </Title>
+                </ShowItem>
 
-            <ShowItem>
-                <Paragraph variant="secondary" size={1.2}>
-                    Please login to continue
-                </Paragraph>
-            </ShowItem>
+                <ShowItem>
+                    <Paragraph variant="secondary" size={1.2}>
+                        Please login to continue
+                    </Paragraph>
+                </ShowItem>
 
-            <Columns>
-                <Column />
-                <Column xs={9} sm={4} md={0.2}>
-                    <ShowItem>
-                        <Rows gap={15}>
-                            <Input
-                                fullWidth
-                                variant="secondary"
-                                leftIcon={<Icon icon={<EmailIcon />} size={1.5} />}
-                                type="email"
-                                placeholder="Email"
-                                onChange={evt => setEmail(evt.target.value)}
-                                value={email}
-                            />
-                            <Input
-                                fullWidth
-                                variant="secondary"
-                                leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
-                                rightIcon={<Icon icon={passwordIcon} size={1.5} />}
-                                onRightIconClick={handleTogglePasswordView}
-                                type={passwordType}
-                                placeholder="Password"
-                                onChange={evt => setPassword(evt.target.value)}
-                                value={password}
-                            />
-                            <Rows align="end">
-                                <Checkbox
-                                    variant="primary"
-                                    label="Remember me"
-                                    onChange={evt => setRememberMe(evt.target.checked)}
-                                    checked={rememberMe}
+                <Columns>
+                    <Column />
+                    <Column xs={9} sm={4} md={0.2}>
+                        <ShowItem>
+                            <Rows gap={15}>
+                                <Input
+                                    fullWidth
+                                    variant="secondary"
+                                    leftIcon={<Icon icon={<EmailIcon />} size={1.5} />}
+                                    type="email"
+                                    placeholder="Email"
+                                    onChange={evt => setEmail(evt.target.value)}
+                                    value={email}
                                 />
+                                <Input
+                                    fullWidth
+                                    variant="secondary"
+                                    leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
+                                    rightIcon={<Icon icon={passwordIcon} size={1.5} />}
+                                    onRightIconClick={handleTogglePasswordView}
+                                    type={passwordType}
+                                    placeholder="Password"
+                                    onChange={evt => setPassword(evt.target.value)}
+                                    value={password}
+                                />
+                                <Rows align="end">
+                                    <Checkbox
+                                        variant="primary"
+                                        label="Remember me"
+                                        onChange={evt => setRememberMe(evt.target.checked)}
+                                        checked={rememberMe}
+                                    />
+                                </Rows>
+                                <Button
+                                    variant="highlight"
+                                    onClick={handleLogin}
+                                    disabled={disabled}
+                                    loading={loading}
+                                >
+                                    Login
+                                </Button>
+                                <Rows align="center">
+                                    <Link to="/register">I don't have an account</Link>
+                                </Rows>
                             </Rows>
-                            <Button
-                                variant="primary"
-                                onClick={handleLogin}
-                                disabled={disabled}
-                                loading={loading}
-                            >
-                                Login
-                            </Button>
-                            <Rows align="center">
-                                <Link to="/register">I don't have an account</Link>
-                            </Rows>
-                        </Rows>
-                    </ShowItem>
-                </Column>
-                <Column />
-            </Columns>
+                        </ShowItem>
+                    </Column>
+                    <Column />
+                </Columns>
+            </Container>
         </Container>
     );
 }

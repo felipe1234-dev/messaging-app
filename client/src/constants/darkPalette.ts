@@ -1,8 +1,8 @@
 const darkPalette = {
     background: {
-        primary: "#201F1F",
-        secondary: "#2D2C2C",
-        highlight: "#733EFF",
+        primary: "#161819",
+        secondary: "#191D1E",
+        highlight: "#1556FF",
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
@@ -11,40 +11,39 @@ const darkPalette = {
     text: {
         primary: "#E7E7E7",
         secondary: "#989898",
-        highlight: "#733EFF",
-        error: "#E7E7E7",
-        warning: "#E7E7E7",
-        info: "#E7E7E7",
-        success: "#E7E7E7"
+        highlight: "#1556FF",
+        error: "#f44336",
+        warning: "#ffa726",
+        info: "#2196f3",
+        success: "#4caf50"
     },
     icon: {
         primary: "#E7E7E7",
         secondary: "#989898",
-        highlight: "#733EFF",
-        error: "#E7E7E7",
-        warning: "#E7E7E7",
-        info: "#E7E7E7",
-        success: "#E7E7E7"
+        highlight: "#1556FF",
+        error: "#f44336",
+        warning: "#ffa726",
+        info: "#2196f3",
+        success: "#4caf50"
     },
     link: {
         primary: "#48a0f3",
         secondary: "#989898",
-        highlight: "#733EFF",
+        highlight: "#1556FF",
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
         success: "#4caf50"
     },
     button: {
-        primary: "#733EFF",
-        secondary: "#d3d3d3",
-        highlight: "#733EFF",
-        disabled: "#2D2C2C"
+        primary: "#161819",
+        secondary: "#191D1E",
+        highlight: "#1556FF"
     },
     checkbox: {
-        primary: "#733EFF",
+        primary: "#1556FF",
         secondary: "#d3d3d3",
-        highlight: "#733EFF",
+        highlight: "#1556FF",
         disabled: "#2D2C2C"
     },
     breakpoints: {

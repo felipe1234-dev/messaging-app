@@ -1,5 +1,5 @@
+import styled, { css } from "styled-components";
 import { Variant } from "@types";
-import styled from "styled-components";
 
 interface StyledIconProps {
     variant: Variant;
@@ -10,32 +10,38 @@ interface StyledIconProps {
     pt: number;
 }
 
-const StyledIcon = styled.span<StyledIconProps>`
+const StyledIcon = styled.span<StyledIconProps>`${({
+    variant,
+    size,
+    pl, pr,
+    pb, pt,
+    theme
+}) => css`
     display: flex;
     align-items: center;
     justify-content: center;
-    color: ${(props) => props.theme.text[props.variant]};
-    width: ${(props) => props.size}em;
+    color: ${theme.icon[variant]};
+    width: ${size}em;
     height: auto;
-    padding-top: ${({ pt }) => pt}px;
-    padding-left: ${({ pl }) => pl}px;
-    padding-right: ${({ pr }) => pr}px;
-    padding-bottom: ${({ pb }) => pb}px;
+    padding-top: ${pt}px;
+    padding-left: ${pl}px;
+    padding-right: ${pr}px;
+    padding-bottom: ${pb}px;
 
     svg {
         display: block;
-        width: ${(props) => props.size}em;
+        width: ${size}em;
         height: auto;
     }
-`;
+`}`;
 
 interface IconProps extends Partial<StyledIconProps> {
     icon: React.ReactNode;
 }
 
 function Icon(props: IconProps) {
-    const { 
-        variant = "primary", 
+    const {
+        variant = "primary",
         size = 1,
         pl = 0,
         pr = 0,
@@ -44,8 +50,8 @@ function Icon(props: IconProps) {
     } = props;
 
     return (
-        <StyledIcon 
-            variant={variant} 
+        <StyledIcon
+            variant={variant}
             size={size}
             pl={pl}
             pr={pr}

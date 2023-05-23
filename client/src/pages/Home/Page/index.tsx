@@ -4,21 +4,19 @@ import { useAuth } from "@providers";
 import Sidebar from "./Sidebar";
 import Chats from "./Chats";
 
-export const gap = 3;
-
 function Page() {
     const { user } = useAuth();
     if (!user) return <></>;
 
     return (
         <Container
-            variant="secondary"
+            transparent
             direction="row"
             justify="start"
             align="start"
             height="100vh"
             width="100vw"
-            gap={gap}
+            gap={0}
         >
             <Sidebar />
             <Chats />
