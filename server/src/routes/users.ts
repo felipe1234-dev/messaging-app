@@ -28,7 +28,7 @@ const usersRouter: HTTPRouter = (api) => {
         useRouteController(loginUserController)
     );
     api.post(
-        "/logout/:userUid", 
+        "/logout/", 
         useRouteMiddleware(authenticationMiddleware), 
         useRouteController(logoutUserController)
     );

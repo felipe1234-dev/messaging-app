@@ -89,8 +89,8 @@ const Api = {
             return new User(data.user);
 
         },
-        logout: async (userUid: string) => {
-            await httpEndpoint.post(`/logout/${userUid}`);
+        logout: async () => {
+            await httpEndpoint.post("/logout/");
             httpEndpoint.defaults.headers.common.authorization = "";
             localStorage.removeItem("refreshToken");
             await auth.signOut();

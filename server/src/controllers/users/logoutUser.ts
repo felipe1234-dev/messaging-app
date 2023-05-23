@@ -1,39 +1,21 @@
-import { Request, RouteController } from "@typings";
+import { RouteController } from "@typings";
 import { codes } from "messaging-app-globals";
 import { UsersDB } from "@databases";
-import { 
-    MissingHeaderParam,
-    NotFound, 
-    ServerError,
-    Unauthorized 
-} from "@errors";
+import { ServerError, Unauthenticated } from "@errors";
 
-const logoutUserController: RouteController = async (
-    req: Request & {
-        params: {
-            userUid?: string;
-        };
-    },
-    res
-) => {
+const logoutUserController: RouteController = async (req, res) => {
     try {
-        const { userUid } = req.params;
-        if (!userUid) throw new MissingHeaderParam("userUid");
-
         const currentUser = req.user;
-        if (currentUser?.uid !== userUid) throw new Unauthorized("You're not authorized");
+        if (!currentUser?.uid) throw new Unauthenticated("You're not authenticated!");
 
-        const user = await UsersDB.getUserByUid(userUid);
-        if (!user) throw new NotFound("User not found");
+        await UsersDB.updateUser(currentUser.uid, {
+            online: false,
+            sessionEnd: new Date(),
+            token: "",
+            refreshToken: "",
+            rememberMeToken: ""
+        });
 
-        user.online = false;
-        user.sessionEnd = new Date();
-        user.token = "";
-        user.refreshToken = "";
-        user.rememberMeToken = "";
-
-        await UsersDB.updateUser(user.uid, { ...user });
-        
         return res.sendResponse({
             status: 200,
             code: codes.LOGGED_OUT,
