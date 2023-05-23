@@ -45,7 +45,7 @@ function AuthProvider(props: { children: React.ReactNode }) {
 
     const logout = async () => {
         if (!user) return;
-        await Api.auth.logout(user.uid);
+        await Api.auth.logout();
         setUser(undefined);
         setFriends([]);
     };
