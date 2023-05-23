@@ -14,7 +14,10 @@ interface ButtonProps {
     pl?: number;
     pr?: number;
     pb?: number;
+    px?: number;
+    py?: number;
     p?: number;
+    borderRadius: number;
     loading: boolean;
     iconed: boolean;
     noInteraction: boolean;
@@ -32,7 +35,9 @@ const Button = styled.button<ButtonProps>`${({
     size,
     pt, pb,
     pl, pr,
+    px, py,
     p,
+    borderRadius,
     loading,
     iconed,
     noInteraction,
@@ -56,13 +61,13 @@ const Button = styled.button<ButtonProps>`${({
     margin: 0;
     
     ${p ? css`padding: ${p}px;` : css`
-        padding-top: ${pt}px;
-        padding-left: ${pl}px;
-        padding-right: ${pr}px;
-        padding-bottom: ${pb}px;
+        padding-top: ${py ?? pt}px;
+        padding-left: ${px ?? pl}px;
+        padding-right: ${px ?? pr}px;
+        padding-bottom: ${py ?? pb}px;
     `}
 
-    border-radius: 8px;
+    border-radius: ${borderRadius}px;
     box-sizing: border-box;
     vertical-align: middle;
     text-decoration: none;
@@ -103,7 +108,7 @@ const Button = styled.button<ButtonProps>`${({
 
     &[disabled] {
         cursor: not-allowed;
-        background-color: ${theme.button.disabled};
+        opacity: 0.5;
     }
 
     &::after {
@@ -138,7 +143,6 @@ const Button = styled.button<ButtonProps>`${({
         min-height: auto;
         width: fit-content;
         height: fit-content;
-        padding: 10px;
 
         svg {
             color: ${theme.icon[iconVariant]};

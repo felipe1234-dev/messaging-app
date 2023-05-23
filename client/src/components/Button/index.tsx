@@ -19,7 +19,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         size = 1,
         pt = 6, pb = 6,
         pl = 16, pr = 16,
+        py, px,
         p,
+        borderRadius = 8,
         onClick,
         disabled = false,
         loading = false,
@@ -43,6 +45,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             size={size}
             pt={pt} pb={pb}
             pl={pl} pr={pr}
+            px={px} py={py}
             p={p}
             onClick={onClick}
             disabled={disabled}
@@ -52,6 +55,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             transparent={transparent}
             round={round}
             selected={selected}
+            borderRadius={borderRadius}
         >
             {!loading ? children : <></>}
         </StyledButton>
