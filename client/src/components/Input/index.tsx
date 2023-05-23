@@ -53,7 +53,7 @@ function Input(props: InputProps) {
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         const code = event.key || event.code || event.keyCode || event.which || event.charCode;
-        
+
         if ((code === "Enter" || code === 13) && onEnterPress) {
             onEnterPress(event);
         }
@@ -67,11 +67,11 @@ function Input(props: InputProps) {
             disableHover={disableHover}
         >
             {(leftIcon && onLeftIconClick) && (
-                <IconButton 
+                <IconButton
                     iconVariant={iconVariant}
-                    type="button" 
-                    title="left-icon" 
-                    onClick={onLeftIconClick}    
+                    type="button"
+                    title="left-icon"
+                    onClick={onLeftIconClick}
                 >
                     {leftIcon}
                 </IconButton>
@@ -92,11 +92,11 @@ function Input(props: InputProps) {
                 value={value}
             />
             {(rightIcon && onRightIconClick) && (
-                <IconButton 
+                <IconButton
                     iconVariant={iconVariant}
-                    type="button" 
-                    title="left-icon" 
-                    onClick={onLeftIconClick}    
+                    type="button"
+                    title="left-icon"
+                    onClick={onRightIconClick}
                 >
                     {rightIcon}
                 </IconButton>
