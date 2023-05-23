@@ -1,45 +1,57 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Position } from "@types";
 
-const positionToStyle = {
-    "top-left": `
-        top: 0;
-        left: 0;
-    `,
-    "top-right": `
-        top: 0;
-        right: 0;
-    `,
-    "top-center": `
-        top: 0;
-        left: 50%;
-    `,
+const positionToStyle = ({
+    position,
+    mt, mb,
+    ml, mr
+}: {
+    position: Position;
+    mt: number; mb: number;
+    ml: number; mr: number;
+}) => {
+    const styles = {
+        "top-left": `
+            top: ${mt}px;
+            left: ${ml}px;
+        `,
+        "top-right": `
+            top: ${mt}px;
+            right: ${mr}px;
+        `,
+        "top-center": `
+            top: ${mt}px;
+            left: calc(50% + ${ml}px);
+        `,
 
-    "bottom-left": `
-        bottom: 0;
-        left: 0;
-    `,
-    "bottom-right": `
-        bottom: 0;
-        right: 0;
-    `,
-    "bottom-center": `
-        bottom: 0;
-        left: 50%;
-    `,
+        "bottom-left": `
+            bottom: ${mb}px;
+            left: ${ml}px;
+        `,
+        "bottom-right": `
+            bottom: ${mb}px;
+            right: ${mr}px;
+        `,
+        "bottom-center": `
+            bottom: ${mb}px;
+            left: calc(50% + ${ml}px);
+        `,
 
-    "center": `
-        top: 50%;
-        left: 50%;
-    `,
-    "center-right": `
-        top: 50%;
-        right: 0;
-    `,
-    "center-left": `
-        top: 50%;
-        left: 0;
-    `
+        "center": `
+            top: calc(50% + ${mt}px);
+            left: calc(50% + ${ml}px);
+        `,
+        "center-right": `
+            top: calc(50% + ${mt}px);
+            right: ${mr}px;
+        `,
+        "center-left": `
+            top: calc(50% + ${mt}px);
+            left: ${ml}px;
+        `
+    };
+
+    return css`${styles[position]}`;
 };
 
 const BadgeContainer = styled.div`
@@ -48,13 +60,25 @@ const BadgeContainer = styled.div`
 
 interface StyledBadgeProps {
     position: Position;
+    ml: number;
+    mr: number;
+    mt: number;
+    mb: number;
 }
 
-const StyledBadge = styled.div<StyledBadgeProps>`
+const StyledBadge = styled.div<StyledBadgeProps>`${({
+    position,
+    ml, mr,
+    mt, mb
+}) => css`
     position: absolute;
-    ${({ position }) => positionToStyle[position]}
+    ${positionToStyle({
+    position,
+    mt, mb,
+    ml, mr
+})}
     z-index: 10;
-`;
+`}`;
 
 export { BadgeContainer, StyledBadge };
 export type { StyledBadgeProps };
