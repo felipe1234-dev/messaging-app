@@ -33,8 +33,8 @@ export type { CardProps } from "./Card";
 export { default as Badge } from "./Badge";
 export type { BadgeProps } from "./Badge";
 
-export { default as HorizontalScroll } from "./HorizontalScroll";
-export * from "./HorizontalScroll";
+export { default as Carousel } from "./Carousel";
+export type { CarouselProps } from "./Carousel";
 
 export { default as Tabs } from "./Tabs";
 export * from "./Tabs";
