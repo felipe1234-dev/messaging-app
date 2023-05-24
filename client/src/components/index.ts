@@ -36,5 +36,11 @@ export type { BadgeProps } from "./Badge";
 export { default as Carousel } from "./Carousel";
 export type { CarouselProps } from "./Carousel";
 
+export { default as Dropdown } from "./Dropdown";
+export type { DropdownProps } from "./Dropdown";
+
 export { default as Tabs } from "./Tabs";
-export * from "./Tabs";
+export type { TabsProps } from "./Tabs";
+
+export { default as MegazordIcon } from "./MegazordIcon";
+export type { MegazordIconProps } from "./MegazordIcon";
