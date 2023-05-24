@@ -8,25 +8,28 @@ interface StyledIconProps {
     pr: number;
     pb: number;
     pt: number;
+    px?: number;
+    py?: number;
 }
 
 const StyledIcon = styled.span<StyledIconProps>`
-    ${({ variant, size, pl, pr, pb, pt, theme }) => css`
+    ${({ variant, size, pl, pr, pb, pt, px, py, theme }) => css`
         display: flex;
         align-items: center;
         justify-content: center;
         color: ${theme.icon[variant]};
-        width: ${size}em;
-        height: auto;
-        padding-top: ${pt}px;
-        padding-left: ${pl}px;
-        padding-right: ${pr}px;
-        padding-bottom: ${pb}px;
+        width: fit-content;
+        height: fit-content;
+        padding-top: ${py ?? pt}px;
+        padding-left: ${px ?? pl}px;
+        padding-right: ${px ?? pr}px;
+        padding-bottom: ${py ?? pb}px;
 
         svg {
             display: block;
-            width: ${size}em;
+            width: 1em;
             height: auto;
+            transform: scale(${size});
         }
     `}
 `;
@@ -37,12 +40,15 @@ interface IconProps extends Partial<StyledIconProps> {
 
 function Icon(props: IconProps) {
     const {
+        icon,
         variant = "primary",
         size = 1,
         pl = 0,
         pr = 0,
         pb = 0,
         pt = 0,
+        px,
+        py,
     } = props;
 
     return (
@@ -53,11 +59,14 @@ function Icon(props: IconProps) {
             pr={pr}
             pb={pb}
             pt={pt}
+            px={px}
+            py={py}
         >
-            {props.icon}
+            {icon}
         </StyledIcon>
     );
 }
 
 export default Icon;
-export type { IconProps };
+export { StyledIcon };
+export type { IconProps, StyledIconProps };

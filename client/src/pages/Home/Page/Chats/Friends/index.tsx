@@ -4,12 +4,13 @@ import { Avatar, Carousel, Button } from "@components";
 
 import { PersonAdd } from "@styled-icons/ionicons-outline";
 
+import { padding } from "../index";
+
 function Friends() {
     const { user } = useAuth();
     if (!user) return <></>;
 
     const onlineCount = user.friends.filter((friend) => friend.online).length;
-    const padding = 25;
 
     return (
         <Container
@@ -52,7 +53,7 @@ function Friends() {
                 direction="row"
                 justify="start"
                 align="center"
-                width="360px"
+                width="320px"
                 height="fit-content"
                 gap={10}
                 py={padding / 2}

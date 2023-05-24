@@ -2,6 +2,9 @@ import { Container, Divider } from "@styles/layout";
 
 import Profile from "./Profile";
 import Friends from "./Friends";
+import Messages from "./Messages";
+
+export const padding = 25;
 
 function Chats() {
     return (
@@ -20,6 +23,7 @@ function Chats() {
                 thickness={0.5}
             />
             <Friends />
+            <Messages />
         </Container>
     );
 }

@@ -5,11 +5,11 @@ import { useAuth } from "@providers";
 import { Settings } from "@styled-icons/ionicons-outline";
 import { Circle } from "@styled-icons/material-rounded";
 
+import { padding } from "../index";
+
 function Profile() {
     const { user } = useAuth();
     if (!user) return <></>;
-
-    const padding = 25;
 
     return (
         <Container
@@ -43,7 +43,7 @@ function Profile() {
                         src={user.photo}
                         alt={user.name}
                         size={1.2}
-                        borderWidth={3}
+                        borderWidth={2.3}
                         borderVariant="highlight"
                         borderStyle="solid"
                         borderOffset={3}
