@@ -28,6 +28,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         p,
         borderRadius = 8,
         onClick,
+        hoverDisabled = false,
         disabled = false,
         loading = false,
         iconed = false,
@@ -56,6 +57,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             py={py}
             p={p}
             onClick={onClick}
+            hoverDisabled={hoverDisabled}
             disabled={disabled}
             loading={loading}
             iconed={iconed}

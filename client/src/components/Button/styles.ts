@@ -18,6 +18,7 @@ interface ButtonProps {
     py?: number;
     p?: number;
     borderRadius: number;
+    hoverDisabled: boolean;
     loading: boolean;
     iconed: boolean;
     noInteraction: boolean;
@@ -42,6 +43,7 @@ const Button = styled.button<ButtonProps>`
         py,
         p,
         borderRadius,
+        hoverDisabled,
         loading,
         iconed,
         noInteraction,
@@ -110,11 +112,14 @@ const Button = styled.button<ButtonProps>`
                 background-color: transparent;
             `}
 
-            &:hover {
-                background-color: ${transparent
-                    ? "rgba(255, 255, 255, 0.05)"
-                    : shade(theme.button[variant], 0.2)};
-            }
+            ${!hoverDisabled &&
+            css`
+                &:hover {
+                    background-color: ${transparent
+                        ? "rgba(255, 255, 255, 0.05)"
+                        : shade(theme.button[variant], 0.2)};
+                }
+            `}
 
             ${selected &&
             css`
