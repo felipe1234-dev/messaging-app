@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { Variant } from "@types";
 
 interface ArrowButtonProps {
@@ -36,4 +36,35 @@ const ArrowButton = styled.div<ArrowButtonProps>`
     `}
 `;
 
-export { ArrowButton };
+interface DropdownContentProps {
+    open: boolean;
+}
+
+const dropdownOpeningAnimation = keyframes`
+    from {
+        height: 0;
+        opacity: 0;
+    }
+
+    to {
+        height: fit-content;
+        opacity: 1;
+    }
+`;
+
+const DropdownContent = styled.div<DropdownContentProps>`
+    ${({ open }) =>
+        open
+            ? css`
+                  animation-name: ${dropdownOpeningAnimation};
+                  animation-duration: 200ms;
+              `
+            : css`
+                  height: 0;
+                  opacity: 0;
+                  overflow: hidden;
+              `}
+`;
+
+export { ArrowButton, DropdownContent };
+export type { ArrowButtonProps, DropdownContentProps };
