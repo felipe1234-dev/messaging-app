@@ -15,6 +15,7 @@ module.exports = function override(config, env) {
         "@layout": path.resolve(__dirname, "src/layout"),
         "@types": path.resolve(__dirname, "src/types"),
         "@images": path.resolve(__dirname, "src/images"),
+        "@icons": path.resolve(__dirname, "src/icons")
     })(config);
 
     config.module.rules.push({
