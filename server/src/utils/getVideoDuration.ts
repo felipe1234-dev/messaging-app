@@ -15,7 +15,7 @@ async function getVideoDuration(videoURL: string): Promise<number> {
                 reject(err);
             } else {
                 const duration = metadata.format.duration;
-                resolve((duration || 0)*1000);
+                resolve((duration || 0) * 1000);
             }
         });
     });

@@ -12,13 +12,13 @@ interface BaseAnimationProps {
 }
 
 const BaseAnimation = styled.div<BaseAnimationProps>`
-    animation-duration: ${props => props.duration};  
-    animation-timing-function: ${props => props.timingFunction};      
-    animation-delay: ${props => props.delay};  
-    animation-iteration-count: ${props => props.iterationCount};  
-    animation-direction: ${props => props.direction}; 
-    animation-fill-mode: ${props => props.fillMode};  
-    animation-play-state:  ${props => props.playState};  
+    animation-duration: ${(props) => props.duration};
+    animation-timing-function: ${(props) => props.timingFunction};
+    animation-delay: ${(props) => props.delay};
+    animation-iteration-count: ${(props) => props.iterationCount};
+    animation-direction: ${(props) => props.direction};
+    animation-fill-mode: ${(props) => props.fillMode};
+    animation-play-state: ${(props) => props.playState};
 `;
 
 BaseAnimation.defaultProps = {
@@ -28,7 +28,7 @@ BaseAnimation.defaultProps = {
     iterationCount: "1",
     direction: "normal",
     fillMode: "both",
-    playState: "running"
+    playState: "running",
 };
 
 export default BaseAnimation;

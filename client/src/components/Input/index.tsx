@@ -14,11 +14,19 @@ interface InputProps {
     required?: boolean;
     fullWidth?: boolean;
     leftIcon?: React.ReactNode;
-    onLeftIconClick?: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
+    onLeftIconClick?: (
+        event: React.MouseEvent<HTMLButtonElement>
+    ) => Promise<void> | void;
     rightIcon?: React.ReactNode;
-    onRightIconClick?: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
-    onChange: (evt: React.ChangeEvent<HTMLInputElement>) => Promise<void> | void;
-    onEnterPress?: (event: React.KeyboardEvent<HTMLInputElement>) => Promise<void> | void;
+    onRightIconClick?: (
+        event: React.MouseEvent<HTMLButtonElement>
+    ) => Promise<void> | void;
+    onChange: (
+        evt: React.ChangeEvent<HTMLInputElement>
+    ) => Promise<void> | void;
+    onEnterPress?: (
+        event: React.KeyboardEvent<HTMLInputElement>
+    ) => Promise<void> | void;
     value: string | number;
 }
 
@@ -46,13 +54,18 @@ function Input(props: InputProps) {
         onEnterPress,
 
         onChange,
-        value
+        value,
     } = props;
 
     const autocomplete = autofill ? "on" : "off";
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        const code = event.key || event.code || event.keyCode || event.which || event.charCode;
+        const code =
+            event.key ||
+            event.code ||
+            event.keyCode ||
+            event.which ||
+            event.charCode;
 
         if ((code === "Enter" || code === 13) && onEnterPress) {
             onEnterPress(event);
@@ -66,7 +79,7 @@ function Input(props: InputProps) {
             fullWidth={fullWidth}
             disableHover={disableHover}
         >
-            {(leftIcon && onLeftIconClick) && (
+            {leftIcon && onLeftIconClick && (
                 <IconButton
                     iconVariant={iconVariant}
                     type="button"
@@ -76,7 +89,7 @@ function Input(props: InputProps) {
                     {leftIcon}
                 </IconButton>
             )}
-            {(leftIcon && !onLeftIconClick) && leftIcon}
+            {leftIcon && !onLeftIconClick && leftIcon}
             <StyledInput
                 variant={variant}
                 textVariant={textVariant}
@@ -91,7 +104,7 @@ function Input(props: InputProps) {
                 onKeyDown={handleKeyDown}
                 value={value}
             />
-            {(rightIcon && onRightIconClick) && (
+            {rightIcon && onRightIconClick && (
                 <IconButton
                     iconVariant={iconVariant}
                     type="button"
@@ -101,7 +114,7 @@ function Input(props: InputProps) {
                     {rightIcon}
                 </IconButton>
             )}
-            {(rightIcon && !onRightIconClick) && rightIcon}
+            {rightIcon && !onRightIconClick && rightIcon}
         </InputContainer>
     );
 }

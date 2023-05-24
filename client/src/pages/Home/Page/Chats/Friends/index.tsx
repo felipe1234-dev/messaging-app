@@ -8,7 +8,7 @@ function Friends() {
     const { user } = useAuth();
     if (!user) return <></>;
 
-    const onlineCount = user.friends.filter(friend => friend.online).length;
+    const onlineCount = user.friends.filter((friend) => friend.online).length;
     const padding = 25;
 
     return (
@@ -31,15 +31,15 @@ function Friends() {
                 px={padding}
                 pb={0}
             >
-                <Title level={5}>
-                    Online now
-                </Title>
+                <Title level={5}>Online now</Title>
 
                 <Button
                     noInteraction
-                    iconed round
+                    iconed
+                    round
                     variant="highlight"
-                    py={0} px={9}
+                    py={0}
+                    px={9}
                 >
                     {onlineCount}
                 </Button>
@@ -67,14 +67,16 @@ function Friends() {
                     p={3}
                 >
                     <Button
-                        iconed round transparent
+                        iconed
+                        round
+                        transparent
                         variant="secondary"
                         p={16}
                     >
                         <Icon icon={<PersonAdd />} />
                     </Button>
                 </Container>
-                {user.friends.map(friend => (
+                {user.friends.map((friend) => (
                     <Container
                         key={friend.uid}
                         direction="column"

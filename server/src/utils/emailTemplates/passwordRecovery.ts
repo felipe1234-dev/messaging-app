@@ -2,9 +2,7 @@ import getWebsiteURL from "../getWebsiteURL";
 
 const baseURL = getWebsiteURL();
 
-function passwordRecovery(props: {
-    recoveryToken: string;
-}) {
+function passwordRecovery(props: { recoveryToken: string }) {
     const { recoveryToken } = props;
 
     return `

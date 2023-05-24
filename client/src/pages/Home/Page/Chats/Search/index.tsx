@@ -23,7 +23,7 @@ function Search() {
                 disableHover
                 placeholder="People, groups and messages"
                 leftIcon={<Icon icon={<Magnifier />} />}
-                onChange={evt => setSearch(evt.target.value)}
+                onChange={(evt) => setSearch(evt.target.value)}
                 value={search}
             />
         </Container>

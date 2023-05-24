@@ -1,16 +1,19 @@
 import React from "react";
 
 interface ComposerProps {
-    components: Array<Function>, 
-    children?: React.ReactNode
+    components: Array<Function>;
+    children?: React.ReactNode;
 }
 
 function Composer(props: ComposerProps) {
     return (
         <>
-            {props.components.reduceRight((otherComponents, Component) => (
-                <Component>{otherComponents}</Component>
-            ), props.children)}
+            {props.components.reduceRight(
+                (otherComponents, Component) => (
+                    <Component>{otherComponents}</Component>
+                ),
+                props.children
+            )}
         </>
     );
 }

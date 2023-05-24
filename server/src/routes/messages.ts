@@ -6,7 +6,7 @@ import { sendMessageController } from "@controllers/messages";
 const messagesRouter: HTTPRouter = (api) => {
     api.put(
         "/send/:type/message",
-        useRouteMiddleware(authenticationMiddleware), 
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(sendMessageController)
     );
 };

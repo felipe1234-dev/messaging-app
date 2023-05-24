@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components";
 
 interface ColumnsProps {
     align?: "center" | "start" | "end";
@@ -39,7 +39,7 @@ Columns.defaultProps = {
     align: "start",
     justify: "center",
     multiline: true,
-    gap: 10
+    gap: 10,
 };
 
 export default Columns;

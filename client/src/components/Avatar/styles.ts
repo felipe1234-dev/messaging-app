@@ -11,45 +11,53 @@ interface StyledAvatarProps {
     borderStyle: string;
 }
 
-const StyledAvatar = styled.div<StyledAvatarProps>`${({
-    multiple,
-    size,
+const StyledAvatar = styled.div<StyledAvatarProps>`
+    ${({
+        multiple,
+        size,
 
-    backgroundColor,
-    borderVariant,
-    borderWidth,
-    borderOffset,
-    borderStyle,
+        backgroundColor,
+        borderVariant,
+        borderWidth,
+        borderOffset,
+        borderStyle,
 
-    theme,
-}) => css`
-    position: relative;
+        theme,
+    }) => css`
+        position: relative;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    ${multiple && css`gap: 3px;`}
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        ${multiple &&
+        css`
+            gap: 3px;
+        `}
 
-    width: fit-content;
-    height: fit-content;
-    padding: 10px;
+        width: fit-content;
+        height: fit-content;
+        padding: 10px;
 
-    font-size: ${size}em;
-    line-height: 1;
-    border-radius: 50%;
+        font-size: ${size}em;
+        line-height: 1;
+        border-radius: 50%;
 
-    overflow: hidden;
-    user-select: none;
-    
-    ${backgroundColor && css`background-color: ${backgroundColor};`}
-    color: #fff;
-    
-    border: none;
-    outline-style: ${borderStyle};
-    outline-width: ${borderWidth}px;
-    outline-color: ${theme.background[borderVariant]};
-    outline-offset: ${borderOffset}px;
-`}`;
+        overflow: hidden;
+        user-select: none;
+
+        ${backgroundColor &&
+        css`
+            background-color: ${backgroundColor};
+        `}
+        color: #fff;
+
+        border: none;
+        outline-style: ${borderStyle};
+        outline-width: ${borderWidth}px;
+        outline-color: ${theme.background[borderVariant]};
+        outline-offset: ${borderOffset}px;
+    `}
+`;
 
 export { StyledAvatar };

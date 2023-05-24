@@ -1,7 +1,7 @@
-import { 
+import {
     Express,
     Request as ExpressRequest,
-    Response as ExpressResponse
+    Response as ExpressResponse,
 } from "express";
 import { User, codes } from "messaging-app-globals";
 
@@ -47,18 +47,16 @@ export type ResponseType =
     | "text"
     | "stream";
 
-export type HTTPRouter = (
-    app: App
-) => void;
+export type HTTPRouter = (app: App) => void;
 
 export type RouteController = (
     req: Request,
-    res: Response, 
-    next: NextFunction,
+    res: Response,
+    next: NextFunction
 ) => Promise<void>;
 
 export type RouteMiddleware = (
     req: Request,
-    res: Response, 
+    res: Response,
     next: NextFunction
 ) => Promise<void> | void;

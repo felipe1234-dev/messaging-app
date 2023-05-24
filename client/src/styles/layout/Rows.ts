@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components";
 
 interface RowsProps {
     align?: "center" | "start" | "end";
@@ -21,7 +21,7 @@ Rows.defaultProps = {
     align: "start",
     justify: "center",
     multiline: true,
-    gap: 10
+    gap: 10,
 };
 
 export default Rows;

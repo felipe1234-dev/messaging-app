@@ -1,65 +1,53 @@
 import { HTTPRouter } from "@typings";
 import { useRouteController, useRouteMiddleware } from "@utils";
 import { authenticationMiddleware } from "@middlewares";
-import { 
+import {
     refreshSessionController,
-    registerUserController, 
-    loginUserController, 
+    registerUserController,
+    loginUserController,
     blockUserController,
     unblockUserController,
     deleteUserController,
     updateUserController,
     logoutUserController,
     recoverPasswordController,
-    searchUsersController
+    searchUsersController,
 } from "@controllers/users";
 
 const usersRouter: HTTPRouter = (api) => {
+    api.post("/refresh/session", useRouteController(refreshSessionController));
+    api.put("/register", useRouteController(registerUserController));
+    api.post("/login", useRouteController(loginUserController));
     api.post(
-        "/refresh/session", 
-        useRouteController(refreshSessionController)
-    );
-    api.put(
-        "/register", 
-        useRouteController(registerUserController)
-    );
-    api.post(
-        "/login", 
-        useRouteController(loginUserController)
-    );
-    api.post(
-        "/logout/", 
-        useRouteMiddleware(authenticationMiddleware), 
+        "/logout/",
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(logoutUserController)
     );
     api.delete(
-        "/block/user/:userUid", 
-        useRouteMiddleware(authenticationMiddleware), 
+        "/block/user/:userUid",
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(blockUserController)
     );
     api.patch(
-        "/unblock/user/:userUid", 
-        useRouteMiddleware(authenticationMiddleware), 
+        "/unblock/user/:userUid",
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(unblockUserController)
     );
     api.delete(
-        "/delete/user/:userUid", 
+        "/delete/user/:userUid",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(deleteUserController)
     );
     api.patch(
-        "/update/user/:userUid", 
-        useRouteMiddleware(authenticationMiddleware), 
+        "/update/user/:userUid",
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(updateUserController)
     );
     api.post(
-        "/recover/password/:userUid", 
+        "/recover/password/:userUid",
         useRouteController(recoverPasswordController)
     );
-    api.post(
-        "/search/users/",
-        useRouteController(searchUsersController)
-    )
-}; 
+    api.post("/search/users/", useRouteController(searchUsersController));
+};
 
 export default usersRouter;

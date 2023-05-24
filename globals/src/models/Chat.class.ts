@@ -29,7 +29,7 @@ class Chat {
             deletedAt,
             deletedBy,
             createdAt = new Date(),
-            createdBy = ""
+            createdBy = "",
         } = data;
 
         this.uid = uid;
@@ -44,37 +44,35 @@ class Chat {
         this.deleted = deleted;
         if (deletedAt) this.deletedAt = toDate(deletedAt);
         if (deletedBy) this.deletedBy = deletedBy;
-        
+
         this.createdAt = toDate(createdAt);
         this.createdBy = createdBy;
     }
 
     public static isChat(obj: any): obj is Chat {
-        return obj instanceof Chat || (
-            obj instanceof Object &&
-            typeof obj.uid === "string" &&
-            typeof obj.title === "string" &&
-            typeof obj.description === "string" &&
-            typeof obj.thumbnail === "string" &&
-            typeof obj.cover === "string" &&
-            
-            obj.blocked instanceof Array &&
-            obj.blocked.every((item: any) => typeof item === "string") &&
-            
-            obj.members instanceof Array &&
-            obj.members.every((item: any) => typeof item === "string") &&
-            
-            obj.admins instanceof Array &&
-            obj.admins.every((item: any) => typeof item === "string") &&
-            
-            typeof obj.deleted === "boolean" &&
-            (obj.deletedAt === undefined || obj.deletedAt instanceof Date) &&
-            (obj.deletedBy === undefined || typeof obj.deletedBy === "string") &&
-            
-            obj.createdAt instanceof Date &&
-            typeof obj.createdBy === "string"
+        return (
+            obj instanceof Chat ||
+            (obj instanceof Object &&
+                typeof obj.uid === "string" &&
+                typeof obj.title === "string" &&
+                typeof obj.description === "string" &&
+                typeof obj.thumbnail === "string" &&
+                typeof obj.cover === "string" &&
+                obj.blocked instanceof Array &&
+                obj.blocked.every((item: any) => typeof item === "string") &&
+                obj.members instanceof Array &&
+                obj.members.every((item: any) => typeof item === "string") &&
+                obj.admins instanceof Array &&
+                obj.admins.every((item: any) => typeof item === "string") &&
+                typeof obj.deleted === "boolean" &&
+                (obj.deletedAt === undefined ||
+                    obj.deletedAt instanceof Date) &&
+                (obj.deletedBy === undefined ||
+                    typeof obj.deletedBy === "string") &&
+                obj.createdAt instanceof Date &&
+                typeof obj.createdBy === "string")
         );
-    } 
+    }
 }
 
 export default Chat;

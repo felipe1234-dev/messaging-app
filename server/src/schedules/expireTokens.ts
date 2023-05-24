@@ -9,20 +9,18 @@ async function expireTokens() {
     expiresInExecutions++;
 
     const onlineUsers = await UsersDB.getUsers({
-        wheres: [
-            ["online", "==", true]
-        ]
+        wheres: [["online", "==", true]],
     });
 
     const promises: Promise<void>[] = [];
 
     for (const user of onlineUsers) {
-        const promise = new Promise<void>(async resolve => {
-            if (!user.token || await Token.isExpired(user.token)) {
+        const promise = new Promise<void>(async (resolve) => {
+            if (!user.token || (await Token.isExpired(user.token))) {
                 await UsersDB.updateUser(user.uid, {
                     online: false,
                     sessionEnd: new Date(),
-                    token: ""
+                    token: "",
                 });
             }
 

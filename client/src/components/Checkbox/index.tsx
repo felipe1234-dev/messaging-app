@@ -9,19 +9,13 @@ interface CheckboxProps extends ParagraphProps {
 }
 
 function Checkbox(props: CheckboxProps) {
-    const { 
-        label = "",
-        onChange, 
-        checked, 
-        disabled = false,
-        ...rest
-    } = props;
+    const { label = "", onChange, checked, disabled = false, ...rest } = props;
 
     return (
         <Label disabled={disabled}>
             {label && <Paragraph {...rest}>{label}</Paragraph>}
-            <input 
-                type="checkbox" 
+            <input
+                type="checkbox"
                 onChange={onChange}
                 checked={checked}
                 disabled={disabled}

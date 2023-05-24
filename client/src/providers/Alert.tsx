@@ -13,27 +13,11 @@ interface AlertValue {
     severity: Severity | undefined;
     visible: boolean;
     autoHideTime: number | null;
-    show: (
-        severity: Severity,
-        message: string, 
-        autoHideIn?: number
-    ) => void;
-    success: (
-        message: string, 
-        autoHideIn?: number
-    ) => void;
-    error: (
-        message: string, 
-        autoHideIn?: number
-    ) => void;
-    info: (
-        message: string, 
-        autoHideIn?: number
-    ) => void;
-    warning: (
-        message: string, 
-        autoHideIn?: number
-    ) => void;
+    show: (severity: Severity, message: string, autoHideIn?: number) => void;
+    success: (message: string, autoHideIn?: number) => void;
+    error: (message: string, autoHideIn?: number) => void;
+    info: (message: string, autoHideIn?: number) => void;
+    warning: (message: string, autoHideIn?: number) => void;
     hide: () => void;
 }
 
@@ -46,11 +30,7 @@ function AlertProvider(props: { children: ReactNode }) {
     const visible = !!severity && !!message;
     const defaultAutoHideTime = 5000;
 
-    const show = (
-        severity: Severity, 
-        message: string,
-        autoHideIn?: number
-    ) => {
+    const show = (severity: Severity, message: string, autoHideIn?: number) => {
         setSeverity(severity);
         setMessage(message);
         setAutoHideTime(autoHideIn || defaultAutoHideTime);
@@ -62,25 +42,17 @@ function AlertProvider(props: { children: ReactNode }) {
         setAutoHideTime(null);
     };
 
-    const success = (
-        message: string,
-        autoHideIn?: number
-    ) => show("success", message, autoHideIn);
+    const success = (message: string, autoHideIn?: number) =>
+        show("success", message, autoHideIn);
 
-    const error = (
-        message: string,
-        autoHideIn?: number
-    ) => show("error", message, autoHideIn);
+    const error = (message: string, autoHideIn?: number) =>
+        show("error", message, autoHideIn);
 
-    const info = (
-        message: string,
-        autoHideIn?: number
-    ) => show("info", message, autoHideIn);
+    const info = (message: string, autoHideIn?: number) =>
+        show("info", message, autoHideIn);
 
-    const warning = (
-        message: string,
-        autoHideIn?: number
-    ) => show("warning", message, autoHideIn);
+    const warning = (message: string, autoHideIn?: number) =>
+        show("warning", message, autoHideIn);
 
     useEffect(() => {
         if (!message || !severity) {
@@ -103,9 +75,13 @@ function AlertProvider(props: { children: ReactNode }) {
         }
     }, [message, severity]);
 
-    useTimeout(() => {
-        if (visible) hide();
-    }, autoHideTime, [visible]);
+    useTimeout(
+        () => {
+            if (visible) hide();
+        },
+        autoHideTime,
+        [visible]
+    );
 
     return (
         <AlertContext.Provider
@@ -119,7 +95,7 @@ function AlertProvider(props: { children: ReactNode }) {
                 error,
                 info,
                 warning,
-                hide
+                hide,
             }}
         >
             {props.children}

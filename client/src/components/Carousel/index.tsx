@@ -5,7 +5,9 @@ import { usePreventBodyScroll, useDrag } from "@hooks";
 import { StyledCarousel, ScrollContainer } from "./styles";
 import { StyledCarouselProps, ScrollContainerProps } from "./styles";
 
-interface CarouselProps extends Partial<StyledCarouselProps>, Partial<ScrollContainerProps> {
+interface CarouselProps
+    extends Partial<StyledCarouselProps>,
+        Partial<ScrollContainerProps> {
     draggable?: boolean;
     scrollWithWheel?: boolean;
     step?: number;
@@ -27,22 +29,18 @@ function Carousel(props: CarouselProps) {
         width,
         height = "fit-content",
         p,
-        pl, pr,
-        pt, pb,
-        px, py,
-        children
+        pl,
+        pr,
+        pt,
+        pb,
+        px,
+        py,
+        children,
     } = props;
 
-    const {
-        disableScroll,
-        enableScroll
-    } = usePreventBodyScroll();
+    const { disableScroll, enableScroll } = usePreventBodyScroll();
 
-    const {
-        dragStart,
-        dragStop,
-        dragMove
-    } = useDrag();
+    const { dragStart, dragStop, dragMove } = useDrag();
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const scrollContainer = scrollContainerRef.current;
@@ -84,7 +82,8 @@ function Carousel(props: CarouselProps) {
     const handleOnWheel = (evt: React.WheelEvent<HTMLDivElement>) => {
         if (!scrollWithWheel) return;
 
-        const isThouchpad = Math.abs(evt.deltaX) !== 0 || Math.abs(evt.deltaY) < 15;
+        const isThouchpad =
+            Math.abs(evt.deltaX) !== 0 || Math.abs(evt.deltaY) < 15;
 
         if (isThouchpad) {
             evt.stopPropagation();
@@ -93,7 +92,7 @@ function Carousel(props: CarouselProps) {
 
         if (!scrollContainer) return;
 
-        const scrollAmount = evt.deltaY / Math.abs(evt.deltaY) * step;
+        const scrollAmount = (evt.deltaY / Math.abs(evt.deltaY)) * step;
 
         const deltaLeft = direction === "row" ? scrollAmount : 0;
         const deltaTop = direction === "row" ? 0 : scrollAmount;
@@ -104,7 +103,7 @@ function Carousel(props: CarouselProps) {
         scrollContainer.scroll({
             left: initLeft + deltaLeft,
             top: initTop + deltaTop,
-            behavior: "smooth"
+            behavior: "smooth",
         });
     };
 
@@ -114,9 +113,12 @@ function Carousel(props: CarouselProps) {
             onMouseLeave={handleOnMouseLeave}
             width={width}
             height={height}
-            pl={pl} pr={pr}
-            pt={pt} pb={pb}
-            px={px} py={py}
+            pl={pl}
+            pr={pr}
+            pt={pt}
+            pb={pb}
+            px={px}
+            py={py}
             p={p}
         >
             <ScrollContainer

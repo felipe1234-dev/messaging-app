@@ -3,11 +3,11 @@ import { RouteMiddleware } from "@typings";
 import { Token } from "@services";
 import { UsersDB } from "@databases";
 import { User } from "messaging-app-globals";
-import { 
-    Unauthenticated, 
+import {
+    Unauthenticated,
     MissingHeaderParam,
     NotFound,
-    Unauthorized
+    Unauthorized,
 } from "@errors";
 
 const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
@@ -20,7 +20,7 @@ const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
     if (token === configs.systemHash) {
         const systemUser = new User({
             name: "system",
-            admin: true
+            admin: true,
         });
 
         req.user = systemUser;
@@ -39,11 +39,12 @@ const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
         const user = await UsersDB.getUserByUid(decodedUser.uid);
 
         if (!user) return res.sendResponse(new NotFound("User not found"));
-        if (user.blocked) return res.sendResponse(new Unauthorized("User blocked"));
-        
+        if (user.blocked)
+            return res.sendResponse(new Unauthorized("User blocked"));
+
         const newToken = await Token.encode(user);
         user.token = newToken;
-        
+
         await UsersDB.updateUser(user.uid, { token: newToken });
 
         req.user = user;
@@ -54,7 +55,9 @@ const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
         return next();
     } catch (error) {
         console.error("Error authenticating user", error);
-        return res.sendResponse(new Unauthenticated("You're not authenticated"));
+        return res.sendResponse(
+            new Unauthenticated("You're not authenticated")
+        );
     }
 };
 

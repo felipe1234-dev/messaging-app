@@ -19,7 +19,7 @@ const getUserFriendsController: RouteController = async (req, res) => {
             status: 200,
             code: codes.FRIENDS_FETCHED,
             message: "Friends fetched successfully",
-            friends
+            friends,
         });
     } catch (err) {
         res.sendResponse(err as ServerError);

@@ -2,7 +2,7 @@ import styled, { keyframes } from "styled-components";
 
 const props = {
     "from-top": "top",
-    "from-bottom": "bottom"
+    "from-bottom": "bottom",
 };
 
 const fadeInAnimation = (

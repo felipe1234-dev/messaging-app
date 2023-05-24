@@ -1,7 +1,7 @@
 import { Wrapper, InnerWrapper, Dot } from "./styles";
 
 interface PageLoaderProps {
-    visible?: boolean
+    visible?: boolean;
 }
 
 function PageLoader(props: PageLoaderProps) {

@@ -11,7 +11,7 @@ const responseFormatterMiddleware: RouteMiddleware = (req, res, next) => {
                 success: false,
                 status: data.status || 500,
                 code: data.code || codes.INTERNAL_SERVER_ERROR,
-                message: data.message || "Unknown error"
+                message: data.message || "Unknown error",
             });
         }
 
@@ -20,7 +20,7 @@ const responseFormatterMiddleware: RouteMiddleware = (req, res, next) => {
             success: true,
             status: data.status,
             code: data.code,
-            message: data.message
+            message: data.message,
         });
     };
 

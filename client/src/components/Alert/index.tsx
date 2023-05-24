@@ -22,25 +22,23 @@ const icons = {
 };
 
 function Alert(props: AlertProps) {
-    const { 
+    const {
         show = false,
         autoHideTime = 500,
         severity = "error",
-        children 
+        children,
     } = props;
 
     const icon = icons[severity];
 
     return (
         <Container>
-            <Snackbar 
+            <Snackbar
                 severity={severity}
-                autoHideTime={autoHideTime - 2*500}
+                autoHideTime={autoHideTime - 2 * 500}
                 show={show}
             >
-                <Icon icon={icon} />
-                {" "}
-                {children}
+                <Icon icon={icon} /> {children}
             </Snackbar>
         </Container>
     );

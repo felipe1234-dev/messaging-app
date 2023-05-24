@@ -1,7 +1,7 @@
 import passwordRecovery from "./passwordRecovery";
 
 const emailTemplates = {
-    passwordRecovery
+    passwordRecovery,
 };
 
 export default emailTemplates;

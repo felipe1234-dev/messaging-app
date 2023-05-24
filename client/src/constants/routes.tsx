@@ -10,20 +10,20 @@ const routes = [
             <Protected>
                 <Home />
             </Protected>
-        )
+        ),
     },
     {
         key: "/login",
         index: false,
         path: "/login",
-        element: <Login />
+        element: <Login />,
     },
     {
         key: "/register",
         index: false,
         path: "/register",
-        element: <Register />
-    }
+        element: <Register />,
+    },
 ];
 
 export default routes;

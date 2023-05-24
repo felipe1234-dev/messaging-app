@@ -22,7 +22,7 @@ function LoaderProvider(props: { children: React.ReactNode }) {
                 show,
                 hide,
                 visible,
-                delay
+                delay,
             }}
         >
             {props.children}

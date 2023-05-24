@@ -28,9 +28,7 @@ function Switch(props: SwitchProps) {
                     checked={checked}
                     disabled={disabled}
                 />
-                <Slider round={round}>
-                    {icon}
-                </Slider>
+                <Slider round={round}>{icon}</Slider>
             </Label>
         </Wrapper>
     );

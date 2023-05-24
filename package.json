@@ -1,11 +1,14 @@
 {
-  "name": "messaging-app",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-  },
-  "keywords": [],
-  "author": "Felipe Alves",
-  "license": "ISC",
-  "dependencies": {}
+    "name": "messaging-app",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "format": "prettier --write ."
+    },
+    "keywords": [],
+    "author": "Felipe Alves",
+    "license": "ISC",
+    "devDependencies": {
+        "prettier": "2.8.8"
+    }
 }

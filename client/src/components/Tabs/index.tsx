@@ -36,11 +36,12 @@ function Tabs(props: TabsProps) {
         margin = 0,
         thickness = 2,
         position = "center-left",
-        borderRadius = 0
+        borderRadius = 0,
     } = indicator;
 
-    const [selectedButton, setSelectedButton] = useState<HTMLButtonElement | null>(null);
-    const activeTab = tabs.find(tab => tab.id === active);
+    const [selectedButton, setSelectedButton] =
+        useState<HTMLButtonElement | null>(null);
+    const activeTab = tabs.find((tab) => tab.id === active);
 
     return (
         <Container transparent>
@@ -51,7 +52,7 @@ function Tabs(props: TabsProps) {
                 gap={gap}
                 {...restTabButtons}
             >
-                {tabs.map(tab => {
+                {tabs.map((tab) => {
                     const {
                         transparent = true,
                         variant = "primary",
@@ -62,7 +63,11 @@ function Tabs(props: TabsProps) {
                     return (
                         <Button
                             key={tab.id}
-                            ref={tab.id === active ? (el) => setSelectedButton(el) : undefined}
+                            ref={
+                                tab.id === active
+                                    ? (el) => setSelectedButton(el)
+                                    : undefined
+                            }
                             onClick={() => onSelect(tab)}
                             transparent={transparent}
                             variant={variant}

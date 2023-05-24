@@ -15,7 +15,10 @@ function Chats() {
             gap={0}
         >
             <Profile />
-            <Divider light={0.08} thickness={0.5} />
+            <Divider
+                light={0.08}
+                thickness={0.5}
+            />
             <Friends />
         </Container>
     );

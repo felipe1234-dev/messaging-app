@@ -1,9 +1,4 @@
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useState
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, codes } from "messaging-app-globals";
 import { Api } from "@services";
 import { WrapperUser } from "@types";
@@ -11,7 +6,11 @@ import { useLoader } from "./Loader";
 
 interface AuthValue {
     user?: WrapperUser;
-    login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
+    login: (
+        email: string,
+        password: string,
+        rememberMe: boolean
+    ) => Promise<void>;
     logout: () => Promise<void>;
 }
 
@@ -22,25 +21,31 @@ function AuthProvider(props: { children: React.ReactNode }) {
     const [friends, setFriends] = useState<User[]>([]);
     const loader = useLoader();
 
-    const login = async (email: string, password: string, rememberMe: boolean) => {
+    const login = async (
+        email: string,
+        password: string,
+        rememberMe: boolean
+    ) => {
         const response = await Api.auth.login(email, password, rememberMe);
         setUser(response);
-        setFriends((await Api.friends.getUserFriends()).sort((a, b) => {
-            if (a.online && !b.online) return -1;
-            if (b.online && !a.online) return 1;
+        setFriends(
+            (await Api.friends.getUserFriends()).sort((a, b) => {
+                if (a.online && !b.online) return -1;
+                if (b.online && !a.online) return 1;
 
-            if (a.online && b.online && a.sessionStart && b.sessionStart) {
-                if (a.sessionStart > b.sessionStart) return -1;
-                if (a.sessionStart < b.sessionStart) return 1;
-            }
+                if (a.online && b.online && a.sessionStart && b.sessionStart) {
+                    if (a.sessionStart > b.sessionStart) return -1;
+                    if (a.sessionStart < b.sessionStart) return 1;
+                }
 
-            if (!a.online && !b.online && a.sessionEnd && b.sessionEnd) {
-                if (a.sessionEnd > b.sessionEnd) return -1;
-                if (a.sessionEnd < b.sessionEnd) return 1;
-            }
+                if (!a.online && !b.online && a.sessionEnd && b.sessionEnd) {
+                    if (a.sessionEnd > b.sessionEnd) return -1;
+                    if (a.sessionEnd < b.sessionEnd) return 1;
+                }
 
-            return 0;
-        }));
+                return 0;
+            })
+        );
     };
 
     const logout = async () => {
@@ -58,10 +63,12 @@ function AuthProvider(props: { children: React.ReactNode }) {
     };
 
     const onFriendUpdated = (updatedFriend: User) => {
-        setFriends(prev => prev.map(friend => {
-            if (friend.uid === updatedFriend.uid) return updatedFriend;
-            return friend;
-        }));
+        setFriends((prev) =>
+            prev.map((friend) => {
+                if (friend.uid === updatedFriend.uid) return updatedFriend;
+                return friend;
+            })
+        );
     };
 
     useEffect(() => {
@@ -84,17 +91,21 @@ function AuthProvider(props: { children: React.ReactNode }) {
         Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
     }, [user?.uid]);
 
-    const wrapperUser = user ? {
-        ...user,
-        friends
-    } : undefined;
+    const wrapperUser = user
+        ? {
+              ...user,
+              friends,
+          }
+        : undefined;
 
     return (
-        <AuthContext.Provider value={{
-            user: wrapperUser,
-            login,
-            logout
-        }}>
+        <AuthContext.Provider
+            value={{
+                user: wrapperUser,
+                login,
+                logout,
+            }}
+        >
             {props.children}
         </AuthContext.Provider>
     );
@@ -102,7 +113,8 @@ function AuthProvider(props: { children: React.ReactNode }) {
 
 function useAuth() {
     const context = useContext(AuthContext);
-    if (!context) throw new Error("useAuth must be used within an AuthProvider");
+    if (!context)
+        throw new Error("useAuth must be used within an AuthProvider");
     return context;
 }
 

@@ -31,7 +31,12 @@ function Profile() {
                 p={padding}
             >
                 <Badge
-                    badge={<Icon variant="success" icon={<Circle />} />}
+                    badge={
+                        <Icon
+                            variant="success"
+                            icon={<Circle />}
+                        />
+                    }
                     mr={-5}
                 >
                     <Avatar
@@ -52,15 +57,26 @@ function Profile() {
                     align="start"
                     gap={5}
                 >
-                    <Paragraph variant="primary" size={1.2}>
+                    <Paragraph
+                        variant="primary"
+                        size={1.2}
+                    >
                         {user.name}
                     </Paragraph>
-                    <Paragraph variant="secondary" size={0.8}>
+                    <Paragraph
+                        variant="secondary"
+                        size={0.8}
+                    >
                         {user.bio}
                     </Paragraph>
                 </Container>
 
-                <Button transparent iconed round p={8}>
+                <Button
+                    transparent
+                    iconed
+                    round
+                    p={8}
+                >
                     <Icon icon={<Settings />} />
                 </Button>
             </Container>

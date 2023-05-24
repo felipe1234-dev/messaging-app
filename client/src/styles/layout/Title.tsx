@@ -16,9 +16,9 @@ interface StyledTitleProps {
 }
 
 const StyledTitle = styled.h1<StyledTitleProps>`
-    font-size: ${props => 6/props.level}em;
-    text-align: ${props => props.align};
-    color: ${props => props.theme.text[props.variant]};
+    font-size: ${(props) => 6 / props.level}em;
+    text-align: ${(props) => props.align};
+    color: ${(props) => props.theme.text[props.variant]};
     margin-top: ${({ mt }) => mt}px;
     margin-left: ${({ ml }) => ml}px;
     margin-right: ${({ mr }) => mr}px;
@@ -34,7 +34,7 @@ interface TitleProps extends Partial<StyledTitleProps> {
 }
 
 function Title(props: TitleProps) {
-    const { 
+    const {
         level = 1,
         variant = "primary",
         align = "center",
@@ -46,21 +46,25 @@ function Title(props: TitleProps) {
         pl = 0,
         pr = 0,
         pb = 0,
-        children 
+        children,
     } = props;
-    
+
     return (
         // @ts-ignore
-        <StyledTitle 
+        <StyledTitle
             // @ts-ignore
-            as={`h${level}`} 
+            as={`h${level}`}
             level={level}
             variant={variant}
             align={align}
-            mt={mt} mb={mb}
-            ml={ml} mr={mr}
-            pt={pt} pb={pb}
-            pl={pl} pr={pr}
+            mt={mt}
+            mb={mb}
+            ml={ml}
+            mr={mr}
+            pt={pt}
+            pb={pb}
+            pl={pl}
+            pr={pr}
         >
             {children}
         </StyledTitle>

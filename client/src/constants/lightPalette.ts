@@ -6,7 +6,7 @@ const lightPalette = {
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
-        success: "#4caf50"
+        success: "#4caf50",
     },
     text: {
         primary: "#E6E7E8",
@@ -15,7 +15,7 @@ const lightPalette = {
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
-        success: "#4caf50"
+        success: "#4caf50",
     },
     icon: {
         primary: "#E7E7E7",
@@ -24,7 +24,7 @@ const lightPalette = {
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
-        success: "#4caf50"
+        success: "#4caf50",
     },
     link: {
         primary: "#1556FF",
@@ -33,7 +33,7 @@ const lightPalette = {
         error: "#f44336",
         warning: "#ffa726",
         info: "#2196f3",
-        success: "#4caf50"
+        success: "#4caf50",
     },
     button: {
         primary: "#FFFFFF",
@@ -44,15 +44,15 @@ const lightPalette = {
         primary: "#1556FF",
         secondary: "#d3d3d3",
         highlight: "#1556FF",
-        disabled: "#2D2C2C"
+        disabled: "#2D2C2C",
     },
     breakpoints: {
         xs: 0,
         sm: 600,
         md: 900,
         lg: 1200,
-        xl: 1536
-    }
+        xl: 1536,
+    },
 };
 
 export default lightPalette;

@@ -1,10 +1,6 @@
 import { Request, RouteController } from "@typings";
 import { codes, validateEmail } from "messaging-app-globals";
-import { 
-    InvalidParam, 
-    MissingPostParam, 
-    ServerError 
-} from "@errors";
+import { InvalidParam, MissingPostParam, ServerError } from "@errors";
 import { Hash } from "@services";
 import { User } from "messaging-app-globals";
 import { UsersDB } from "@databases";
@@ -15,7 +11,7 @@ const registerUserController: RouteController = async (
             name?: string;
             email?: string;
             password?: string;
-        }
+        };
     },
     res
 ) => {
@@ -37,7 +33,7 @@ const registerUserController: RouteController = async (
             name,
             email,
             salt,
-            password: hashedPassword
+            password: hashedPassword,
         });
 
         await UsersDB.createUser(newUser);
@@ -45,11 +41,11 @@ const registerUserController: RouteController = async (
         return res.sendResponse({
             status: 200,
             code: codes.USER_CREATED,
-            message: "User created successfully"
+            message: "User created successfully",
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);
     }
-}
+};
 
 export default registerUserController;

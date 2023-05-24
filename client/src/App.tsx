@@ -23,17 +23,21 @@ function App() {
         loader.hide();
     });
 
-    useTimeout(async () => {
-        await Api.ping().catch(() => {
-            alert.error("Network error");
-        });
-    }, 0, [pathNow]);
+    useTimeout(
+        async () => {
+            await Api.ping().catch(() => {
+                alert.error("Network error");
+            });
+        },
+        0,
+        [pathNow]
+    );
 
     return (
         <Page>
             <Routes>
-                {routes.map(route => (
-                    <Route 
+                {routes.map((route) => (
+                    <Route
                         key={route.key}
                         index={route.index}
                         path={route.path}
@@ -41,8 +45,8 @@ function App() {
                     />
                 ))}
             </Routes>
-            <Alert 
-                severity={alert.severity} 
+            <Alert
+                severity={alert.severity}
                 show={alert.visible}
                 autoHideTime={alert.autoHideTime || 0}
             >

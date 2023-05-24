@@ -3,12 +3,16 @@ import { Position } from "@types";
 
 const positionToStyle = ({
     position,
-    mt, mb,
-    ml, mr
+    mt,
+    mb,
+    ml,
+    mr,
 }: {
     position: Position;
-    mt: number; mb: number;
-    ml: number; mr: number;
+    mt: number;
+    mb: number;
+    ml: number;
+    mr: number;
 }) => {
     const styles = {
         "top-left": `
@@ -37,7 +41,7 @@ const positionToStyle = ({
             left: calc(50% + ${ml}px);
         `,
 
-        "center": `
+        center: `
             top: calc(50% + ${mt}px);
             left: calc(50% + ${ml}px);
         `,
@@ -48,10 +52,12 @@ const positionToStyle = ({
         "center-left": `
             top: calc(50% + ${mt}px);
             left: ${ml}px;
-        `
+        `,
     };
 
-    return css`${styles[position]}`;
+    return css`
+        ${styles[position]}
+    `;
 };
 
 const BadgeContainer = styled.div`
@@ -66,19 +72,19 @@ interface StyledBadgeProps {
     mb: number;
 }
 
-const StyledBadge = styled.div<StyledBadgeProps>`${({
-    position,
-    ml, mr,
-    mt, mb
-}) => css`
-    position: absolute;
-    ${positionToStyle({
-    position,
-    mt, mb,
-    ml, mr
-})}
-    z-index: 10;
-`}`;
+const StyledBadge = styled.div<StyledBadgeProps>`
+    ${({ position, ml, mr, mt, mb }) => css`
+        position: absolute;
+        ${positionToStyle({
+            position,
+            mt,
+            mb,
+            ml,
+            mr,
+        })}
+        z-index: 10;
+    `}
+`;
 
 export { BadgeContainer, StyledBadge };
 export type { StyledBadgeProps };

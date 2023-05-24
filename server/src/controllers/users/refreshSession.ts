@@ -4,17 +4,17 @@ import { UsersDB } from "@databases";
 import { Token } from "@services";
 import {
     Forbidden,
-    MissingPostParam, 
-    NotFound, 
-    ServerError, 
-    Unauthenticated
+    MissingPostParam,
+    NotFound,
+    ServerError,
+    Unauthenticated,
 } from "@errors";
 
 const refreshSessionController: RouteController = async (
     req: Request & {
         body: {
             refreshToken?: string;
-        }
+        };
     },
     res
 ) => {
@@ -27,7 +27,7 @@ const refreshSessionController: RouteController = async (
 
         if (user.blocked) throw new Forbidden("User blocked");
 
-        if (!user.token || await Token.isExpired(user.token)) {
+        if (!user.token || (await Token.isExpired(user.token))) {
             await UsersDB.updateUser(user.uid, { refreshToken: "" });
             throw new Unauthenticated("Token expired");
         }
@@ -37,11 +37,11 @@ const refreshSessionController: RouteController = async (
             code: codes.SESSION_RECOVERED,
             message: "User session recovered successfully",
             user: secureUserData(user),
-            token: user.token
+            token: user.token,
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);
     }
-}
+};
 
 export default refreshSessionController;

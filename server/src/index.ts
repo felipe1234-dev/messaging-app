@@ -2,23 +2,19 @@
 import * as functions from "firebase-functions";
 import express from "express";
 
-import { 
-    useRouteMiddleware
-} from "@utils";
+import { useRouteMiddleware } from "@utils";
 import {
     corsMiddleware,
     responseFormatterMiddleware,
-    logRequestsMiddleware
+    logRequestsMiddleware,
 } from "@middlewares";
 import {
     usersRouter,
     messagesRouter,
     chatsRouter,
-    friendsRouter
+    friendsRouter,
 } from "@routes";
-import {
-    expireTokens
-} from "@schedules";
+import { expireTokens } from "@schedules";
 
 const app = express();
 

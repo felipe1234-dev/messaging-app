@@ -8,13 +8,7 @@ interface LinkProps extends Partial<StyledLinkProps> {
 }
 
 function Link(props: LinkProps) {
-    const { 
-        href, 
-        to,
-        children,
-        variant = "primary",
-        size = 1
-    } = props;
+    const { href, to, children, variant = "primary", size = 1 } = props;
 
     const navigate = useNavigate();
 

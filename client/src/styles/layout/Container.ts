@@ -5,7 +5,13 @@ import { shade } from "@functions";
 interface ContainerProps {
     direction?: "row" | "column";
     align?: "start" | "end" | "center";
-    justify?: "center" | "start" | "end" | "space-between" | "space-around" | "space-evenly";
+    justify?:
+        | "center"
+        | "start"
+        | "end"
+        | "space-between"
+        | "space-around"
+        | "space-evenly";
     gap?: number;
 
     width?: string;
@@ -39,68 +45,90 @@ interface ContainerProps {
     rounded?: string;
 }
 
-const Container = styled.div<ContainerProps>`${({
-    direction,
-    align,
-    justify,
-    gap,
+const Container = styled.div<ContainerProps>`
+    ${({
+        direction,
+        align,
+        justify,
+        gap,
 
-    width,
-    height,
+        width,
+        height,
 
-    light,
+        light,
 
-    mt, mb,
-    ml, mr,
-    mx, my,
-    m,
+        mt,
+        mb,
+        ml,
+        mr,
+        mx,
+        my,
+        m,
 
-    pt, pb,
-    pl, pr,
-    px, py,
-    p,
+        pt,
+        pb,
+        pl,
+        pr,
+        px,
+        py,
+        p,
 
-    roundedTL,
-    roundedTR,
-    roundedBL,
-    roundedBR,
-    rounded,
+        roundedTL,
+        roundedTR,
+        roundedBL,
+        roundedBR,
+        rounded,
 
-    variant,
-    transparent,
-    theme
-}) => css`
-    display: flex;
-    flex-direction: ${direction};
-    align-items: ${align};
-    justify-content: ${justify};
-    gap: ${gap}px;
+        variant,
+        transparent,
+        theme,
+    }) => css`
+        display: flex;
+        flex-direction: ${direction};
+        align-items: ${align};
+        justify-content: ${justify};
+        gap: ${gap}px;
 
-    width: ${width};
-    height: ${height};
-    background-color: ${transparent || !variant ? "transparent" : shade(theme.background[variant], light || 0)};
-    
-    ${p ? css`padding: ${p}px;` : css`
-        padding-top: ${py ?? pt}px;
-        padding-left: ${px ?? pl}px;
-        padding-right: ${px ?? pr}px;
-        padding-bottom: ${py ?? pb}px;
+        width: ${width};
+        height: ${height};
+        background-color: ${transparent || !variant
+            ? "transparent"
+            : shade(theme.background[variant], light || 0)};
+
+        ${p
+            ? css`
+                  padding: ${p}px;
+              `
+            : css`
+                  padding-top: ${py ?? pt}px;
+                  padding-left: ${px ?? pl}px;
+                  padding-right: ${px ?? pr}px;
+                  padding-bottom: ${py ?? pb}px;
+              `}
+
+        ${m
+            ? css`
+                  margin: ${m}px;
+              `
+            : css`
+                  margin-top: ${my ?? mt}px;
+                  margin-left: ${mx ?? ml}px;
+                  margin-right: ${mx ?? mr}px;
+                  margin-bottom: ${my ?? mb}px;
+              `}
+
+    ${rounded
+            ? css`
+                  border-radius: ${rounded};
+              `
+            : css`
+                  border-top-left-radius: ${roundedTL};
+                  border-top-right-radius: ${roundedTR};
+                  border-bottom-left-radius: ${roundedBL};
+                  border-bottom-right-radius: ${roundedBR};
+              `}
     `}
-
-    ${m ? css`margin: ${m}px;` : css`
-        margin-top: ${my ?? mt}px;
-        margin-left: ${mx ?? ml}px;
-        margin-right: ${mx ?? mr}px;
-        margin-bottom: ${my ?? mb}px;
-    `}
-
-    ${rounded ? css`border-radius: ${rounded};` : css`
-        border-top-left-radius: ${roundedTL};
-        border-top-right-radius: ${roundedTR};
-        border-bottom-left-radius: ${roundedBL};
-        border-bottom-right-radius: ${roundedBR};
-    `}
-`}`;
+`;
 
 Container.defaultProps = {
     variant: "primary",
@@ -123,7 +151,7 @@ Container.defaultProps = {
     roundedTL: "0",
     roundedTR: "0",
     roundedBL: "0",
-    roundedBR: "0"
+    roundedBR: "0",
 };
 
 export default Container;

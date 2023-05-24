@@ -33,7 +33,7 @@ function SingleAvatar(props: SingleAvatarProps) {
         borderVariant = "highlight",
         borderWidth = 0,
         borderStyle = "solid",
-        borderOffset = 0
+        borderOffset = 0,
     } = props;
     const colorAvatar = stringToAvatar(alt);
 
@@ -47,7 +47,14 @@ function SingleAvatar(props: SingleAvatarProps) {
             borderStyle={borderStyle}
             borderOffset={borderOffset}
         >
-            {src ? <img src={src} alt={alt} /> : colorAvatar.shortName}
+            {src ? (
+                <img
+                    src={src}
+                    alt={alt}
+                />
+            ) : (
+                colorAvatar.shortName
+            )}
         </StyledAvatar>
     );
 }
@@ -60,7 +67,7 @@ function MultipleAvatar(props: MultipleAvatarProps) {
         borderVariant = "highlight",
         borderWidth = 0,
         borderStyle = "solid",
-        borderOffset = 0
+        borderOffset = 0,
     } = props;
     const colorAvatar = stringToAvatar(alts[0]);
 
@@ -78,7 +85,14 @@ function MultipleAvatar(props: MultipleAvatarProps) {
                 const src = srcs[i];
                 const colorAvatar = stringToAvatar(alt);
 
-                return src ? <img src={src} alt={alt} /> : colorAvatar.shortName;
+                return src ? (
+                    <img
+                        src={src}
+                        alt={alt}
+                    />
+                ) : (
+                    colorAvatar.shortName
+                );
             })}
         </StyledAvatar>
     );
@@ -86,9 +100,9 @@ function MultipleAvatar(props: MultipleAvatarProps) {
 
 function Avatar(props: AvatarProps) {
     if (isSingleAvatarProps(props)) {
-        return <SingleAvatar {...props} />
+        return <SingleAvatar {...props} />;
     } else if (isMultipleAvatarProps(props)) {
-        return <MultipleAvatar {...props} />
+        return <MultipleAvatar {...props} />;
     } else {
         return <></>;
     }
@@ -100,13 +114,20 @@ export type { AvatarProps, SingleAvatarProps, MultipleAvatarProps };
 function isAvatarProps(obj: any): obj is AvatarProps {
     return (
         obj instanceof Object &&
-        (typeof obj.src === "string" || obj.src instanceof Array || obj.src === undefined) &&
-        (typeof obj.alt === "string" || obj.alt instanceof Array || obj.alt === undefined) &&
+        (typeof obj.src === "string" ||
+            obj.src instanceof Array ||
+            obj.src === undefined) &&
+        (typeof obj.alt === "string" ||
+            obj.alt instanceof Array ||
+            obj.alt === undefined) &&
         (obj.size === undefined || typeof obj.size === "number") &&
         (obj.multiple === undefined || typeof obj.multiple === "boolean") &&
-        (typeof obj.borderVariant === "string" || obj.borderVariant === undefined) &&
-        (typeof obj.borderWidth === "number" || obj.borderWidth === undefined) &&
-        (typeof obj.borderOffset === "number" || obj.borderOffset === undefined) &&
+        (typeof obj.borderVariant === "string" ||
+            obj.borderVariant === undefined) &&
+        (typeof obj.borderWidth === "number" ||
+            obj.borderWidth === undefined) &&
+        (typeof obj.borderOffset === "number" ||
+            obj.borderOffset === undefined) &&
         (typeof obj.borderStyle === "string" || obj.borderStyle === undefined)
     );
 }

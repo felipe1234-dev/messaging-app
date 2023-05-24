@@ -1,0 +1,10 @@
+# dependencies
+/node_modules
+/client/node_modules
+/server/node_modules
+/globals/node_modules
+
+# production
+/server/build
+/client/build
+/globals/lib

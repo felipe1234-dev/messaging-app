@@ -1,7 +1,4 @@
-import { 
-    CollectionReference,
-    Query
-} from "@google-cloud/firestore";
+import { CollectionReference, Query } from "@google-cloud/firestore";
 import { firestore } from "@databases";
 import { Operator } from "messaging-app-globals";
 
@@ -58,15 +55,16 @@ class DBAccess {
         if (!this._uid) return new Date();
 
         for (const key in updates) {
-            if (updates[key] === undefined)
-                delete updates[key];
+            if (updates[key] === undefined) delete updates[key];
         }
 
-        const updateTime = await this._collection.doc(this._uid).update({ ...updates, uid: this._uid });
+        const updateTime = await this._collection
+            .doc(this._uid)
+            .update({ ...updates, uid: this._uid });
         this.restartAllStates();
         return updateTime.writeTime.toDate();
     }
-    
+
     public async delete(): Promise<Date> {
         if (!this._uid) return new Date();
         const deleteTime = await this._collection.doc(this._uid).delete();
@@ -78,15 +76,16 @@ class DBAccess {
         if (!this._uid) return new Date();
 
         for (const key in data) {
-            if (data[key] === undefined)
-                delete data[key];
+            if (data[key] === undefined) delete data[key];
         }
 
-        const createTime = await this._collection.doc(this._uid).set({ ...data, uid: this._uid });
+        const createTime = await this._collection
+            .doc(this._uid)
+            .set({ ...data, uid: this._uid });
         this.restartAllStates();
         return createTime.writeTime.toDate();
     }
-    
+
     public async get<T>(): Promise<T[]> {
         if (this._uid) {
             const uid = this._uid;
@@ -100,7 +99,7 @@ class DBAccess {
         }
 
         const results = [];
-        
+
         do {
             let query: Query = this._collection;
 
@@ -113,7 +112,7 @@ class DBAccess {
                 const [field, direction] = order;
                 query = query.orderBy(field, direction);
             }
-    
+
             if (lastDoc) {
                 query = query.startAfter(lastDoc);
                 lastDoc = undefined;
@@ -122,10 +121,10 @@ class DBAccess {
             query = query.limit(1000);
 
             const { docs } = await query.get();
-        
+
             for (const doc of docs) {
                 if (
-                    this._limit !== undefined && 
+                    this._limit !== undefined &&
                     results.length >= this._limit
                 ) {
                     lastDoc = undefined;
@@ -134,10 +133,10 @@ class DBAccess {
                 results.push(doc.data());
                 lastDoc = doc;
             }
-        } while(lastDoc);
-   
+        } while (lastDoc);
+
         this.restartAllStates();
-        
+
         return results as T[];
     }
 }

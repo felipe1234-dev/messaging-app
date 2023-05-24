@@ -4,7 +4,11 @@ import { generateUid } from "messaging-app-globals";
 import * as fs from "fs";
 
 class FileStorage {
-    static async upload(file: File, destination: string, metadata?: any): Promise<string> {
+    static async upload(
+        file: File,
+        destination: string,
+        metadata?: any
+    ): Promise<string> {
         const extension = file.name.split(".").at(-1);
         const localPath = await FileStorage.saveLocally(file);
 
@@ -19,8 +23,8 @@ class FileStorage {
                     extension,
                     lastModified: file.lastModified,
                     size: file.size,
-                    ...metadata
-                }
+                    ...metadata,
+                },
             });
 
             const url = FileStorage.getURL(destination);

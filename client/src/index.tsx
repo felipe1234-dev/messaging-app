@@ -3,12 +3,12 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import reportWebVitals from "./reportWebVitals";
-import { 
+import {
     AuthProvider,
     ChatsProvider,
-    ThemeProvider, 
+    ThemeProvider,
     LoaderProvider,
-    AlertProvider
+    AlertProvider,
 } from "./providers";
 import { Composer } from "./components";
 
@@ -21,12 +21,12 @@ const root = ReactDOM.createRoot(
 );
 
 const providers = [
-    BrowserRouter, 
-    ThemeProvider, 
+    BrowserRouter,
+    ThemeProvider,
     LoaderProvider,
     AlertProvider,
     AuthProvider,
-    ChatsProvider
+    ChatsProvider,
 ];
 
 root.render(

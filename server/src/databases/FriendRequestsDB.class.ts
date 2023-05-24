@@ -4,11 +4,17 @@ import { FriendRequest } from "messaging-app-globals";
 const friendRequestsCollection = new DBAccess("friendRequests");
 
 class FriendRequestsDB {
-    public static createFriendRequest(friendRequest: FriendRequest): Promise<Date> {
-        return friendRequestsCollection.doc(friendRequest.uid).create(friendRequest);
+    public static createFriendRequest(
+        friendRequest: FriendRequest
+    ): Promise<Date> {
+        return friendRequestsCollection
+            .doc(friendRequest.uid)
+            .create(friendRequest);
     }
 
-    public static async getFriendRequestByUid(uid: string): Promise<FriendRequest | undefined> {
+    public static async getFriendRequestByUid(
+        uid: string
+    ): Promise<FriendRequest | undefined> {
         const friendRequest = (
             await friendRequestsCollection
                 .where("uid", "==", uid)
@@ -21,7 +27,10 @@ class FriendRequestsDB {
         return new FriendRequest(friendRequest);
     }
 
-    public static updateFriendRequest(uid: string, updates: Partial<FriendRequest>): Promise<Date> {
+    public static updateFriendRequest(
+        uid: string,
+        updates: Partial<FriendRequest>
+    ): Promise<Date> {
         return friendRequestsCollection.doc(uid).update(updates);
     }
 
@@ -29,12 +38,15 @@ class FriendRequestsDB {
         return friendRequestsCollection.doc(uid).delete();
     }
 
-    public static async friendRequestAlreadySent(from: string, to: string): Promise<boolean> {
+    public static async friendRequestAlreadySent(
+        from: string,
+        to: string
+    ): Promise<boolean> {
         const friendRequest = (
             await friendRequestsCollection
-              .where("from", "==", from)
-              .where("to", "==", to)
-              .get<FriendRequest>()
+                .where("from", "==", from)
+                .where("to", "==", to)
+                .get<FriendRequest>()
         )[0];
 
         return !!friendRequest;

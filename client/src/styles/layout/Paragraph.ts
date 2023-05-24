@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 import { Variant } from "@types";
 
 interface ParagraphProps {
-    variant?: Variant; 
+    variant?: Variant;
     size?: number;
     ml?: number;
     mr?: number;
@@ -14,28 +14,25 @@ interface ParagraphProps {
     pb?: number;
 }
 
-const Paragraph = styled.p<ParagraphProps>`${({
-    size,
-    variant,
-    ml, mr,
-    mt, mb,
-    pl, pr,
-    pt, pb,
-    theme
-}) => css`
-    font-size: ${size}em;
-    ${variant && css`color: ${theme.text[variant]}`};
+const Paragraph = styled.p<ParagraphProps>`
+    ${({ size, variant, ml, mr, mt, mb, pl, pr, pt, pb, theme }) => css`
+        font-size: ${size}em;
+        ${variant &&
+        css`
+            color: ${theme.text[variant]};
+        `};
 
-    margin-left: ${ml}px;
-    margin-right: ${mr}px;
-    margin-top: ${mt}px;
-    margin-bottom: ${mb}px;
+        margin-left: ${ml}px;
+        margin-right: ${mr}px;
+        margin-top: ${mt}px;
+        margin-bottom: ${mb}px;
 
-    padding-top: ${pt}px;
-    padding-left: ${pl}px;
-    padding-right: ${pr}px;
-    padding-bottom: ${pb}px;
-`}`;
+        padding-top: ${pt}px;
+        padding-left: ${pl}px;
+        padding-right: ${pr}px;
+        padding-bottom: ${pb}px;
+    `}
+`;
 
 Paragraph.defaultProps = {
     size: 1,
@@ -47,7 +44,7 @@ Paragraph.defaultProps = {
     pt: 0,
     pl: 0,
     pr: 0,
-    pb: 0
+    pb: 0,
 };
 
 export default Paragraph;

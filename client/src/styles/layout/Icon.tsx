@@ -10,30 +10,26 @@ interface StyledIconProps {
     pt: number;
 }
 
-const StyledIcon = styled.span<StyledIconProps>`${({
-    variant,
-    size,
-    pl, pr,
-    pb, pt,
-    theme
-}) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: ${theme.icon[variant]};
-    width: ${size}em;
-    height: auto;
-    padding-top: ${pt}px;
-    padding-left: ${pl}px;
-    padding-right: ${pr}px;
-    padding-bottom: ${pb}px;
-
-    svg {
-        display: block;
+const StyledIcon = styled.span<StyledIconProps>`
+    ${({ variant, size, pl, pr, pb, pt, theme }) => css`
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: ${theme.icon[variant]};
         width: ${size}em;
         height: auto;
-    }
-`}`;
+        padding-top: ${pt}px;
+        padding-left: ${pl}px;
+        padding-right: ${pr}px;
+        padding-bottom: ${pb}px;
+
+        svg {
+            display: block;
+            width: ${size}em;
+            height: auto;
+        }
+    `}
+`;
 
 interface IconProps extends Partial<StyledIconProps> {
     icon: React.ReactNode;
@@ -46,7 +42,7 @@ function Icon(props: IconProps) {
         pl = 0,
         pr = 0,
         pb = 0,
-        pt = 0
+        pt = 0,
     } = props;
 
     return (

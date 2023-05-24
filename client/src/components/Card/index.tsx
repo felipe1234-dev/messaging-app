@@ -1,18 +1,6 @@
-import { 
-    StyledCard,
-    CardImage,
-    CardContent,
-    CardInfo
-} from "./styles";
-import {
-    Title,
-    Paragraph 
-} from "@styles/layout";
-import {
-    ContainerProps,
-    TitleProps,
-    ParagraphProps
-} from "@styles/layout";
+import { StyledCard, CardImage, CardContent, CardInfo } from "./styles";
+import { Title, Paragraph } from "@styles/layout";
+import { ContainerProps, TitleProps, ParagraphProps } from "@styles/layout";
 
 interface CardProps extends ContainerProps, TitleProps, ParagraphProps {
     image: React.ReactNode;
@@ -27,23 +15,35 @@ function ChatCard(props: CardProps) {
         justify = "space-between",
         align = "center",
         gap = 10,
-        
+
         level,
         variant,
         size,
-        
-        ml, mr, mt, mb,
-        pl, pr, pt, pb,
+
+        ml,
+        mr,
+        mt,
+        mb,
+        pl,
+        pr,
+        pt,
+        pb,
 
         image,
         primary,
         secondary,
-        info
+        info,
     } = props;
 
     const spacingProps = {
-        ml, mr, mt, mb,
-        pl, pr, pt, pb
+        ml,
+        mr,
+        mt,
+        mb,
+        pl,
+        pr,
+        pt,
+        pb,
     };
 
     return (
@@ -54,24 +54,24 @@ function ChatCard(props: CardProps) {
             gap={gap}
             {...spacingProps}
         >
-            <CardImage>
-                {image}    
-            </CardImage>
+            <CardImage>{image}</CardImage>
             <CardContent>
                 <Title
                     level={level}
                     variant={variant}
                     {...spacingProps}
-                >{primary}</Title>
+                >
+                    {primary}
+                </Title>
                 <Paragraph
                     size={size}
                     variant={variant}
                     {...spacingProps}
-                >{secondary}</Paragraph>
+                >
+                    {secondary}
+                </Paragraph>
             </CardContent>
-            <CardInfo>
-                {info}
-            </CardInfo>
+            <CardInfo>{info}</CardInfo>
         </StyledCard>
     );
 }

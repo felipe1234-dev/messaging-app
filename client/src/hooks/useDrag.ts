@@ -18,7 +18,10 @@ function useDrag() {
         });
     };
 
-    const dragMove = (evt: React.MouseEvent, callback?: (deltaX: number) => void) => {
+    const dragMove = (
+        evt: React.MouseEvent,
+        callback?: (deltaX: number) => void
+    ) => {
         const newDiff = position.current - evt.clientX;
 
         const movedEnough = Math.abs(newDiff) > 5;
@@ -39,7 +42,7 @@ function useDrag() {
         dragMove,
         dragging,
         position,
-        setDragging
+        setDragging,
     };
 }
 

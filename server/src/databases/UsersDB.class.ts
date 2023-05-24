@@ -27,10 +27,12 @@ class UsersDB {
         }
 
         const users = await query.get<User>();
-        return users.map(user => new User(user));
+        return users.map((user) => new User(user));
     }
 
-    public static async getUserByEmail(email: string): Promise<User | undefined> {
+    public static async getUserByEmail(
+        email: string
+    ): Promise<User | undefined> {
         const user = (
             await userCollection
                 .where("email", "==", email)
@@ -56,8 +58,10 @@ class UsersDB {
         return new User(user);
     }
 
-    public static async getUserByRefreshToken(refreshToken: string): Promise<User | undefined> {
-        const user = ( 
+    public static async getUserByRefreshToken(
+        refreshToken: string
+    ): Promise<User | undefined> {
+        const user = (
             await userCollection
                 .where("refreshToken", "==", refreshToken)
                 .where("deleted", "==", false)
@@ -65,12 +69,14 @@ class UsersDB {
         )[0];
 
         if (!user) return undefined;
-        
+
         return new User(user);
     }
 
-    public static async getUserByRememberMeToken(rememberMeToken: string): Promise<User | undefined> {
-        const user = ( 
+    public static async getUserByRememberMeToken(
+        rememberMeToken: string
+    ): Promise<User | undefined> {
+        const user = (
             await userCollection
                 .where("rememberMeToken", "==", rememberMeToken)
                 .where("deleted", "==", false)
@@ -78,11 +84,14 @@ class UsersDB {
         )[0];
 
         if (!user) return undefined;
-        
+
         return new User(user);
     }
 
-    public static updateUser(uid: string, updates: Partial<User>): Promise<Date> {
+    public static updateUser(
+        uid: string,
+        updates: Partial<User>
+    ): Promise<Date> {
         return userCollection.doc(uid).update(updates);
     }
 }

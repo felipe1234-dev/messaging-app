@@ -10,24 +10,24 @@ interface WrapperProps {
 const Wrapper = styled.div<WrapperProps>`
     @keyframes goToBackLayerAnimation {
         ${() => {
-        let css = "";
-        let i = 0;
-        const max = 10;
+            let css = "";
+            let i = 0;
+            const max = 10;
 
-        while (i < max) {
-            const percent = (0 + i) + "%";
+            while (i < max) {
+                const percent = 0 + i + "%";
 
-            css += `
+                css += `
                     ${percent} {
                         z-index: ${max - i};
                     }
                 `;
 
-            i += 10;
-        }
+                i += 10;
+            }
 
-        return css;
-    }}
+            return css;
+        }}
     }
 
     width: 100%;
@@ -36,14 +36,14 @@ const Wrapper = styled.div<WrapperProps>`
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 10;
 
-    opacity: .8;
+    opacity: 0.8;
     transition: opacity ease-in-out ${time};
 
     background-color: rgba(0, 0, 0, 0.5);
@@ -52,10 +52,12 @@ const Wrapper = styled.div<WrapperProps>`
     animation-name: goToBackLayerAnimation;
     animation-duration: ${time};
 
-    ${props => props.hidden && css`
-        opacity: 0;
-        pointer-events: none;
-    `}
+    ${(props) =>
+        props.hidden &&
+        css`
+            opacity: 0;
+            pointer-events: none;
+        `}
 `;
 
 const InnerWrapper = styled.div`
@@ -69,17 +71,17 @@ const Dot = styled.div`
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background-color: ${props => props.theme.text.primary};
+    background-color: ${(props) => props.theme.text.primary};
     animation: ${moveAnimation} 700ms linear 0ms infinite;
     margin-right: 30px;
-    
+
     &:first-child {
         position: absolute;
         top: 0;
         left: 0;
         animation: ${growAnimation} 700ms linear 0ms infinite;
     }
-    
+
     &:last-child {
         position: absolute;
         top: 0;

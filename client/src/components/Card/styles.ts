@@ -1,13 +1,11 @@
 import styled from "styled-components";
 import { Container, ContainerProps } from "@styles/layout";
 
-interface StyledCardProps extends ContainerProps {
-    
-}
+interface StyledCardProps extends ContainerProps {}
 
 const StyledCard = styled(Container)<StyledCardProps>`
     height: fit-content;
-    min-height: 40px; 
+    min-height: 40px;
 `;
 
 const CardImage = styled.figure`

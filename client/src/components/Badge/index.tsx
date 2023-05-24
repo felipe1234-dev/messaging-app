@@ -7,20 +7,24 @@ interface BadgeProps extends Partial<StyledBadgeProps> {
 }
 
 function Badge(props: BadgeProps) {
-    const { 
-        position = "bottom-right", 
+    const {
+        position = "bottom-right",
         badge,
-        mt = 0, mb = 0,
-        ml = 0, mr = 0,
-        children 
+        mt = 0,
+        mb = 0,
+        ml = 0,
+        mr = 0,
+        children,
     } = props;
 
     return (
         <BadgeContainer>
-            <StyledBadge 
+            <StyledBadge
                 position={position}
-                mt={mt} mb={mb}
-                ml={ml} mr={mr}    
+                mt={mt}
+                mb={mb}
+                ml={ml}
+                mr={mr}
             >
                 {badge}
             </StyledBadge>

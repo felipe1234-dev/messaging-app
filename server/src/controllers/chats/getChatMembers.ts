@@ -1,12 +1,7 @@
 import { Request, RouteController } from "@typings";
 import { codes, User, secureUserData } from "messaging-app-globals";
 import { ChatsDB, UsersDB } from "@databases";
-import { 
-    MissingURLParam, 
-    NotFound, 
-    ServerError, 
-    Unauthorized 
-} from "@errors";
+import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
 
 const getChatMembersController: RouteController = async (
     req: Request & {
@@ -22,12 +17,14 @@ const getChatMembersController: RouteController = async (
 
         const chat = await ChatsDB.getChatByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
-        
+
         const currentUser = req.user;
         if (!currentUser) throw new Unauthorized("You're not authenticated");
-        
-        const canSeeChat = chat.members.includes(currentUser.uid) || currentUser.admin;
-        if (!canSeeChat) throw new Unauthorized("You are not allowed to see this chat");
+
+        const canSeeChat =
+            chat.members.includes(currentUser.uid) || currentUser.admin;
+        if (!canSeeChat)
+            throw new Unauthorized("You are not allowed to see this chat");
 
         const isBlocked = chat.blocked.includes(currentUser.uid);
         if (isBlocked) throw new Unauthorized("You are blocked in this chat");
@@ -43,11 +40,11 @@ const getChatMembersController: RouteController = async (
             status: 200,
             code: codes.MEMBERS_FETCHED,
             message: "Members fetched successfully",
-            members
+            members,
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);
     }
-}
+};
 
 export default getChatMembersController;

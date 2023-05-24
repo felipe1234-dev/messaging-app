@@ -13,7 +13,7 @@ function Protected(props: { children: React.ReactNode }) {
 
     if (!allowed) return <Login />;
 
-    return <>{props.children}</>
+    return <>{props.children}</>;
 }
 
 export default Protected;

@@ -25,7 +25,7 @@ class FriendRequest {
             sentAt = new Date(),
             deleted = false,
             deletedAt,
-            deletedBy
+            deletedBy,
         } = data;
 
         this.uid = uid;
@@ -42,22 +42,24 @@ class FriendRequest {
     }
 
     public static isFriendRequest(obj: any): obj is FriendRequest {
-        return obj instanceof FriendRequest || (
-            obj instanceof Object &&
-            typeof obj.uid === "string" &&
-            typeof obj.from === "string" &&
-            typeof obj.to === "string" &&
-            obj.sentAt instanceof Date &&
-
-            typeof obj.accepted === "boolean" &&
-            (obj.acceptedAt === undefined || obj.acceptedAt instanceof Date) &&
-
-            typeof obj.rejected === "boolean" &&
-            (obj.rejectedAt === undefined || obj.rejectedAt instanceof Date) &&
-
-            typeof obj.deleted === "boolean" &&
-            (obj.deletedAt === undefined || obj.deletedAt instanceof Date) &&
-            (obj.deletedBy === undefined || typeof obj.deletedBy === "string")
+        return (
+            obj instanceof FriendRequest ||
+            (obj instanceof Object &&
+                typeof obj.uid === "string" &&
+                typeof obj.from === "string" &&
+                typeof obj.to === "string" &&
+                obj.sentAt instanceof Date &&
+                typeof obj.accepted === "boolean" &&
+                (obj.acceptedAt === undefined ||
+                    obj.acceptedAt instanceof Date) &&
+                typeof obj.rejected === "boolean" &&
+                (obj.rejectedAt === undefined ||
+                    obj.rejectedAt instanceof Date) &&
+                typeof obj.deleted === "boolean" &&
+                (obj.deletedAt === undefined ||
+                    obj.deletedAt instanceof Date) &&
+                (obj.deletedBy === undefined ||
+                    typeof obj.deletedBy === "string"))
         );
     }
 }

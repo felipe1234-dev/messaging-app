@@ -3,10 +3,10 @@ import { codes } from "messaging-app-globals";
 import { ChatsDB, UsersDB } from "@databases";
 import {
     Forbidden,
-    MissingPostParam, 
-    NotFound, 
-    ServerError, 
-    Unauthorized 
+    MissingPostParam,
+    NotFound,
+    ServerError,
+    Unauthorized,
 } from "@errors";
 
 const addChatMemberController: RouteController = async (
@@ -14,7 +14,7 @@ const addChatMemberController: RouteController = async (
         body: {
             chat?: string;
             member?: string;
-        }
+        };
     },
     res
 ) => {
@@ -29,26 +29,32 @@ const addChatMemberController: RouteController = async (
 
         const member = await UsersDB.getUserByUid(memberUid);
         if (!member) throw new NotFound("User not found");
-        
+
         const currentUser = req.user;
         if (!currentUser) throw new Unauthorized("You're not authenticated");
-        
+
         const canAddMembers = chat.admins.includes(currentUser.uid);
-        if (!canAddMembers) throw new Unauthorized("You are not allowed to add members to this chat");
+        if (!canAddMembers)
+            throw new Unauthorized(
+                "You are not allowed to add members to this chat"
+            );
 
         const isAlreadyMember = chat.members.includes(member.uid);
-        if (!isAlreadyMember) throw new Forbidden("This user is already a member");
+        if (!isAlreadyMember)
+            throw new Forbidden("This user is already a member");
 
-        await ChatsDB.updateChat(chatUid, { members: [...chat.members, member.uid ] });
+        await ChatsDB.updateChat(chatUid, {
+            members: [...chat.members, member.uid],
+        });
 
         return res.sendResponse({
             status: 200,
             code: codes.MEMBER_ADDED,
-            message: "Member added successfully"
+            message: "Member added successfully",
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);
     }
-}
+};
 
 export default addChatMemberController;

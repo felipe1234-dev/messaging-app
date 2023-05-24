@@ -4,7 +4,10 @@ const path = require("path");
 const pathTotsconfig = path.join(__dirname, "../tsconfig.json");
 const tsconfig = JSON.parse(fs.readFileSync(pathTotsconfig, "utf8"));
 
-const pathToBuild = path.join(__dirname, `../${tsconfig.compilerOptions.outDir}`);
+const pathToBuild = path.join(
+    __dirname,
+    `../${tsconfig.compilerOptions.outDir}`
+);
 const builtFilesPaths = walk(pathToBuild);
 
 for (const filepath of builtFilesPaths) {
@@ -16,8 +19,8 @@ for (const filepath of builtFilesPaths) {
 
 /**
  * Lists all files in the given directory recursively
- * @param {string} dir 
- * @param {string[]=} files 
+ * @param {string} dir
+ * @param {string[]=} files
  * @returns {string[]}
  */
 function walk(dir, files = []) {
@@ -50,7 +53,9 @@ function resolvePathAliases(filepath, tsconfig) {
             const baseUrl = tsconfig.compilerOptions.baseUrl;
             const buildUrl = tsconfig.compilerOptions.outDir;
 
-            for (let [glob, replacement] of Object.entries(tsconfig.compilerOptions.paths)) {
+            for (let [glob, replacement] of Object.entries(
+                tsconfig.compilerOptions.paths
+            )) {
                 let group = 0;
 
                 const pattern = globToRegexp(glob);
@@ -60,19 +65,25 @@ function resolvePathAliases(filepath, tsconfig) {
                     return `\$${group}`;
                 });
                 replacement = path.join(baseUrl, replacement);
-                
+
                 resolvedPath = resolvedPath.replace(pattern, replacement);
             }
 
             resolvedPath = resolvedPath.replace("src", buildUrl);
             resolvedPath = path.resolve(__dirname, `../${resolvedPath}`);
 
-            const isImportable = fs.existsSync(resolvedPath) || fs.existsSync(resolvedPath + ".js");
+            const isImportable =
+                fs.existsSync(resolvedPath) ||
+                fs.existsSync(resolvedPath + ".js");
             if (!isImportable) return match;
 
-            let relativePath = path.relative(path.dirname(filepath), resolvedPath);
-            if (!relativePath.startsWith("./")) relativePath = "./" + relativePath;
-            
+            let relativePath = path.relative(
+                path.dirname(filepath),
+                resolvedPath
+            );
+            if (!relativePath.startsWith("./"))
+                relativePath = "./" + relativePath;
+
             return `require("${relativePath}")`;
         }
     );
@@ -81,8 +92,8 @@ function resolvePathAliases(filepath, tsconfig) {
 }
 
 function globToRegexp(glob, opts) {
-    if (typeof glob !== 'string') {
-        throw new TypeError('Expected a string');
+    if (typeof glob !== "string") {
+        throw new TypeError("Expected a string");
     }
 
     var str = String(glob);
@@ -111,7 +122,7 @@ function globToRegexp(glob, opts) {
     var inGroup = false;
 
     // RegExp flags (eg "i" ) to pass in to RegExp constructor.
-    var flags = opts && typeof (opts.flags) === "string" ? opts.flags : "";
+    var flags = opts && typeof opts.flags === "string" ? opts.flags : "";
 
     var c;
     for (var i = 0, len = str.length; i < len; i++) {
@@ -182,13 +193,14 @@ function globToRegexp(glob, opts) {
                     reStr += "(.*)";
                 } else {
                     // globstar is enabled, so determine if this is a globstar segment
-                    var isGlobstar = starCount > 1                      // multiple "*"'s
-                        && (prevChar === "/" || prevChar === undefined)   // from the start of the segment
-                        && (nextChar === "/" || nextChar === undefined)   // to the end of the segment
+                    var isGlobstar =
+                        starCount > 1 && // multiple "*"'s
+                        (prevChar === "/" || prevChar === undefined) && // from the start of the segment
+                        (nextChar === "/" || nextChar === undefined); // to the end of the segment
 
                     if (isGlobstar) {
                         // it's a globstar, so match zero or more path segments
-                        reStr += "((?:[^/]*(?:\/|$))*)";
+                        reStr += "((?:[^/]*(?:/|$))*)";
                         i++; // move over the "/"
                     } else {
                         // it's not a globstar, so only match one path segment
@@ -204,7 +216,7 @@ function globToRegexp(glob, opts) {
 
     // When regexp 'g' flag is specified don't
     // constrain the regular expression with ^ & $
-    if (!flags || !~flags.indexOf('g')) {
+    if (!flags || !~flags.indexOf("g")) {
         reStr = "^" + reStr + "$";
     }
 

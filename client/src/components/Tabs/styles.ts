@@ -2,9 +2,9 @@ import styled, { css } from "styled-components";
 import { Variant, Position } from "@types";
 import { Container, ContainerProps } from "@styles/layout";
 
-interface TabButtonsProps extends ContainerProps { }
+interface TabButtonsProps extends ContainerProps {}
 
-const TabButtons = styled(Container) <TabButtonsProps>`
+const TabButtons = styled(Container)<TabButtonsProps>`
     position: relative;
 `;
 
@@ -60,28 +60,24 @@ interface IndicatorProps {
     borderRadius: number;
 }
 
-const Indicator = styled.div<IndicatorProps>`${({
-    variant,
-    position,
-    selectedButton,
-    offset,
-    margin,
-    thickness,
-    borderRadius,
-    theme
-}) => css`
-    position: absolute;
-    transition: all 0.3s ease-in-out;
-    background-color: ${theme.background[variant]};
-    border-radius: ${borderRadius}px;
-    ${positionToStyle(
-    position,
-    selectedButton,
-    offset,
-    margin,
-    thickness
-)}
-`}`;
+const Indicator = styled.div<IndicatorProps>`
+    ${({
+        variant,
+        position,
+        selectedButton,
+        offset,
+        margin,
+        thickness,
+        borderRadius,
+        theme,
+    }) => css`
+        position: absolute;
+        transition: all 0.3s ease-in-out;
+        background-color: ${theme.background[variant]};
+        border-radius: ${borderRadius}px;
+        ${positionToStyle(position, selectedButton, offset, margin, thickness)}
+    `}
+`;
 
 export { TabButtons, Indicator };
 export type { IndicatorProps };

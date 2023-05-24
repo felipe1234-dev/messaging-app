@@ -21,7 +21,10 @@ class ChatsDB {
         return new Chat(chat);
     }
 
-    public static updateChat(uid: string, updates: Partial<Chat>): Promise<Date> {
+    public static updateChat(
+        uid: string,
+        updates: Partial<Chat>
+    ): Promise<Date> {
         return chatCollection.doc(uid).update(updates);
     }
 
@@ -31,7 +34,7 @@ class ChatsDB {
             .where("deleted", "==", false)
             .get<Chat>();
 
-        return chats.map(chat => new Chat(chat));
+        return chats.map((chat) => new Chat(chat));
     }
 }
 

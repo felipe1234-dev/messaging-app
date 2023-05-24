@@ -19,12 +19,12 @@ const Label = styled.label`
 
         &:checked + span {
             background-color: ${({ theme }) => theme.checkbox.primary};
-            
+
             & > * {
                 transform: translateX(26px);
             }
         }
-        
+
         &:checked + span:before {
             transform: translateX(26px);
         }
@@ -32,7 +32,6 @@ const Label = styled.label`
         &:focus + span {
             box-shadow: 0 0 1px ${({ theme }) => theme.checkbox.primary};
         }
-
     }
 `;
 
@@ -52,12 +51,13 @@ const Slider = styled.span<SliderProps>`
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    
+
     background-color: ${({ theme }) => theme.checkbox.secondary};
-    
-    &, > * {
-        transition: .4s;
-    } 
+
+    &,
+    > * {
+        transition: 0.4s;
+    }
 
     > * {
         position: relative;
@@ -72,16 +72,18 @@ const Slider = styled.span<SliderProps>`
         left: 4px;
         bottom: 4px;
         background-color: ${({ theme }) => theme.text.primary};
-        transition: .4s;
+        transition: 0.4s;
     }
 
-    ${({ round }) => round && css`
-        border-radius: 34px;
-        
-        &:before {
-            border-radius: 50%;
-        }
-    `}
+    ${({ round }) =>
+        round &&
+        css`
+            border-radius: 34px;
+
+            &:before {
+                border-radius: 50%;
+            }
+        `}
 `;
 
 export { Wrapper, Label, Slider };

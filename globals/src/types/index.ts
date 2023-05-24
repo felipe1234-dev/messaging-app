@@ -1,4 +1,5 @@
-export type Operator = "<"
+export type Operator =
+    | "<"
     | "<="
     | "=="
     | "!="

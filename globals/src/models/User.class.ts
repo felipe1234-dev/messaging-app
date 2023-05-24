@@ -67,7 +67,7 @@ class User {
         this.salt = salt;
         this.password = password;
         this.admin = admin;
-       
+
         this.deleted = deleted;
         if (deletedAt) this.deletedAt = toDate(deletedAt);
         if (deletedBy) this.deletedBy = deletedBy;
@@ -91,39 +91,47 @@ class User {
     }
 
     public static isUser(obj: any): obj is User {
-        return obj instanceof User || (
-            obj instanceof Object &&
-            typeof obj.uid === "string" &&
-            typeof obj.name === "string" &&
-            typeof obj.email === "string" &&
-            typeof obj.bio === "string" &&
-            typeof obj.photo === "string" &&
-            typeof obj.cover === "string" &&
-            typeof obj.salt === "string" &&
-            typeof obj.password === "string" &&
-            typeof obj.admin === "boolean" &&
-            obj.createdAt instanceof Date &&
-           
-            obj.friends instanceof Array &&
-            obj.friends.every((item: any) => typeof item === "string") &&
-            
-            typeof obj.online === "boolean" &&
-            (obj.sessionStart === undefined || obj.sessionStart instanceof Date) &&
-            (obj.sessionEnd === undefined || obj.sessionEnd instanceof Date) &&
-            (obj.token === undefined || typeof obj.token === "string") &&
-            (obj.refreshToken === undefined || typeof obj.refreshToken === "string") &&
-            (obj.rememberMeToken === undefined || typeof obj.rememberMeToken === "string") &&
-            (obj.recoveryToken === undefined || typeof obj.recoveryToken === "string") &&
-
-            typeof obj.deleted === "boolean" &&
-            (obj.deletedBy === undefined || typeof obj.deletedBy === "string") &&
-            (obj.deletedAt === undefined || obj.deletedAt instanceof Date) &&
-            
-            typeof obj.blocked === "boolean" &&
-            (obj.blockedBy === undefined || typeof obj.blockedBy === "string") &&
-            (obj.blockedAt === undefined || obj.blockedAt instanceof Date) &&
-            (obj.unblockedAt === undefined || obj.unblockedAt instanceof Date) &&
-            (obj.unblockedBy === undefined || typeof obj.unblockedBy === "string") 
+        return (
+            obj instanceof User ||
+            (obj instanceof Object &&
+                typeof obj.uid === "string" &&
+                typeof obj.name === "string" &&
+                typeof obj.email === "string" &&
+                typeof obj.bio === "string" &&
+                typeof obj.photo === "string" &&
+                typeof obj.cover === "string" &&
+                typeof obj.salt === "string" &&
+                typeof obj.password === "string" &&
+                typeof obj.admin === "boolean" &&
+                obj.createdAt instanceof Date &&
+                obj.friends instanceof Array &&
+                obj.friends.every((item: any) => typeof item === "string") &&
+                typeof obj.online === "boolean" &&
+                (obj.sessionStart === undefined ||
+                    obj.sessionStart instanceof Date) &&
+                (obj.sessionEnd === undefined ||
+                    obj.sessionEnd instanceof Date) &&
+                (obj.token === undefined || typeof obj.token === "string") &&
+                (obj.refreshToken === undefined ||
+                    typeof obj.refreshToken === "string") &&
+                (obj.rememberMeToken === undefined ||
+                    typeof obj.rememberMeToken === "string") &&
+                (obj.recoveryToken === undefined ||
+                    typeof obj.recoveryToken === "string") &&
+                typeof obj.deleted === "boolean" &&
+                (obj.deletedBy === undefined ||
+                    typeof obj.deletedBy === "string") &&
+                (obj.deletedAt === undefined ||
+                    obj.deletedAt instanceof Date) &&
+                typeof obj.blocked === "boolean" &&
+                (obj.blockedBy === undefined ||
+                    typeof obj.blockedBy === "string") &&
+                (obj.blockedAt === undefined ||
+                    obj.blockedAt instanceof Date) &&
+                (obj.unblockedAt === undefined ||
+                    obj.unblockedAt instanceof Date) &&
+                (obj.unblockedBy === undefined ||
+                    typeof obj.unblockedBy === "string"))
         );
     }
 }

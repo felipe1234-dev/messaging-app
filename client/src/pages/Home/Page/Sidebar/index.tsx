@@ -7,7 +7,11 @@ import { useAuth, useTheme, useLoader } from "@providers";
 import { Variant } from "@types";
 
 import { Sun, Moon, People } from "@styled-icons/bootstrap";
-import { Call, ChatMultiple, VideoChat } from "@styled-icons/fluentui-system-regular";
+import {
+    Call,
+    ChatMultiple,
+    VideoChat,
+} from "@styled-icons/fluentui-system-regular";
 import { LogOut } from "@styled-icons/boxicons-regular";
 
 function Sidebar() {
@@ -22,7 +26,7 @@ function Sidebar() {
         textChats: <ChatMultiple />,
         voiceChats: <Call />,
         videoChats: <VideoChat />,
-        friendRequests: <People />
+        friendRequests: <People />,
     };
 
     const generateTabProps = (id: keyof typeof icons) => ({
@@ -35,15 +39,15 @@ function Sidebar() {
             p: 8,
             borderRadius: 0,
             iconVariant: (tab === id ? "highlight" : "secondary") as Variant,
-            children: <Icon icon={icons[id]} />
-        }
+            children: <Icon icon={icons[id]} />,
+        },
     });
 
     const tabs = [
         generateTabProps("textChats"),
         generateTabProps("videoChats"),
         generateTabProps("voiceChats"),
-        generateTabProps("friendRequests")
+        generateTabProps("friendRequests"),
     ];
 
     const handleLogout = async () => {
@@ -67,9 +71,7 @@ function Sidebar() {
                 gap={0}
                 p={5}
             >
-                <Title level={3}>
-                    {appName[0]}.
-                </Title>
+                <Title level={3}>{appName[0]}.</Title>
 
                 <Tabs
                     direction="column"
@@ -79,11 +81,11 @@ function Sidebar() {
                     gap={5}
                     active={tab}
                     tabs={tabs}
-                    onSelect={selectedTab => setTab(selectedTab.id)}
+                    onSelect={(selectedTab) => setTab(selectedTab.id)}
                     indicator={{
                         variant: "highlight",
                         margin: -3,
-                        thickness: 3
+                        thickness: 3,
                     }}
                 />
 
@@ -95,7 +97,9 @@ function Sidebar() {
                     height="fit-content"
                 >
                     <Button
-                        transparent iconed round
+                        transparent
+                        iconed
+                        round
                         onClick={toggleTheme}
                         size={iconSize}
                         p={8}
@@ -103,7 +107,9 @@ function Sidebar() {
                         <Icon icon={theme === "light" ? <Moon /> : <Sun />} />
                     </Button>
                     <Button
-                        transparent iconed round
+                        transparent
+                        iconed
+                        round
                         onClick={handleLogout}
                         size={iconSize}
                         p={8}

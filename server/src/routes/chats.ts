@@ -10,48 +10,48 @@ import {
     updateChatController,
     removeChatMemberController,
     getUserChatsController,
-    getChatMembersController
+    getChatMembersController,
 } from "@controllers/chats";
 
 const chatsRouter: HTTPRouter = (api) => {
     api.put(
-        "/create/chat", 
+        "/create/chat",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(createChatController)
     );
     api.get(
         "/chat/:chatUid/messages",
-        useRouteMiddleware(authenticationMiddleware), 
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(getChatMessagesController)
     );
     api.get(
         "/chat/:chatUid/members",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(getChatMembersController)
-    )
+    );
     api.patch(
         "/add/chat/admin",
-        useRouteMiddleware(authenticationMiddleware), 
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(addChatAdminController)
     );
     api.patch(
         "/add/chat/member",
-        useRouteMiddleware(authenticationMiddleware), 
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(addChatMemberController)
     );
     api.delete(
         "/delete/chat/:chatUid",
-        useRouteMiddleware(authenticationMiddleware), 
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(deleteChatController)
     );
     api.patch(
         "/update/chat/:chatUid",
-        useRouteMiddleware(authenticationMiddleware), 
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(updateChatController)
     );
     api.delete(
         "/remove/chat/member",
-        useRouteMiddleware(authenticationMiddleware), 
+        useRouteMiddleware(authenticationMiddleware),
         useRouteController(removeChatMemberController)
     );
     api.get(
@@ -60,6 +60,5 @@ const chatsRouter: HTTPRouter = (api) => {
         useRouteController(getUserChatsController)
     );
 };
-
 
 export default chatsRouter;

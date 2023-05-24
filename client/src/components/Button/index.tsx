@@ -4,7 +4,9 @@ import { StyledButton, StyledButtonProps } from "./styles";
 interface ButtonProps extends Partial<StyledButtonProps> {
     type?: "button" | "submit" | "reset";
     children: React.ReactNode;
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>;
+    onClick?: (
+        event: React.MouseEvent<HTMLButtonElement>
+    ) => void | Promise<void>;
     disabled?: boolean;
 }
 
@@ -17,9 +19,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         fullWidth = true,
         uppercase = false,
         size = 1,
-        pt = 6, pb = 6,
-        pl = 16, pr = 16,
-        py, px,
+        pt = 6,
+        pb = 6,
+        pl = 16,
+        pr = 16,
+        py,
+        px,
         p,
         borderRadius = 8,
         onClick,
@@ -30,9 +35,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         transparent = false,
         round = false,
         selected = false,
-        children
+        children,
     } = props;
-    
+
     return (
         <StyledButton
             ref={ref}
@@ -43,9 +48,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             fullWidth={fullWidth}
             uppercase={uppercase}
             size={size}
-            pt={pt} pb={pb}
-            pl={pl} pr={pr}
-            px={px} py={py}
+            pt={pt}
+            pb={pb}
+            pl={pl}
+            pr={pr}
+            px={px}
+            py={py}
             p={p}
             onClick={onClick}
             disabled={disabled}

@@ -11,8 +11,8 @@ class Email {
         html: string;
     }) {
         if (!options.from) options.from = configs.email.auth.user;
-        if (Array.isArray(options.to)) options.to = options.to.join(", "); 
-        
+        if (Array.isArray(options.to)) options.to = options.to.join(", ");
+
         return transporter.sendMail(options);
     }
 }

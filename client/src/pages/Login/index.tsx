@@ -8,7 +8,7 @@ import {
     Icon,
     Rows,
     Columns,
-    Column
+    Column,
 } from "@styles/layout";
 import { ShowItem } from "@styles/animations";
 
@@ -39,7 +39,7 @@ function Login() {
 
     const handleTogglePasswordView = () => {
         console.log("test");
-        setViewPassword(prev => !prev);
+        setViewPassword((prev) => !prev);
     };
 
     const handleLogin = async () => {
@@ -62,50 +62,77 @@ function Login() {
             <Container
                 justify="center"
                 align="center"
-                pt={15} pb={15}
+                pt={15}
+                pb={15}
             >
                 <ShowItem>
-                    <Title level={3}>
-                        {appName}
-                    </Title>
+                    <Title level={3}>{appName}</Title>
                 </ShowItem>
 
                 <ShowItem>
-                    <Paragraph variant="secondary" size={1.2}>
+                    <Paragraph
+                        variant="secondary"
+                        size={1.2}
+                    >
                         Please login to continue
                     </Paragraph>
                 </ShowItem>
 
                 <Columns>
                     <Column />
-                    <Column xs={9} sm={4} md={0.2}>
+                    <Column
+                        xs={9}
+                        sm={4}
+                        md={0.2}
+                    >
                         <ShowItem>
                             <Rows gap={15}>
                                 <Input
                                     fullWidth
                                     variant="secondary"
-                                    leftIcon={<Icon icon={<EmailIcon />} size={1.5} />}
+                                    leftIcon={
+                                        <Icon
+                                            icon={<EmailIcon />}
+                                            size={1.5}
+                                        />
+                                    }
                                     type="email"
                                     placeholder="Email"
-                                    onChange={evt => setEmail(evt.target.value)}
+                                    onChange={(evt) =>
+                                        setEmail(evt.target.value)
+                                    }
                                     value={email}
                                 />
                                 <Input
                                     fullWidth
                                     variant="secondary"
-                                    leftIcon={<Icon icon={<LockIcon />} size={1.5} />}
-                                    rightIcon={<Icon icon={passwordIcon} size={1.5} />}
+                                    leftIcon={
+                                        <Icon
+                                            icon={<LockIcon />}
+                                            size={1.5}
+                                        />
+                                    }
+                                    rightIcon={
+                                        <Icon
+                                            icon={passwordIcon}
+                                            size={1.5}
+                                        />
+                                    }
                                     onRightIconClick={handleTogglePasswordView}
                                     type={passwordType}
                                     placeholder="Password"
-                                    onChange={evt => setPassword(evt.target.value)}
+                                    onChange={(evt) =>
+                                        setPassword(evt.target.value)
+                                    }
                                     value={password}
                                 />
                                 <Rows align="end">
                                     <Checkbox
                                         variant="primary"
                                         label="Remember me"
-                                        onChange={evt => setRememberMe(evt.target.checked)}
+                                        onChange={(evt) =>
+                                            setRememberMe(evt.target.checked)
+                                        }
                                         checked={rememberMe}
                                     />
                                 </Rows>
@@ -118,7 +145,9 @@ function Login() {
                                     Login
                                 </Button>
                                 <Rows align="center">
-                                    <Link to="/register">I don't have an account</Link>
+                                    <Link to="/register">
+                                        I don't have an account
+                                    </Link>
                                 </Rows>
                             </Rows>
                         </ShowItem>

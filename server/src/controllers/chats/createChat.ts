@@ -5,7 +5,7 @@ import { ChatsDB } from "@databases";
 
 const createChatController: RouteController = async (
     req: Request & {
-        body: Partial<Chat>
+        body: Partial<Chat>;
     },
     res
 ) => {
@@ -16,9 +16,9 @@ const createChatController: RouteController = async (
 
         const newChat = new Chat({
             ...chatProps,
-            admins: [ currentUser.uid, ...(chatProps.admins || []) ],
-            members: [ currentUser.uid, ...(chatProps.members || []) ],
-            createdBy: currentUser.uid
+            admins: [currentUser.uid, ...(chatProps.admins || [])],
+            members: [currentUser.uid, ...(chatProps.members || [])],
+            createdBy: currentUser.uid,
         });
 
         await ChatsDB.createChat(newChat);
@@ -26,11 +26,11 @@ const createChatController: RouteController = async (
         return res.sendResponse({
             status: 200,
             code: codes.CHAT_CREATED,
-            message: "Chat created successfully"
+            message: "Chat created successfully",
         });
     } catch (err) {
         return res.sendResponse(err as ServerError);
     }
-}
+};
 
 export default createChatController;

@@ -1,0 +1,14 @@
+{
+    "trailingComma": "es5",
+    "embeddedLanguageFormatting": "auto",
+    "arrowParens": "always",
+    "printWidth": 80,
+    "tabWidth": 4,
+    "semi": true,
+    "bracketSpacing": true,
+    "insertFinalNewline": true,
+    "singleAttributePerLine": true,
+    "useTabs": false,
+    "singleQuote": false,
+    "bracketSameLine": false
+}

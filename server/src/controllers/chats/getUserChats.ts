@@ -14,7 +14,7 @@ const getUserChatsController: RouteController = async (req, res) => {
             status: 200,
             code: codes.CHATS_FETCHED,
             message: "Chats fetched successfully",
-            chats
+            chats,
         });
     } catch (err) {
         res.sendResponse(err as ServerError);

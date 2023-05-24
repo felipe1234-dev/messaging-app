@@ -10,7 +10,7 @@ const firebaseConfig = {
     projectId: getEnv("PROJECT_ID"),
     storageBucket: getEnv("STORAGE_BUCKET"),
     messagingSenderId: getEnv("MESSAGING_SENDER_ID"),
-    appId: getEnv("APP_ID")
+    appId: getEnv("APP_ID"),
 };
 
 const app = firebase.initializeApp(firebaseConfig, getEnv("PROJECT_ID"));

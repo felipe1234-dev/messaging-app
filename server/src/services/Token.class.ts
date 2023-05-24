@@ -11,9 +11,11 @@ class Token {
     }
 
     static async encode(user: User): Promise<string> {
-        const customToken = await app.auth().createCustomToken(user.uid, secureUserData(user));
+        const customToken = await app
+            .auth()
+            .createCustomToken(user.uid, secureUserData(user));
         const token = await getIdToken(customToken);
-        
+
         return token;
     }
 
@@ -36,8 +38,8 @@ async function getIdToken(customToken: string): Promise<string> {
         {
             body: {
                 token: customToken,
-                returnSecureToken: true
-            }
+                returnSecureToken: true,
+            },
         }
     );
 
