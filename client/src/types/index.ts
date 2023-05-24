@@ -1,9 +1,19 @@
 import { User, Chat, Message, codes } from "messaging-app-globals";
+import { IconProps } from "@styles/layout/Icon";
 
 export * from "./is";
 
 export type Severity = "error" | "warning" | "info" | "success";
 export type Variant = "primary" | "secondary" | "highlight" | Severity;
+export type Direction = "row" | "column";
+export type Align = "start" | "end" | "center" | "baseline";
+export type Justify =
+    | "center"
+    | "start"
+    | "end"
+    | "space-between"
+    | "space-around"
+    | "space-evenly";
 export type Position =
     | "top-left"
     | "top-right"
@@ -37,3 +47,5 @@ export interface ResponseError {
     message: string;
     [key: string]: any;
 }
+
+export interface CustomIconProps extends Omit<IconProps, "icon"> {}

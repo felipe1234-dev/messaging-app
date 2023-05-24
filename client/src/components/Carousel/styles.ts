@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { Align, Direction, Justify } from "@types";
 
 interface StyledCarouselProps {
     width: string;
@@ -37,15 +38,9 @@ const StyledCarousel = styled.div<StyledCarouselProps>`
 
 interface ScrollContainerProps {
     hideScrollbar: boolean;
-    direction: "row" | "column";
-    align: "start" | "end" | "center";
-    justify:
-        | "center"
-        | "start"
-        | "end"
-        | "space-between"
-        | "space-around"
-        | "space-evenly";
+    direction: Direction;
+    align: Align;
+    justify: Justify;
     gap: number;
 }
 

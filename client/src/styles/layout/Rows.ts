@@ -1,8 +1,9 @@
 import styled from "styled-components";
+import { Align, Justify } from "@types";
 
 interface RowsProps {
-    align?: "center" | "start" | "end";
-    justify?: "center" | "space-between" | "space-around" | "start" | "end";
+    align?: Align;
+    justify?: Justify;
     multiline?: boolean;
     gap?: number;
 }

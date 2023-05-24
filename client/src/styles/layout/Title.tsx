@@ -1,32 +1,55 @@
-import styled from "styled-components";
-import { Variant } from "@types";
+import styled, { css } from "styled-components";
+import { Variant, Align } from "@types";
 
 interface StyledTitleProps {
     level: number;
     variant: Variant;
-    align: "center" | "start" | "end";
+    align: Align;
     ml: number;
     mr: number;
     mt: number;
     mb: number;
+    mx?: number;
+    my?: number;
     pt: number;
     pl: number;
     pr: number;
     pb: number;
+    px?: number;
+    py?: number;
 }
 
 const StyledTitle = styled.h1<StyledTitleProps>`
-    font-size: ${(props) => 6 / props.level}em;
-    text-align: ${(props) => props.align};
-    color: ${(props) => props.theme.text[props.variant]};
-    margin-top: ${({ mt }) => mt}px;
-    margin-left: ${({ ml }) => ml}px;
-    margin-right: ${({ mr }) => mr}px;
-    margin-bottom: ${({ mb }) => mb}px;
-    padding-top: ${({ pt }) => pt}px;
-    padding-left: ${({ pl }) => pl}px;
-    padding-right: ${({ pr }) => pr}px;
-    padding-bottom: ${({ pb }) => pb}px;
+    ${({
+        level,
+        align,
+        variant,
+        mt,
+        ml,
+        mr,
+        mb,
+        mx,
+        my,
+        pt,
+        pl,
+        pr,
+        pb,
+        px,
+        py,
+        theme,
+    }) => css`
+        font-size: ${6 / level}em;
+        text-align: ${align};
+        color: ${theme.text[variant]};
+        margin-top: ${py ?? mt}px;
+        margin-left: ${px ?? ml}px;
+        margin-right: ${px ?? mr}px;
+        margin-bottom: ${py ?? mb}px;
+        padding-top: ${py ?? pt}px;
+        padding-left: ${px ?? pl}px;
+        padding-right: ${px ?? pr}px;
+        padding-bottom: ${py ?? pb}px;
+    `}
 `;
 
 interface TitleProps extends Partial<StyledTitleProps> {
@@ -42,10 +65,14 @@ function Title(props: TitleProps) {
         ml = 0,
         mr = 0,
         mb = 0,
+        mx,
+        my,
         pt = 0,
         pl = 0,
         pr = 0,
         pb = 0,
+        px,
+        py,
         children,
     } = props;
 
@@ -61,10 +88,14 @@ function Title(props: TitleProps) {
             mb={mb}
             ml={ml}
             mr={mr}
+            mx={mx}
+            my={my}
             pt={pt}
             pb={pb}
             pl={pl}
             pr={pr}
+            px={px}
+            py={py}
         >
             {children}
         </StyledTitle>

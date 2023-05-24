@@ -1,17 +1,11 @@
 import styled, { css } from "styled-components";
-import { Variant } from "@types";
+import { Variant, Direction, Align, Justify } from "@types";
 import { shade } from "@functions";
 
 interface ContainerProps {
-    direction?: "row" | "column";
-    align?: "start" | "end" | "center";
-    justify?:
-        | "center"
-        | "start"
-        | "end"
-        | "space-between"
-        | "space-around"
-        | "space-evenly";
+    direction?: Direction;
+    align?: Align;
+    justify?: Justify;
     gap?: number;
 
     width?: string;
