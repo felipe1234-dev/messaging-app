@@ -31,8 +31,12 @@ async function expireTokens() {
 
         if (promises.length >= 500) {
             await Promise.all(promises);
+            promises.length = 0;
         }
     }
+
+    await Promise.all(promises);
+    promises.length = 0;
 
     expiresInExecutions = 0;
 }
