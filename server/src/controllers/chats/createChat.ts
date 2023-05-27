@@ -16,8 +16,12 @@ const createChatController: RouteController = async (
 
         const newChat = new Chat({
             ...chatProps,
-            admins: [currentUser.uid, ...(chatProps.admins || [])],
-            members: [currentUser.uid, ...(chatProps.members || [])],
+            admins: Array.from(
+                new Set([currentUser.uid, ...(chatProps.admins || [])])
+            ),
+            members: Array.from(
+                new Set([currentUser.uid, ...(chatProps.members || [])])
+            ),
             createdBy: currentUser.uid,
         });
 
