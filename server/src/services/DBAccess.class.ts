@@ -36,6 +36,10 @@ class DBAccess {
         return this;
     }
 
+    public and(field: string, operator: Operator, value: any): DBAccess {
+        return this.where(field, operator, value);
+    }
+
     public startAfter(uid: string): DBAccess {
         this._startAfter = uid;
         return this;

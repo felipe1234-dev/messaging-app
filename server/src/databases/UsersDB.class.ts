@@ -1,15 +1,15 @@
 import DBAccess from "@services/DBAccess.class";
 import { User, FilterParams } from "messaging-app-globals";
 
-const userCollection = new DBAccess("users");
+const userCollection = () => new DBAccess("users");
 
 class UsersDB {
     public static createUser(user: User): Promise<Date> {
-        return userCollection.doc(user.uid).create(user);
+        return userCollection().doc(user.uid).create(user);
     }
 
     public static async getUsers(params: FilterParams): Promise<User[]> {
-        let query = userCollection;
+        let query = userCollection();
 
         if (params.wheres) {
             for (const where of params.wheres) {
@@ -34,9 +34,9 @@ class UsersDB {
         email: string
     ): Promise<User | undefined> {
         const user = (
-            await userCollection
+            await userCollection()
                 .where("email", "==", email)
-                .where("deleted", "==", false)
+                .and("deleted", "==", false)
                 .get<User>()
         )[0];
 
@@ -47,9 +47,9 @@ class UsersDB {
 
     public static async getUserByUid(uid: string): Promise<User | undefined> {
         const user = (
-            await userCollection
+            await userCollection()
                 .where("uid", "==", uid)
-                .where("deleted", "==", false)
+                .and("deleted", "==", false)
                 .get<User>()
         )[0];
 
@@ -62,9 +62,9 @@ class UsersDB {
         refreshToken: string
     ): Promise<User | undefined> {
         const user = (
-            await userCollection
+            await userCollection()
                 .where("refreshToken", "==", refreshToken)
-                .where("deleted", "==", false)
+                .and("deleted", "==", false)
                 .get<User>()
         )[0];
 
@@ -77,7 +77,7 @@ class UsersDB {
         rememberMeToken: string
     ): Promise<User | undefined> {
         const user = (
-            await userCollection
+            await userCollection()
                 .where("rememberMeToken", "==", rememberMeToken)
                 .where("deleted", "==", false)
                 .get<User>()
@@ -92,7 +92,7 @@ class UsersDB {
         uid: string,
         updates: Partial<User>
     ): Promise<Date> {
-        return userCollection.doc(uid).update(updates);
+        return userCollection().doc(uid).update(updates);
     }
 }
 
