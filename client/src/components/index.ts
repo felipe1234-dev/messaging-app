@@ -44,3 +44,6 @@ export type { TabsProps } from "./Tabs";
 
 export { default as MegazordIcon } from "./MegazordIcon";
 export type { MegazordIconProps } from "./MegazordIcon";
+
+export { default as ChatCard } from "./ChatCard";
+export type { ChatCardProps } from "./ChatCard";

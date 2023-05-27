@@ -48,4 +48,8 @@ export interface ResponseError {
     [key: string]: any;
 }
 
+export interface HashMap<T> {
+    [key: string]: T;
+}
+
 export interface CustomIconProps extends Omit<IconProps, "icon"> {}

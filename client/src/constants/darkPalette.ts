@@ -39,6 +39,10 @@ const darkPalette = {
         primary: "#161819",
         secondary: "#191D1E",
         highlight: "#1556FF",
+        error: "#f44336",
+        warning: "#ffa726",
+        info: "#2196f3",
+        success: "#4caf50",
     },
     checkbox: {
         primary: "#1556FF",

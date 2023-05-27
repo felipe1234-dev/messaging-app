@@ -141,12 +141,23 @@ const Api = {
         },
         getChatMessages: async (
             chatUid: string,
-            limit?: number,
-            startAfter?: string
+            filters: {
+                limit?: number;
+                startAfter?: string;
+                orderBy?: [field: string, direction: "desc" | "asc"]
+            } = {}
         ) => {
-            const { data } = await httpEndpoint.get(
-                `/chat/${chatUid}/messages/?limit=${limit}&startAfter=${startAfter}`
-            );
+            let url = `/chat/${chatUid}/messages/?`;
+            const urlQueries: string[] = [];
+
+            for (const [key, value] of Object.entries(filters)) {
+                urlQueries.push(`${key}=${value}`);
+            }
+
+            url += urlQueries.join("&");
+
+            const { data } = await httpEndpoint.get(url);
+            
             return (data.messages as any[]).map((message) => {
                 if (message.type === "text") {
                     return new TextMessage(message);

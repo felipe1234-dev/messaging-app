@@ -1,14 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Chat, Message, User } from "messaging-app-globals";
 import { useAuth } from "@providers";
 import { useAsyncEffect } from "@hooks";
 import { Api } from "@services";
-import { WrapperChat } from "@types";
+import { convertToHashMap } from "@functions";
+import { WrapperChat, HashMap } from "@types";
 
 interface ChatsValue {
     chats: WrapperChat[];
-    messages: Message[];
-    members: User[];
 }
 
 const ChatsContext = createContext<ChatsValue | undefined>(undefined);
@@ -16,59 +15,83 @@ const ChatsContext = createContext<ChatsValue | undefined>(undefined);
 function ChatsProvider(props: { children: React.ReactNode }) {
     const { user } = useAuth();
 
-    const [chats, setChats] = useState<Chat[]>([]);
-    const [members, setMembers] = useState<User[]>([]);
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [chats, setChats] = useState<HashMap<Chat>>({});
+    const [members, setMembers] = useState<HashMap<User>>({});
+    const [messages, setMessages] = useState<HashMap<Message>>({});
 
     const onUserChatUpdated = (updatedChat: Chat) => {
-        setChats((prev) =>
-            prev.map((chat) => {
-                if (chat.uid === updatedChat.uid) return updatedChat;
-                return chat;
-            })
-        );
+        setChats((prev) => {
+            const newChats = { ...prev };
+            newChats[updatedChat.uid] = updatedChat;
+            return newChats;
+        });
     };
 
     const onMemberUpdated = (updatedUser: User) => {
-        const userUid = updatedUser.uid;
-
-        const userInChats = !!members.find((member) => member.uid === userUid);
-        if (!userInChats) return;
-
-        setMembers((prev) =>
-            prev.map((member) => {
-                if (member.uid === userUid) return updatedUser;
-                return member;
-            })
-        );
+        setMembers((prev) => {
+            const newMembers = { ...prev };
+            newMembers[updatedUser.uid] = updatedUser;
+            return newMembers;
+        });
     };
 
     const onMessageSent = (message: Message) => {
-        setMessages((prev) => [...prev, message]);
+        console.log("sent message", message);
+
+        setMessages((prev) => {
+            const newMessages = { ...prev };
+            newMessages[message.uid] = message;
+            return newMessages;
+        });
     };
 
     useAsyncEffect(async () => {
         if (!user) {
-            setChats([]);
-            setMembers([]);
-            setMessages([]);
-        } else {
-            const chats = await Api.chats.getUserChats();
-            setChats(chats);
+            setChats({});
+            setMembers({});
+            setMessages({});
+            return;
+        }
 
-            for (const chat of chats) {
-                const memberList = await Api.chats.getChatMembers(chat.uid);
-                setMembers(memberList);
+        const chats = await Api.chats.getUserChats();
 
-                for (const member of memberList) {
-                    Api.users.onUserUpdated(member.uid, onMemberUpdated);
-                }
+        for (const chat of chats) {
+            const memberList = await Api.chats.getChatMembers(chat.uid);
 
-                Api.messages.onMessageSentToChat(chat.uid, onMessageSent);
+            for (const member of memberList) {
+                Api.users.onUserUpdated(member.uid, onMemberUpdated);
             }
 
-            Api.chats.onUserChatUpdated(user.uid, onUserChatUpdated);
+            setMembers((prev) => {
+                const membersHashMap = convertToHashMap(
+                    [...Object.values(prev), ...memberList],
+                    (member) => member.uid
+                );
+                return membersHashMap;
+            });
+
+            const messageList = await Api.chats.getChatMessages(chat.uid, {
+                limit: 10,
+                orderBy: ["createdAt", "desc"],
+            });
+
+            console.log("messageList", messageList);
+
+            Api.messages.onMessageSentToChat(chat.uid, onMessageSent);
+
+            setMessages((prev) => {
+                const messagesHashMap = convertToHashMap(
+                    [...Object.values(prev), ...messageList],
+                    (message) => message.uid
+                );
+                return messagesHashMap;
+            });
         }
+
+        const chatHashMap = convertToHashMap(chats, (chat) => chat.uid);
+        setChats(chatHashMap);
+
+        Api.chats.onUserChatUpdated(user.uid, onUserChatUpdated);
     }, [user?.uid]);
 
     const sortMessages = (messages: Message[]) => {
@@ -81,7 +104,7 @@ function ChatsProvider(props: { children: React.ReactNode }) {
 
     const getLastMessage = (chat: Chat) => () => {
         const chatMessages = sortMessages(
-            messages.filter((message) => {
+            Object.values(messages).filter((message) => {
                 return message.chat === chat.uid;
             })
         );
@@ -89,23 +112,23 @@ function ChatsProvider(props: { children: React.ReactNode }) {
         return chatMessages[chatMessages.length - 1];
     };
 
-    const wrapperChats = chats
+    const wrapperChats = Object.values(chats)
         .map((chat) => ({
             ...chat,
-            members: members.filter((member) => {
+            members: Object.values(members).filter((member) => {
                 return chat.members.includes(member.uid);
             }),
-            blocked: members.filter((member) => {
+            blocked: Object.values(members).filter((member) => {
                 return chat.blocked.includes(member.uid);
             }),
-            admins: members.filter((member) => {
+            admins: Object.values(members).filter((member) => {
                 return chat.admins.includes(member.uid);
             }),
-            createdBy: members.find((member) => {
+            createdBy: Object.values(members).find((member) => {
                 return member.uid === chat.createdBy;
             }) as User,
             messages: sortMessages(
-                messages.filter((message) => {
+                Object.values(messages).filter((message) => {
                     return message.chat === chat.uid;
                 })
             ),
@@ -121,14 +144,10 @@ function ChatsProvider(props: { children: React.ReactNode }) {
             return 0;
         });
 
+    console.log("wrapperChats", wrapperChats);
+
     return (
-        <ChatsContext.Provider
-            value={{
-                chats: wrapperChats,
-                members,
-                messages,
-            }}
-        >
+        <ChatsContext.Provider value={{ chats: wrapperChats }}>
             {props.children}
         </ChatsContext.Provider>
     );
