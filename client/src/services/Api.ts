@@ -144,7 +144,7 @@ const Api = {
             filters: {
                 limit?: number;
                 startAfter?: string;
-                orderBy?: [field: string, direction: "desc" | "asc"]
+                orderBy?: [field: string, direction: "desc" | "asc"];
             } = {}
         ) => {
             let url = `/chat/${chatUid}/messages/?`;
@@ -157,13 +157,13 @@ const Api = {
             url += urlQueries.join("&");
 
             const { data } = await httpEndpoint.get(url);
-            
+
             return (data.messages as any[]).map((message) => {
-                if (message.type === "text") {
+                if (TextMessage.isTextMessage(message)) {
                     return new TextMessage(message);
-                } else if (message.type === "audio") {
+                } else if (AudioMessage.isAudioMessage(message)) {
                     return new AudioMessage(message);
-                } else if (message.type === "video") {
+                } else if (VideoMessage.isVideoMessage(message)) {
                     return new VideoMessage(message);
                 } else {
                     return new Message(message);
@@ -205,7 +205,19 @@ const Api = {
                         const doc = change.doc;
                         if (!doc.exists) throw new Error("Message not found");
 
-                        const msg = new Message(doc.data());
+                        const data = doc.data();
+                        let msg: Message;
+
+                        if (TextMessage.isTextMessage(data)) {
+                            msg = new TextMessage(data);
+                        } else if (AudioMessage.isAudioMessage(data)) {
+                            msg = new AudioMessage(data);
+                        } else if (VideoMessage.isVideoMessage(data)) {
+                            msg = new VideoMessage(data);
+                        } else {
+                            msg = new Message(data);
+                        }
+
                         callback(msg);
                     }
                 });
