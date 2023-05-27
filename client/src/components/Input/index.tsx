@@ -8,6 +8,7 @@ interface InputProps {
     textVariant?: Variant;
     iconVariant?: Variant;
     placeholder?: string;
+    light?: number;
     disableHover?: boolean;
     autofill?: boolean;
     disabled?: boolean;
@@ -38,21 +39,17 @@ function Input(props: InputProps) {
         textVariant = "primary",
         iconVariant = "primary",
         placeholder = "",
-
         disableHover = false,
         autofill = false,
         disabled = false,
         required = false,
         fullWidth = true,
-
+        light = 0,
         leftIcon,
         onLeftIconClick,
-
         rightIcon,
         onRightIconClick,
-
         onEnterPress,
-
         onChange,
         value,
     } = props;
@@ -78,6 +75,7 @@ function Input(props: InputProps) {
             textVariant={textVariant}
             fullWidth={fullWidth}
             disableHover={disableHover}
+            light={light}
         >
             {leftIcon && onLeftIconClick && (
                 <IconButton

@@ -7,14 +7,15 @@ interface InputContainerProps {
     textVariant: Variant;
     fullWidth: boolean;
     disableHover: boolean;
+    light: number;
 }
 
 const InputContainer = styled.div<InputContainerProps>`
-    ${({ variant, textVariant, fullWidth, disableHover, theme }) => css`
+    ${({ variant, textVariant, fullWidth, disableHover, light, theme }) => css`
         position: relative;
         display: inline-flex;
         align-items: center;
-        background-color: ${theme.background[variant]};
+        background-color: ${shade(theme.background[variant], light)};
         color: ${theme.text[textVariant]};
 
         cursor: text;
@@ -62,17 +63,21 @@ const InputContainer = styled.div<InputContainerProps>`
                 }
             }
         `}
+
+        svg {
+            width: 1.6em;
+        }
     `}
 `;
 
-interface InputProps {
+interface StyledInputProps {
     variant: Variant;
     textVariant: Variant;
     leftIcon: boolean;
     rightIcon: boolean;
 }
 
-const Input = styled.input<InputProps>`
+const StyledInput = styled.input<StyledInputProps>`
     ${({ textVariant, leftIcon, rightIcon, theme }) => css`
         width: 100%;
         height: 100%;
@@ -90,7 +95,7 @@ const Input = styled.input<InputProps>`
             padding-right: 10px;
         `}
 
-    &:focus {
+        &:focus {
             outline: none;
         }
 
@@ -119,9 +124,10 @@ const IconButton = styled.button<IconButtonProps>`
         }
 
         svg {
+            width: 1.6em;
             color: ${theme.icon[iconVariant]};
         }
     `}
 `;
 
-export { Input as StyledInput, InputContainer, IconButton };
+export { StyledInput, InputContainer, IconButton };
