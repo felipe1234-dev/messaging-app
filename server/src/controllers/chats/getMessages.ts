@@ -9,8 +9,9 @@ const getChatMessagesController: RouteController = async (
             chatUid?: string;
         };
         query: {
-            limit?: string;
+            limit?: number;
             startAfter?: string;
+            orderBy?: string; // orderBy=propName,direction
         };
     },
     res
@@ -33,14 +34,18 @@ const getChatMessagesController: RouteController = async (
         const isBlocked = chat.blocked.includes(currentUser.uid);
         if (isBlocked) throw new Unauthorized("You are blocked in this chat");
 
-        let { limit: limitQuery, startAfter } = req.query;
-        const limit = limitQuery ? Number(limitQuery) : Infinity;
+        const {
+            limit = Infinity,
+            startAfter,
+            orderBy = "createdAt,desc",
+        } = req.query;
+        const [field, direction] = orderBy.split(",");
 
-        let messages = await MessagesDB.getChatMessages(
-            chatUid,
+        let messages = await MessagesDB.getChatMessages(chatUid, {
             limit,
-            startAfter
-        );
+            startAfter,
+            orderBy: [field, direction === "desc" ? "desc" : "asc"],
+        });
 
         const canSeeDeletedMessages =
             currentUser.admin || chat.admins.includes(currentUser.uid);
