@@ -21,6 +21,7 @@ function Dropdown(props: DropdownProps) {
         label,
         iconVariant = "primary",
         transparent = true,
+        fullWidth = false,
         defaultOpen = false,
         width = "100%",
         height = "fit-content",
@@ -47,25 +48,22 @@ function Dropdown(props: DropdownProps) {
             <Button
                 {...buttonProps}
                 transparent={transparent}
+                fullWidth={fullWidth}
                 onClick={toggleDropdown}
+                direction="row"
+                justify="space-between"
+                align="center"
+                gap={gap}
+                width={width}
+                height={height}
             >
-                <Container
-                    transparent
-                    direction="row"
-                    justify="space-between"
-                    align="center"
-                    width={width}
-                    height={height}
-                    gap={gap}
+                <span>{label}</span>
+                <ArrowButton
+                    iconVariant={iconVariant}
+                    open={open}
                 >
-                    <span>{label}</span>
-                    <ArrowButton
-                        iconVariant={iconVariant}
-                        open={open}
-                    >
-                        <Icon icon={arrow} />
-                    </ArrowButton>
-                </Container>
+                    <Icon icon={arrow} />
+                </ArrowButton>
             </Button>
             <DropdownContent open={open}>{children}</DropdownContent>
         </Container>
