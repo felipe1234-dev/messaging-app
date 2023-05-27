@@ -1,20 +1,20 @@
 function toDate(value: any): Date {
-    if (value && typeof value === "object" && value.toDate) {
+    if (value && value instanceof Object && value.toDate) {
         const date = value.toDate();
         return date;
     }
-    if (value && typeof value === "object" && value._seconds) {
+    if (value && value instanceof Object && value._seconds) {
         const date = new Date(value._seconds * 1000);
         return date;
     }
-    if (value && typeof value === "object" && value.seconds) {
+    if (value && value instanceof Object && value.seconds) {
         const date = new Date(value.seconds * 1000);
         return date;
     }
     if (value instanceof Date) {
         return value;
     }
-    if (typeof value === "string" && value !== "") {
+    if (typeof value === "string" && !!value.trim()) {
         return new Date(value);
     }
 

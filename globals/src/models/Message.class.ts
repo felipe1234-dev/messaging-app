@@ -57,16 +57,16 @@ class Message {
                 typeof obj.sentBy === "string" &&
                 typeof obj.deleted === "boolean" &&
                 (obj.deletedAt === undefined ||
-                    obj.deletedAt instanceof Date) &&
+                    toDate(obj.deletedAt) instanceof Date) &&
                 (obj.deletedBy === undefined ||
                     typeof obj.deletedBy === "string") &&
-                obj.createdAt instanceof Date &&
+                toDate(obj.createdAt) instanceof Date &&
                 obj.views instanceof Array &&
                 obj.views.every(
                     (view: any) =>
                         view instanceof Object &&
                         typeof view.viewedBy === "string" &&
-                        view.viewedAt instanceof Date
+                        toDate(view.viewedAt) instanceof Date
                 ))
         );
     }

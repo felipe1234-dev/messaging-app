@@ -51,13 +51,13 @@ class FriendRequest {
                 obj.sentAt instanceof Date &&
                 typeof obj.accepted === "boolean" &&
                 (obj.acceptedAt === undefined ||
-                    obj.acceptedAt instanceof Date) &&
+                    toDate(obj.acceptedAt) instanceof Date) &&
                 typeof obj.rejected === "boolean" &&
                 (obj.rejectedAt === undefined ||
-                    obj.rejectedAt instanceof Date) &&
+                    toDate(obj.rejectedAt) instanceof Date) &&
                 typeof obj.deleted === "boolean" &&
                 (obj.deletedAt === undefined ||
-                    obj.deletedAt instanceof Date) &&
+                    toDate(obj.deletedAt) instanceof Date) &&
                 (obj.deletedBy === undefined ||
                     typeof obj.deletedBy === "string"))
         );

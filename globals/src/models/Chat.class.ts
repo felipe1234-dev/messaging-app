@@ -66,10 +66,10 @@ class Chat {
                 obj.admins.every((item: any) => typeof item === "string") &&
                 typeof obj.deleted === "boolean" &&
                 (obj.deletedAt === undefined ||
-                    obj.deletedAt instanceof Date) &&
+                    toDate(obj.deletedAt) instanceof Date) &&
                 (obj.deletedBy === undefined ||
                     typeof obj.deletedBy === "string") &&
-                obj.createdAt instanceof Date &&
+                toDate(obj.createdAt) instanceof Date &&
                 typeof obj.createdBy === "string")
         );
     }

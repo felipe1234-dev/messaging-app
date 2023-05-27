@@ -103,14 +103,14 @@ class User {
                 typeof obj.salt === "string" &&
                 typeof obj.password === "string" &&
                 typeof obj.admin === "boolean" &&
-                obj.createdAt instanceof Date &&
+                toDate(obj.createdAt) instanceof Date &&
                 obj.friends instanceof Array &&
                 obj.friends.every((item: any) => typeof item === "string") &&
                 typeof obj.online === "boolean" &&
                 (obj.sessionStart === undefined ||
-                    obj.sessionStart instanceof Date) &&
+                    toDate(obj.sessionStart) instanceof Date) &&
                 (obj.sessionEnd === undefined ||
-                    obj.sessionEnd instanceof Date) &&
+                    toDate(obj.sessionEnd) instanceof Date) &&
                 (obj.token === undefined || typeof obj.token === "string") &&
                 (obj.refreshToken === undefined ||
                     typeof obj.refreshToken === "string") &&
@@ -122,14 +122,14 @@ class User {
                 (obj.deletedBy === undefined ||
                     typeof obj.deletedBy === "string") &&
                 (obj.deletedAt === undefined ||
-                    obj.deletedAt instanceof Date) &&
+                    toDate(obj.deletedAt) instanceof Date) &&
                 typeof obj.blocked === "boolean" &&
                 (obj.blockedBy === undefined ||
                     typeof obj.blockedBy === "string") &&
                 (obj.blockedAt === undefined ||
-                    obj.blockedAt instanceof Date) &&
+                    toDate(obj.blockedAt) instanceof Date) &&
                 (obj.unblockedAt === undefined ||
-                    obj.unblockedAt instanceof Date) &&
+                    toDate(obj.unblockedAt) instanceof Date) &&
                 (obj.unblockedBy === undefined ||
                     typeof obj.unblockedBy === "string"))
         );
