@@ -16,6 +16,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         variant = "primary",
         textVariant = "primary",
         iconVariant = "primary",
+        direction = "row",
+        align = "center",
+        justify = "center",
+        gap = 5,
+        width = "auto",
+        height = "auto",
         fullWidth = true,
         uppercase = false,
         size = 1,
@@ -46,6 +52,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             variant={variant}
             textVariant={textVariant}
             iconVariant={iconVariant}
+            direction={direction}
+            align={align}
+            justify={justify}
+            gap={gap}
+            width={width}
+            height={height}
             fullWidth={fullWidth}
             uppercase={uppercase}
             size={size}

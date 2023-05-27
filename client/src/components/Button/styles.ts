@@ -1,10 +1,16 @@
 import styled, { css } from "styled-components";
 import { spinnerAnimation } from "@styles/animations";
-import { Variant } from "@types";
+import { Variant, Align, Justify, Direction } from "@types";
 import { shade } from "@functions";
 
 interface ButtonProps {
     variant: Variant;
+    direction: Direction;
+    justify: Justify;
+    align: Align;
+    gap: number;
+    width: string;
+    height: string;
     textVariant: Variant;
     iconVariant: Variant;
     fullWidth: boolean;
@@ -32,6 +38,12 @@ const Button = styled.button<ButtonProps>`
         variant,
         textVariant,
         iconVariant,
+        direction,
+        justify,
+        align,
+        gap,
+        width,
+        height,
         fullWidth,
         uppercase,
         size,
@@ -55,10 +67,13 @@ const Button = styled.button<ButtonProps>`
         position: relative;
 
         display: inline-flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: ${direction};
+        align-items: ${align};
+        justify-content: ${justify};
+        gap: ${gap}px;
 
-        width: ${fullWidth ? "100%" : "auto"};
+        width: ${fullWidth ? "100%" : width};
+        height: ${height};
         min-height: 40px;
         cursor: pointer;
 
