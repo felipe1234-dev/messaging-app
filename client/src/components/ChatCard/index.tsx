@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { Container, Title, Paragraph } from "@styles/layout";
+import { Title, Paragraph } from "@styles/layout";
 import { Avatar } from "@components";
+import { WrapperChat } from "@types";
+import { timeAgo } from "@functions";
 import { useAuth } from "@providers";
 import {
     Message,
@@ -10,59 +11,60 @@ import {
     User,
 } from "messaging-app-globals";
 
+import { OuterContainer, InnerContainer, CardInfo } from "./styles";
+
 interface ChatCardProps {
-    thumbnail?: string;
-    members: User[];
-    lastMessage: Message;
+    chat: WrapperChat;
+    onClick?: () => Promise<void> | void;
 }
 
 function ChatCard(props: ChatCardProps) {
-    const { members, lastMessage } = props;
+    const { chat, onClick } = props;
     const { user } = useAuth();
+    if (!user) return <></>;
 
-    const otherMembers = useMemo(
-        () => members.filter((member) => member.uid !== user?.uid),
-        [user?.uid, members]
+    const otherMembers = chat.members.filter(
+        (member) => member.uid !== user.uid
     );
     const firstMember = otherMembers[0];
-
-    if (!user) return <></>;
     if (!firstMember) return <></>;
 
+    const lastMessage = chat.getLastMessage();
+    const senderUid = lastMessage?.sentBy;
+    const sender = chat.members.find((member) => member.uid === senderUid);
+    const senderName = sender?.uid === user.uid ? "You" : sender?.name;
+
+    const Message = () => (
+        <>
+            {senderName && lastMessage ? (
+                TextMessage.isTextMessage(lastMessage) ? (
+                    `${senderName}: ${lastMessage.text} ${timeAgo(
+                        lastMessage.createdAt
+                    )}`
+                ) : (
+                    <></>
+                )
+            ) : (
+                <></>
+            )}
+        </>
+    );
+
     return (
-        <Container
-            transparent
-            direction="row"
-            align="center"
-            justify="space-between"
-        >
-            <Container
-                transparent
-                direction="row"
-                align="center"
-                justify="start"
-            >
+        <OuterContainer onClick={onClick}>
+            <InnerContainer>
                 <Avatar
                     src={firstMember.photo}
                     alt={firstMember.name}
                 />
-                <Container
-                    transparent
-                    direction="column"
-                    align="start"
-                    justify="center"
-                >
-                    <Title>{firstMember.name}</Title>
-                    <Paragraph>
-                        {TextMessage.isTextMessage(lastMessage) ? (
-                            lastMessage.text
-                        ) : (
-                            <></>
-                        )}
+                <CardInfo>
+                    <Title level={5}>{firstMember.name}</Title>
+                    <Paragraph variant="secondary">
+                        <Message />
                     </Paragraph>
-                </Container>
-            </Container>
-        </Container>
+                </CardInfo>
+            </InnerContainer>
+        </OuterContainer>
     );
 }
 

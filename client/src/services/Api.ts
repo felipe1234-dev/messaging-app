@@ -296,6 +296,19 @@ const Api = {
             });
             return (data.user as any[]).map((user) => new User(user));
         },
+        getUserByUid: async (userUid: string) => {
+            const { data } = await httpEndpoint.post("/search/users", {
+                filters: {
+                    wheres: [["uid", "==", userUid]]
+                }
+            });
+
+            if (data.length === 0) return undefined;
+
+            const user = new User(data[0]);
+
+            return user;
+        },
         onUserUpdated: (
             userUid: string,
             callback: (user: User) => void

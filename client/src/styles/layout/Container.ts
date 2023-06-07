@@ -86,7 +86,7 @@ const Container = styled.div<ContainerProps>`
         width: ${width};
         height: ${height};
         background-color: ${transparent || !variant
-            ? "transparent"
+            ? `rgba(255, 255, 255, ${light})`
             : shade(theme.background[variant], light || 0)};
 
         ${p

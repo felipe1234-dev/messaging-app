@@ -57,7 +57,7 @@ interface TitleProps extends Partial<StyledTitleProps> {
 }
 
 function Title(props: TitleProps) {
-    const {
+    let {
         level = 1,
         variant = "primary",
         align = "center",
@@ -75,12 +75,13 @@ function Title(props: TitleProps) {
         py,
         children,
     } = props;
+    level = Math.max(Math.min(level, 6), 1);
 
     return (
         // @ts-ignore
         <StyledTitle
             // @ts-ignore
-            as={`h${level}`}
+            as={`h${Math.round(level)}`}
             level={level}
             variant={variant}
             align={align}
