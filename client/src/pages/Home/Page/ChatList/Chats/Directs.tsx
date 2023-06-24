@@ -8,7 +8,7 @@ import { SearchAlt2 } from "@styled-icons/boxicons-regular";
 function Directs() {
     const [search, setSearch] = useState("");
     const { chats } = useChats();
-    const { openChatWindow } = useChatWindow();
+    const { chatWindow, openChatWindow } = useChatWindow();
 
     return (
         <Container
@@ -40,6 +40,7 @@ function Directs() {
                         key={chat.uid}
                         chat={chat}
                         onClick={() => openChatWindow(chat)}
+                        selected={chat.uid === chatWindow?.uid}
                     />
                 ))}
         </Container>

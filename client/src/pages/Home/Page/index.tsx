@@ -1,17 +1,16 @@
-import { Container } from "@styles/layout";
+import { Container, Columns } from "@styles/layout";
 import { useAuth } from "@providers";
 
 import Sidebar from "./Sidebar";
-import Chats from "./Chats";
+import ChatList from "./ChatList";
+import ChatWindow from "./ChatWindow";
 
 function Page() {
     const { user } = useAuth();
     if (!user) return <></>;
 
     return (
-        <Container
-            transparent
-            direction="row"
+        <Columns
             justify="start"
             align="start"
             height="100vh"
@@ -19,8 +18,9 @@ function Page() {
             gap={0}
         >
             <Sidebar />
-            <Chats />
-        </Container>
+            <ChatList />
+            <ChatWindow />
+        </Columns>
     );
 }
 

@@ -97,9 +97,9 @@ function Sidebar() {
                     height="fit-content"
                 >
                     <Button
-                        transparent
-                        iconed
                         round
+                        iconed
+                        transparent
                         onClick={toggleTheme}
                         size={iconSize}
                         p={8}
@@ -107,9 +107,9 @@ function Sidebar() {
                         <Icon icon={theme === "light" ? <Moon /> : <Sun />} />
                     </Button>
                     <Button
-                        transparent
-                        iconed
                         round
+                        iconed
+                        transparent
                         onClick={handleLogout}
                         size={iconSize}
                         p={8}

@@ -10,7 +10,7 @@ import { CreateGroup } from "@icons";
 import Directs from "./Directs";
 import Groups from "./Groups";
 
-interface ChatListProps {
+interface DropdownListProps {
     label: string;
     action: {
         onClick: (
@@ -21,7 +21,7 @@ interface ChatListProps {
     list: React.ReactNode;
 }
 
-const ChatList = ({ label, action, list }: ChatListProps) => (
+const DropdownList = ({ label, action, list }: DropdownListProps) => (
     <Container
         transparent
         direction="row"
@@ -52,7 +52,7 @@ const ChatList = ({ label, action, list }: ChatListProps) => (
     </Container>
 );
 
-function Messages() {
+function Chats() {
     return (
         <Container
             transparent
@@ -72,7 +72,7 @@ function Messages() {
                 gap={20}
                 p={padding}
             >
-                <ChatList
+                <DropdownList
                     label="Directs"
                     list={<Directs />}
                     action={{
@@ -81,7 +81,7 @@ function Messages() {
                     }}
                 />
 
-                <ChatList
+                <DropdownList
                     label="Groups"
                     list={<Groups />}
                     action={{
@@ -94,4 +94,4 @@ function Messages() {
     );
 }
 
-export default Messages;
+export default Chats;

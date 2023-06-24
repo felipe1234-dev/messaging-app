@@ -13,7 +13,8 @@ export type Justify =
     | "end"
     | "space-between"
     | "space-around"
-    | "space-evenly";
+    | "space-evenly"
+    | "stretch";
 export type Position =
     | "top-left"
     | "top-right"

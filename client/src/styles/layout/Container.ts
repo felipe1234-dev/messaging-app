@@ -7,6 +7,7 @@ interface ContainerProps {
     align?: Align;
     justify?: Justify;
     gap?: number;
+    flex?: string;
 
     width?: string;
     height?: string;
@@ -37,6 +38,9 @@ interface ContainerProps {
     roundedBL?: string;
     roundedBR?: string;
     rounded?: string;
+
+    overflowX?: string;
+    overflowY?: string;
 }
 
 const Container = styled.div<ContainerProps>`
@@ -45,6 +49,7 @@ const Container = styled.div<ContainerProps>`
         align,
         justify,
         gap,
+        flex,
 
         width,
         height,
@@ -75,6 +80,10 @@ const Container = styled.div<ContainerProps>`
 
         variant,
         transparent,
+
+        overflowX,
+        overflowY,
+
         theme,
     }) => css`
         display: flex;
@@ -82,12 +91,25 @@ const Container = styled.div<ContainerProps>`
         align-items: ${align};
         justify-content: ${justify};
         gap: ${gap}px;
+        ${flex &&
+        css`
+            flex: ${flex};
+        `}
 
         width: ${width};
         height: ${height};
         background-color: ${transparent || !variant
             ? `rgba(255, 255, 255, ${light})`
             : shade(theme.background[variant], light || 0)};
+
+        ${overflowX &&
+        css`
+            overflow-x: ${overflowX};
+        `}
+        ${overflowY &&
+        css`
+            overflow-y: ${overflowY};
+        `}
 
         ${p
             ? css`
@@ -111,7 +133,7 @@ const Container = styled.div<ContainerProps>`
                   margin-bottom: ${my ?? mb}px;
               `}
 
-    ${rounded
+        ${rounded
             ? css`
                   border-radius: ${rounded};
               `

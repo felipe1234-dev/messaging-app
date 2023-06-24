@@ -47,3 +47,6 @@ export type { MegazordIconProps } from "./MegazordIcon";
 
 export { default as ChatCard } from "./ChatCard";
 export type { ChatCardProps } from "./ChatCard";
+
+export { default as MessageCard } from "./MessageCard";
+export type { MessageCardProps } from "./MessageCard";

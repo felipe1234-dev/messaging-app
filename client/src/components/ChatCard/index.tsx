@@ -16,10 +16,11 @@ import { OuterContainer, InnerContainer, CardInfo } from "./styles";
 interface ChatCardProps {
     chat: WrapperChat;
     onClick?: () => Promise<void> | void;
+    selected?: boolean;
 }
 
 function ChatCard(props: ChatCardProps) {
-    const { chat, onClick } = props;
+    const { chat, onClick, selected = false } = props;
     const { user } = useAuth();
     if (!user) return <></>;
 
@@ -51,7 +52,10 @@ function ChatCard(props: ChatCardProps) {
     );
 
     return (
-        <OuterContainer onClick={onClick}>
+        <OuterContainer
+            onClick={onClick}
+            selected={selected}
+        >
             <InnerContainer>
                 <Avatar
                     src={firstMember.photo}
