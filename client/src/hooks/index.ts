@@ -4,3 +4,4 @@ export { default as useInterval } from "./useInterval";
 export { default as useAsyncEffect } from "./useAsyncEffect";
 export { default as usePreventBodyScroll } from "./usePreventBodyScroll";
 export { default as useDrag } from "./useDrag";
+export { default as useForceUpdate } from "./useForceUpdate";

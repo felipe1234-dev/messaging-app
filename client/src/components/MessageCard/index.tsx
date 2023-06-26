@@ -1,12 +1,15 @@
 import { useAuth } from "@providers";
 import { timeAgo } from "@functions";
+import { useInterval, useForceUpdate } from "@hooks";
 
+import { Title, Columns, Paragraph, Container } from "@styles/layout";
 import { MessageRow, MessageContainer, MessageBalloon } from "./styles";
-import { Title, Columns, Paragraph } from "@styles/layout";
 
 import { User, Message, TextMessage } from "messaging-app-globals";
 
 import Avatar from "../Avatar";
+
+const width = "35px";
 
 interface MessageCardProps {
     message: Message;
@@ -17,9 +20,9 @@ interface MessageCardProps {
 function MessageCard(props: MessageCardProps) {
     const { sender, message, showSender = true } = props;
     const { user } = useAuth();
-    if (!user) return <></>;
+    const { forceUpdate } = useForceUpdate();
 
-    const isSender = user.uid === sender.uid;
+    const isSender = user?.uid === sender.uid;
 
     const SenderPhoto = () => (
         <Avatar
@@ -28,11 +31,16 @@ function MessageCard(props: MessageCardProps) {
         />
     );
 
-    const baseProps = { isSender };
+    const baseProps = { isSender, showSender };
+
+    useInterval(() => forceUpdate(), 1000);
+
+    if (!user) return <></>;
 
     return (
         <MessageRow {...baseProps}>
             {!isSender && showSender && <SenderPhoto />}
+            {!isSender && !showSender && <Container width={width} />}
             <MessageContainer {...baseProps}>
                 {showSender && (
                     <Columns
@@ -54,6 +62,7 @@ function MessageCard(props: MessageCardProps) {
                 </MessageBalloon>
             </MessageContainer>
             {isSender && showSender && <SenderPhoto />}
+            {isSender && !showSender && <Container width={width} />}
         </MessageRow>
     );
 }

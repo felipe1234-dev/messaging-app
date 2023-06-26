@@ -32,17 +32,19 @@ const MessageContainer = styled.div<MessageContainerProps>`
 
 interface MessageBalloonProps {
     isSender: boolean;
+    showSender: boolean;
 }
 
 const MessageBalloon = styled.p<MessageBalloonProps>`
-    ${({ isSender, theme }) => css`
-        background-color: ${
-            theme.background[isSender ? "highlight" : "secondary"]
-        };
+    ${({ isSender, showSender, theme }) => css`
+        background-color: ${theme.background[
+            isSender ? "highlight" : "secondary"
+        ]};
         color: ${theme.text.primary};
         padding: 10px;
         border-radius: 18px;
-        border-top-${isSender ? "right" : "left"}-radius: 0;
+        ${showSender &&
+        css`border-top-${isSender ? "right" : "left"}-radius: 0;`}
     `}
 `;
 

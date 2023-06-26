@@ -2,11 +2,8 @@ function timeAgo(date: Date) {
     const today = new Date();
 
     const millisecondsPassed = Math.round(today.getTime() - date.getTime());
-    if (millisecondsPassed < 1000) return "Just now";
-
     const secondsPassed = Math.round(millisecondsPassed / 1000);
-    if (secondsPassed === 1) return "1 second ago";
-    if (secondsPassed < 60) return `${secondsPassed} seconds ago`;
+    if (secondsPassed < 60) return "Just now";
 
     const minutesPassed = Math.round(secondsPassed / 60);
     if (minutesPassed === 1) return "1 minute ago";

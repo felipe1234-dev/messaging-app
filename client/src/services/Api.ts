@@ -1,3 +1,5 @@
+import axios, { AxiosError } from "axios";
+import { isLocal } from "@functions";
 import {
     FilterParams,
     User,
@@ -8,9 +10,13 @@ import {
     VideoMessage,
     secureUserData,
 } from "messaging-app-globals";
-import { isLocal } from "@functions";
-import { ResponseError, isResponseError, Unsubscribe } from "@types";
-import axios, { AxiosError } from "axios";
+import {
+    ResponseError,
+    isResponseError,
+    Unsubscribe,
+    WrapperUser,
+    WrapperChat,
+} from "@types";
 import {
     auth,
     chatCollection,
@@ -189,8 +195,41 @@ const Api = {
                     }
                 });
         },
+
+        connect: (user: WrapperUser, chat: WrapperChat) => {
+            const memberUids = chat.members.map((member) => member.uid);
+            const blockedUids = chat.blocked.map((member) => member.uid);
+
+            if (!memberUids.includes(user.uid) && !user.admin) {
+                throw new Error("You don't participate in this chat");
+            }
+
+            if (blockedUids.includes(user.uid)) {
+                throw new Error("You were blocked");
+            }
+
+            return {
+                sendTextMessage: (text: string) => {
+                    const textMessage = new TextMessage({
+                        text,
+                        chat: chat.uid,
+                        sentBy: user.uid,
+                    });
+
+                    return messageCollection
+                        .doc(textMessage.uid)
+                        .set({ ...textMessage });
+                },
+            };
+        },
     },
     messages: {
+        sendTextMessage: async (chatUid: string, text: string) => {
+            await httpEndpoint.put("/send/text/message", {
+                text,
+                chat: chatUid,
+            });
+        },
         onMessageSentToChat: (
             chatUid: string,
             callback: (message: Message) => void
@@ -299,8 +338,8 @@ const Api = {
         getUserByUid: async (userUid: string) => {
             const { data } = await httpEndpoint.post("/search/users", {
                 filters: {
-                    wheres: [["uid", "==", userUid]]
-                }
+                    wheres: [["uid", "==", userUid]],
+                },
             });
 
             if (data.length === 0) return undefined;

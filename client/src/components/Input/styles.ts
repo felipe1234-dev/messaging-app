@@ -114,9 +114,9 @@ const IconButton = styled.button<IconButtonProps>`
         cursor: pointer;
         background-color: transparent;
         display: flex;
-        padding: 0;
+        padding: 8px;
         border: none;
-        border-radius: 10px;
+        border-radius: 50%;
         transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
 
         &:hover {

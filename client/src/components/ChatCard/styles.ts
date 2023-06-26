@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { shade } from "@functions";
 
 const px = 10;
 const py = 10;
@@ -39,9 +40,10 @@ const InnerContainer = styled.div`
     background-color: transparent;
     padding: ${py}px ${px}px;
     gap: 10px;
+    min-width: 288px;
 `;
 
-const CardInfo = styled.div`
+const CardBody = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -50,4 +52,51 @@ const CardInfo = styled.div`
     background-color: transparent;
 `;
 
-export { OuterContainer, InnerContainer, CardInfo };
+const CardInfo = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: space-between;
+    justify-content: center;
+    gap: 5px;
+`;
+
+const CardText = styled.p`
+    ${({ theme }) => css`
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100px;
+        color: ${shade(theme.background.secondary, 0.5)};
+    `}
+`;
+
+const CardSender = styled.p`
+    ${({ theme }) => css`
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        color: ${shade(theme.background.secondary, 1)};
+    `}
+`;
+
+const CardDate = styled.p`
+    ${({ theme }) => css`
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        color: ${shade(theme.background.secondary, 1)};
+    `}
+`;
+
+export {
+    OuterContainer,
+    InnerContainer,
+    CardBody,
+    CardInfo,
+    CardText,
+    CardDate,
+    CardSender,
+};

@@ -1,5 +1,5 @@
-import { Variant } from "@types";
 import { StyledInput, InputContainer, IconButton } from "./styles";
+import { Variant } from "@types";
 
 interface InputProps {
     label?: string;
@@ -7,6 +7,8 @@ interface InputProps {
     variant?: Variant;
     textVariant?: Variant;
     iconVariant?: Variant;
+    rightIconVariant?: Variant;
+    leftIconVariant?: Variant;
     placeholder?: string;
     light?: number;
     disableHover?: boolean;
@@ -38,6 +40,8 @@ function Input(props: InputProps) {
         variant = "primary",
         textVariant = "primary",
         iconVariant = "primary",
+        rightIconVariant,
+        leftIconVariant,
         placeholder = "",
         disableHover = false,
         autofill = false,
@@ -79,7 +83,7 @@ function Input(props: InputProps) {
         >
             {leftIcon && onLeftIconClick && (
                 <IconButton
-                    iconVariant={iconVariant}
+                    iconVariant={leftIconVariant || iconVariant}
                     type="button"
                     title="left-icon"
                     onClick={onLeftIconClick}
@@ -104,9 +108,9 @@ function Input(props: InputProps) {
             />
             {rightIcon && onRightIconClick && (
                 <IconButton
-                    iconVariant={iconVariant}
+                    iconVariant={rightIconVariant || iconVariant}
                     type="button"
-                    title="left-icon"
+                    title="right-icon"
                     onClick={onRightIconClick}
                 >
                     {rightIcon}

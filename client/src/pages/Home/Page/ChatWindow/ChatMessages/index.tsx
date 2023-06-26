@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 import { MessageCard, Input, Avatar } from "@components";
-import { Container } from "@styles/layout";
+import { Container, Icon, Columns, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
-import { useAuth } from "@providers";
+import { Api } from "@services";
+import { timeAgo } from "@functions";
+import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
+
+import { SendPlane } from "@styled-icons/remix-fill";
 
 const paddingX = 50;
 const paddingY = 25;
@@ -13,13 +17,72 @@ const paddingY = 25;
 function ChatMessages() {
     const { user } = useAuth();
     const { chatWindow } = useChatWindow();
+    const alert = useAlert();
+
     const [messageEl, setMessageEl] = useState<HTMLDivElement | null>(null);
     const [message, setMessage] = useState("");
 
-    useEffect(() => {
+    const scrollToBottom = () => {
         if (!messageEl) return;
-        messageEl.scrollTop = messageEl.scrollHeight;
+
+        messageEl.scrollTo({
+            top: messageEl.scrollHeight,
+            behavior: "smooth",
+        });
+    };
+
+    const handleSendMessage = () => {
+        if (!user || !chatWindow) return;
+
+        Api.chats
+            .connect(user, chatWindow)
+            .sendTextMessage(message)
+            .then(() => {
+                setMessage("");
+                scrollToBottom();
+            })
+            .catch((err) => alert.error(err));
+    };
+
+    useEffect(() => {
+        scrollToBottom();
     }, [messageEl]);
+
+    const chatMessages = useMemo(() => {
+        let prevSender: User | undefined = undefined;
+
+        return (chatWindow?.messages || []).reduce(
+            (messages, message) => {
+                const messageDate = message.createdAt.toDateString();
+                const sender = chatWindow?.members.find(
+                    (member) => member.uid === message.sentBy
+                );
+                let showSender = true;
+
+                if (!sender) return messages;
+
+                if (!messages[messageDate]) {
+                    showSender = true;
+                    messages[messageDate] = [];
+                } else {
+                    showSender = prevSender?.uid !== sender.uid;
+                }
+
+                messages[messageDate].push([message, sender, showSender]);
+
+                prevSender = sender;
+
+                return messages;
+            },
+            {} as {
+                [time: string]: [
+                    message: Message,
+                    sender: User,
+                    showSender: boolean
+                ][];
+            }
+        );
+    }, [chatWindow]);
 
     if (!user || !chatWindow) return <></>;
 
@@ -46,22 +109,31 @@ function ChatMessages() {
                 overflowY="auto"
                 overflowX="hidden"
             >
-                {chatWindow?.messages
-                    .map((message) => {
-                        const sender = chatWindow.members.find(
-                            (member) => member.uid === message.sentBy
-                        );
-
-                        return [message, sender] as [Message, User];
-                    })
-                    .filter(([, sender]) => !!sender)
-                    .map(([message, sender]) => (
-                        <MessageCard
-                            key={message.uid}
-                            message={message}
-                            sender={sender}
-                        />
-                    ))}
+                {Object.entries(chatMessages).map(
+                    ([timeAgo, messagesAndSenders]) => (
+                        <>
+                            <Columns
+                                align="center"
+                                justify="center"
+                                width="100%"
+                            >
+                                <Paragraph variant="secondary">
+                                    {timeAgo}
+                                </Paragraph>
+                            </Columns>
+                            {messagesAndSenders.map(
+                                ([message, sender, showSender]) => (
+                                    <MessageCard
+                                        key={message.uid}
+                                        message={message}
+                                        sender={sender}
+                                        showSender={showSender}
+                                    />
+                                )
+                            )}
+                        </>
+                    )
+                )}
             </Container>
             <Container
                 transparent
@@ -81,6 +153,15 @@ function ChatMessages() {
                             alt={user.name}
                         />
                     }
+                    rightIcon={
+                        <Icon
+                            icon={<SendPlane />}
+                            size={2}
+                        />
+                    }
+                    rightIconVariant="highlight"
+                    onRightIconClick={handleSendMessage}
+                    onEnterPress={handleSendMessage}
                     placeholder="Your message..."
                     onChange={(evt) => setMessage(evt.target.value)}
                     value={message}

@@ -36,8 +36,6 @@ function ChatsProvider(props: { children: React.ReactNode }) {
     };
 
     const onMessageSent = (message: Message) => {
-        console.log("sent message", message);
-
         setMessages((prev) => {
             const newMessages = { ...prev };
             newMessages[message.uid] = message;
@@ -74,8 +72,6 @@ function ChatsProvider(props: { children: React.ReactNode }) {
                 limit: 10,
                 orderBy: ["createdAt", "desc"],
             });
-
-            console.log("messageList", messageList);
 
             Api.messages.onMessageSentToChat(chat.uid, onMessageSent);
 
@@ -143,8 +139,6 @@ function ChatsProvider(props: { children: React.ReactNode }) {
             if (aLastMessage.createdAt < bLastMessage.createdAt) return 1;
             return 0;
         });
-
-    console.log("wrapperChats", wrapperChats);
 
     return (
         <ChatsContext.Provider value={{ chats: wrapperChats }}>
