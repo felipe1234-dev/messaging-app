@@ -1,11 +1,11 @@
-import { useMemo, useState, useEffect } from "react";
+import React, { Fragment, useMemo, useState, useEffect } from "react";
 
 import { MessageCard, Input, Avatar } from "@components";
 import { Container, Icon, Columns, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
 import { Api } from "@services";
-import { timeAgo } from "@functions";
+import { useInterval } from "@hooks";
 import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
 
@@ -20,7 +20,8 @@ function ChatMessages() {
     const alert = useAlert();
 
     const [messageEl, setMessageEl] = useState<HTMLDivElement | null>(null);
-    const [message, setMessage] = useState("");
+    const [text, setText] = useState("");
+    const [startedTypingAt, setStartedTypingAt] = useState<Date>();
 
     const scrollToBottom = () => {
         if (!messageEl) return;
@@ -31,14 +32,23 @@ function ChatMessages() {
         });
     };
 
+    const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        if (!user || !chatWindow) return;
+
+        setText(evt.target.value);
+
+        setStartedTypingAt(new Date());
+        Api.chats.connect(user, chatWindow).isTyping();
+    };
+
     const handleSendMessage = () => {
         if (!user || !chatWindow) return;
 
         Api.chats
             .connect(user, chatWindow)
-            .sendTextMessage(message)
+            .sendTextMessage(text)
             .then(() => {
-                setMessage("");
+                setText("");
                 scrollToBottom();
             })
             .catch((err) => alert.error(err));
@@ -47,6 +57,25 @@ function ChatMessages() {
     useEffect(() => {
         scrollToBottom();
     }, [messageEl]);
+
+    useInterval(
+        (timerId) => {
+            if (!startedTypingAt || !user || !chatWindow)
+                return clearInterval(timerId);
+
+            const today = new Date();
+            const intervalSecs =
+                (today.getTime() - startedTypingAt.getTime()) / 1000;
+
+            if (intervalSecs >= 1) {
+                setStartedTypingAt(undefined);
+                Api.chats.connect(user, chatWindow).isNotTyping();
+                clearInterval(timerId);
+            }
+        },
+        1000,
+        [startedTypingAt]
+    );
 
     const chatMessages = useMemo(() => {
         let prevSender: User | undefined = undefined;
@@ -111,7 +140,7 @@ function ChatMessages() {
             >
                 {Object.entries(chatMessages).map(
                     ([timeAgo, messagesAndSenders]) => (
-                        <>
+                        <Fragment key={timeAgo}>
                             <Columns
                                 align="center"
                                 justify="center"
@@ -131,7 +160,7 @@ function ChatMessages() {
                                     />
                                 )
                             )}
-                        </>
+                        </Fragment>
                     )
                 )}
             </Container>
@@ -163,8 +192,8 @@ function ChatMessages() {
                     onRightIconClick={handleSendMessage}
                     onEnterPress={handleSendMessage}
                     placeholder="Your message..."
-                    onChange={(evt) => setMessage(evt.target.value)}
-                    value={message}
+                    onChange={handleTextChange}
+                    value={text}
                     light={0.05}
                 />
             </Container>

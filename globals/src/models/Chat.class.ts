@@ -9,6 +9,7 @@ class Chat {
     public blocked: string[];
     public members: string[];
     public admins: string[];
+    public typing: string[];
     public deleted: boolean;
     public deletedAt?: Date;
     public deletedBy?: string;
@@ -25,6 +26,7 @@ class Chat {
             blocked = [],
             members = [],
             admins = [],
+            typing = [],
             deleted = false,
             deletedAt,
             deletedBy,
@@ -40,6 +42,7 @@ class Chat {
         this.blocked = blocked;
         this.members = members;
         this.admins = admins;
+        this.typing = typing;
 
         this.deleted = deleted;
         if (deletedAt) this.deletedAt = toDate(deletedAt);
@@ -64,6 +67,8 @@ class Chat {
                 obj.members.every((item: any) => typeof item === "string") &&
                 obj.admins instanceof Array &&
                 obj.admins.every((item: any) => typeof item === "string") &&
+                obj.typing instanceof Array &&
+                obj.typing.every((item: any) => typeof item === "string") &&
                 typeof obj.deleted === "boolean" &&
                 (obj.deletedAt === undefined ||
                     toDate(obj.deletedAt) instanceof Date) &&

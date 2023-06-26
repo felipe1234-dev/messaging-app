@@ -209,6 +209,20 @@ const Api = {
             }
 
             return {
+                isTyping: () => {
+                    return chatCollection.doc(chat.uid).update({
+                        typing: Array.from(new Set([...chat.typing, user.uid])),
+                    });
+                },
+                isNotTyping: () => {
+                    return chatCollection.doc(chat.uid).update({
+                        typing: Array.from(
+                            new Set(
+                                chat.typing.filter((uid) => uid !== user.uid)
+                            )
+                        ),
+                    });
+                },
                 sendTextMessage: (text: string) => {
                     const textMessage = new TextMessage({
                         text,
