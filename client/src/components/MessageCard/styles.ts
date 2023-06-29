@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { shade } from "@functions";
 
 interface MessageRowProps {
     isSender: boolean;
@@ -37,9 +38,10 @@ interface MessageBalloonProps {
 
 const MessageBalloon = styled.p<MessageBalloonProps>`
     ${({ isSender, showSender, theme }) => css`
-        background-color: ${theme.background[
-            isSender ? "highlight" : "secondary"
-        ]};
+        background-color: ${shade(
+            theme.background[isSender ? "highlight" : "secondary"],
+            isSender ? 0 : 0.1
+        )};
         color: ${theme.text.primary};
         padding: 10px;
         border-radius: 18px;

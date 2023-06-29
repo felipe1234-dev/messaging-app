@@ -1,6 +1,5 @@
 import { Title, Paragraph } from "@styles/layout";
 
-import { Avatar } from "@components";
 import { WrapperChat } from "@types";
 import { timeAgo } from "@functions";
 import { useAuth } from "@providers";
@@ -23,6 +22,9 @@ import {
     CardInfo,
     CardText,
 } from "./styles";
+
+import Avatar from "../Avatar";
+import OnlineNow from "../OnlineNow";
 
 interface ChatCardProps {
     chat: WrapperChat;
@@ -57,16 +59,26 @@ function ChatCard(props: ChatCardProps) {
         <></>
     );
 
+    const Profile = () => (
+        <Avatar
+            src={firstMember.photo}
+            alt={firstMember.name}
+        />
+    );
+
     return (
         <OuterContainer
             onClick={onClick}
             selected={selected}
         >
             <InnerContainer>
-                <Avatar
-                    src={firstMember.photo}
-                    alt={firstMember.name}
-                />
+                {firstMember.online ? (
+                    <OnlineNow>
+                        <Profile />
+                    </OnlineNow>
+                ) : (
+                    <Profile />
+                )}
                 <CardBody>
                     <Title level={5}>{firstMember.name}</Title>
                     <CardInfo>

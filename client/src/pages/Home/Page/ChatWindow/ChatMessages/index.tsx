@@ -1,7 +1,7 @@
 import React, { Fragment, useMemo, useState, useEffect } from "react";
 
 import { MessageCard, Input, Avatar } from "@components";
-import { Container, Icon, Columns, Paragraph } from "@styles/layout";
+import { Container, Icon, Columns, Rows, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
 import { Api } from "@services";
@@ -113,6 +113,11 @@ function ChatMessages() {
         );
     }, [chatWindow]);
 
+    const usersTyping = chatWindow?.members.filter(
+        (member) =>
+            member.uid !== user?.uid && chatWindow?.typing.includes(member.uid)
+    );
+
     if (!user || !chatWindow) return <></>;
 
     return (
@@ -172,8 +177,32 @@ function ChatMessages() {
                 width={`calc(100% - ${2 * paddingX}px)`}
                 flex="1 1"
                 px={paddingX}
-                py={paddingY}
+                pt={paddingY / 2}
+                pb={paddingY}
             >
+                {usersTyping && (
+                    <Rows
+                        transparent
+                        align="start"
+                        justify="center"
+                        width="100%"
+                    >
+                        {usersTyping.map((user) => (
+                            <Columns
+                                transparent
+                                align="center"
+                                justify="start"
+                                width="fit-content"
+                            >
+                                <Avatar
+                                    src={user.photo}
+                                    alt={user.name}
+                                />
+                                <Paragraph>{user.name} is typing...</Paragraph>
+                            </Columns>
+                        ))}
+                    </Rows>
+                )}
                 <Input
                     variant="secondary"
                     leftIcon={
