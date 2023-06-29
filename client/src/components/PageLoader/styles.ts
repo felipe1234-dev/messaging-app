@@ -1,13 +1,13 @@
 import styled, { css } from "styled-components";
-import { growAnimation, moveAnimation } from "@styles/animations";
 
 const time = "500ms";
+const loaderSize = "50px";
 
 interface WrapperProps {
     hidden: boolean;
 }
 
-const Wrapper = styled.div<WrapperProps>`
+const DarkBackground = styled.div<WrapperProps>`
     @keyframes goToBackLayerAnimation {
         ${() => {
             let css = "";
@@ -60,35 +60,54 @@ const Wrapper = styled.div<WrapperProps>`
         `}
 `;
 
-const InnerWrapper = styled.div`
-    height: 15px;
-    width: 105px;
+const LoaderContainer = styled.div`
+    height: ${loaderSize};
+    width: ${loaderSize};
     display: flex;
     position: relative;
 `;
 
-const Dot = styled.div`
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: ${(props) => props.theme.text.primary};
-    animation: ${moveAnimation} 700ms linear 0ms infinite;
-    margin-right: 30px;
+const LoaderFigure = styled.div`
+    ${({ theme }) => css`
+        @keyframes blink {
+            0% {
+                background-color: ${theme.background.highlight};
+                width: ${loaderSize};
+                height: ${loaderSize};
+            }
 
-    &:first-child {
-        position: absolute;
-        top: 0;
-        left: 0;
-        animation: ${growAnimation} 700ms linear 0ms infinite;
-    }
+            29% {
+                background-color: ${theme.background.highlight};
+            }
 
-    &:last-child {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin-right: 0;
-        animation: ${growAnimation} 700ms linear 0s infinite reverse;
-    }
+            30% {
+                width: ${loaderSize};
+                height: ${loaderSize};
+                background-color: transparent;
+                border-width: calc(${loaderSize} / 2);
+                opacity: 1;
+            }
+
+            100% {
+                width: ${loaderSize};
+                height: ${loaderSize};
+                border-width: 0;
+                opacity: 0;
+                background-color: transparent;
+            }
+        }
+
+        width: ${loaderSize};
+        height: ${loaderSize};
+        box-sizing: border-box;
+        border: 0 solid ${theme.background.highlight};
+        border-radius: 50%;
+
+        animation-name: blink;
+        animation-duration: 1.15s;
+        animation-timing-function: ease;
+        animation-iteration-count: infinite;
+    `}
 `;
 
-export { Wrapper, InnerWrapper, Dot };
+export { DarkBackground, LoaderContainer, LoaderFigure };

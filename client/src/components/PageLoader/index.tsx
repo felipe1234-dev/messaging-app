@@ -1,4 +1,4 @@
-import { Wrapper, InnerWrapper, Dot } from "./styles";
+import { DarkBackground, LoaderContainer, LoaderFigure } from "./styles";
 
 interface PageLoaderProps {
     visible?: boolean;
@@ -8,14 +8,11 @@ function PageLoader(props: PageLoaderProps) {
     const { visible = false } = props;
 
     return (
-        <Wrapper hidden={!visible}>
-            <InnerWrapper>
-                <Dot />
-                <Dot />
-                <Dot />
-                <Dot />
-            </InnerWrapper>
-        </Wrapper>
+        <DarkBackground hidden={!visible}>
+            <LoaderContainer>
+                <LoaderFigure />
+            </LoaderContainer>
+        </DarkBackground>
     );
 }
 
