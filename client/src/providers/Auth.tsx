@@ -21,13 +21,7 @@ function AuthProvider(props: { children: React.ReactNode }) {
     const [friends, setFriends] = useState<User[]>([]);
     const loader = useLoader();
 
-    const login = async (
-        email: string,
-        password: string,
-        rememberMe: boolean
-    ) => {
-        const response = await Api.auth.login(email, password, rememberMe);
-        setUser(response);
+    const fetchFriends = async () => {
         setFriends(
             (await Api.friends.getUserFriends()).sort((a, b) => {
                 if (a.online && !b.online) return -1;
@@ -46,6 +40,16 @@ function AuthProvider(props: { children: React.ReactNode }) {
                 return 0;
             })
         );
+    };
+
+    const login = async (
+        email: string,
+        password: string,
+        rememberMe: boolean
+    ) => {
+        const response = await Api.auth.login(email, password, rememberMe);
+        setUser(response);
+        fetchFriends();
     };
 
     const logout = async () => {
@@ -81,7 +85,13 @@ function AuthProvider(props: { children: React.ReactNode }) {
         );
 
         loader.show();
-        Api.auth.recoverSession().then(setUser).finally(loader.hide);
+        Api.auth
+            .recoverSession()
+            .then((user) => {
+                setUser(user);
+                fetchFriends();
+            })
+            .finally(loader.hide);
     }, []);
 
     useEffect(() => {
