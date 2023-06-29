@@ -1,6 +1,8 @@
 import { Container, Icon, Title } from "@styles/layout";
+import { ShowItem } from "@styles/animations";
+
 import { useAuth } from "@providers";
-import { Avatar, Carousel, Button } from "@components";
+import { Avatar, Carousel, Button, OnlineNow } from "@components";
 
 import { PersonAdd } from "@styled-icons/ionicons-outline";
 
@@ -9,6 +11,8 @@ import { padding } from "./index";
 function Friends() {
     const { user } = useAuth();
     if (!user) return <></>;
+
+    console.log("user.friends", user.friends);
 
     const onlineCount = user.friends.filter((friend) => friend.online).length;
 
@@ -78,17 +82,30 @@ function Friends() {
                     </Button>
                 </Container>
                 {user.friends.map((friend) => (
-                    <Container
-                        key={friend.uid}
-                        direction="column"
-                        align="center"
-                        justify="center"
-                    >
-                        <Avatar
-                            src={friend.photo}
-                            alt={friend.name}
-                        />
-                    </Container>
+                    <ShowItem>
+                        <Container
+                            key={friend.uid}
+                            transparent
+                            direction="column"
+                            align="center"
+                            justify="center"
+                            width="fit-content"
+                        >
+                            {friend.online ? (
+                                <OnlineNow>
+                                    <Avatar
+                                        src={friend.photo}
+                                        alt={friend.name}
+                                    />
+                                </OnlineNow>
+                            ) : (
+                                <Avatar
+                                    src={friend.photo}
+                                    alt={friend.name}
+                                />
+                            )}
+                        </Container>
+                    </ShowItem>
                 ))}
             </Carousel>
         </Container>

@@ -1,5 +1,5 @@
 import { Columns, Rows, Title, Icon, Paragraph } from "@styles/layout";
-import { Avatar, Button } from "@components";
+import { Avatar, Button, Badge } from "@components";
 import { Variant } from "@types";
 import { timeAgo } from "@functions";
 
@@ -9,6 +9,7 @@ import { useAuth } from "@providers";
 import { CameraReels, FileEarmarkImage } from "@styled-icons/bootstrap";
 import { PhoneCallOutline } from "@styled-icons/evaicons-outline";
 import { Images } from "@styled-icons/icomoon";
+import { Circle } from "@styled-icons/material-rounded";
 
 function ChatInfo() {
     const { chatWindow } = useChatWindow();
@@ -64,12 +65,31 @@ function ChatInfo() {
                     >
                         <Title level={5}>{chatTitle}</Title>
                         {!isGroupChat &&
-                            otherMember &&
-                            otherMember.sessionStart && (
+                            (otherMember.online ? (
+                                <Badge
+                                    badge={
+                                        <Icon
+                                            variant="success"
+                                            icon={<Circle />}
+                                        />
+                                    }
+                                    mb={-1}
+                                    mr={83}
+                                >
+                                    <Paragraph
+                                        variant="secondary"
+                                        ml={20}
+                                    >
+                                        Online now
+                                    </Paragraph>
+                                </Badge>
+                            ) : otherMember.sessionStart ? (
                                 <Paragraph variant="secondary">
-                                    {timeAgo(otherMember.sessionStart)}
+                                    Online {timeAgo(otherMember.sessionStart)}
                                 </Paragraph>
-                            )}
+                            ) : (
+                                <></>
+                            ))}
                     </Rows>
                 </Columns>
 

@@ -1,5 +1,5 @@
 import { Container, Paragraph, Icon } from "@styles/layout";
-import { Avatar, Button, Badge } from "@components";
+import { Avatar, Button, Badge, OnlineNow } from "@components";
 import { useAuth } from "@providers";
 
 import { Settings } from "@styled-icons/ionicons-outline";
@@ -30,15 +30,7 @@ function Profile() {
                 gap={20}
                 p={padding}
             >
-                <Badge
-                    badge={
-                        <Icon
-                            variant="success"
-                            icon={<Circle />}
-                        />
-                    }
-                    mr={-5}
-                >
+                <OnlineNow>
                     <Avatar
                         src={user.photo}
                         alt={user.name}
@@ -48,7 +40,7 @@ function Profile() {
                         borderStyle="solid"
                         borderOffset={3}
                     />
-                </Badge>
+                </OnlineNow>
 
                 <Container
                     transparent
