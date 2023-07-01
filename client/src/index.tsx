@@ -9,6 +9,7 @@ import {
     ThemeProvider,
     LoaderProvider,
     AlertProvider,
+    ModalProvider,
 } from "./providers";
 import { Composer } from "./components";
 
@@ -25,6 +26,7 @@ const providers = [
     ThemeProvider,
     LoaderProvider,
     AlertProvider,
+    ModalProvider,
     AuthProvider,
     ChatsProvider,
 ];

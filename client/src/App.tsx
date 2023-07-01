@@ -2,8 +2,8 @@ import { useEffect } from "react";
 
 import { Page } from "./styles/layout";
 import { routes } from "./constants";
-import { useLoader, useAlert } from "./providers";
-import { PageLoader, Alert } from "./components";
+import { useLoader, useAlert, useModal } from "./providers";
+import { PageLoader, Alert, Modal } from "./components";
 import { useTimeout } from "./hooks";
 import { Api } from "./services";
 
@@ -12,6 +12,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 function App() {
     const alert = useAlert();
     const loader = useLoader();
+    const modal = useModal();
     const pageLocation = useLocation();
     const { pathname: pathNow } = pageLocation;
 
@@ -45,6 +46,13 @@ function App() {
                     />
                 ))}
             </Routes>
+            <Modal
+                visible={modal.visible}
+                header={modal.header}
+                body={modal.body}
+                footer={modal.footer}
+                {...modal.props}
+            />
             <Alert
                 severity={alert.severity}
                 show={alert.visible}

@@ -53,3 +53,6 @@ export type { MessageCardProps } from "./MessageCard";
 
 export { default as OnlineNow } from "./OnlineNow";
 export type { OnlineNowProps } from "./OnlineNow";
+
+export { default as Modal } from "./Modal";
+export type { ModalProps } from "./Modal";
