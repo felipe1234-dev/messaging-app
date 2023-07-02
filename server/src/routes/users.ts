@@ -2,52 +2,45 @@ import { HTTPRouter } from "@typings";
 import { useRouteController, useRouteMiddleware } from "@utils";
 import { authenticationMiddleware } from "@middlewares";
 import {
-    refreshSessionController,
-    registerUserController,
-    loginUserController,
+    searchUsersController,
+    
+    getUserByUidController,
+    updateUserController,
+    deleteUserController,
+
     blockUserController,
     unblockUserController,
-    deleteUserController,
-    updateUserController,
-    logoutUserController,
-    recoverPasswordController,
-    searchUsersController,
 } from "@controllers/users";
 
 const usersRouter: HTTPRouter = (api) => {
-    api.post("/refresh/session", useRouteController(refreshSessionController));
-    api.put("/register", useRouteController(registerUserController));
-    api.post("/login", useRouteController(loginUserController));
-    api.post(
-        "/logout/",
+    api.get("/users/", useRouteController(searchUsersController));
+
+    api.get(
+        "/users/:userUid",
         useRouteMiddleware(authenticationMiddleware),
-        useRouteController(logoutUserController)
+        useRouteController(getUserByUidController)
     );
-    api.delete(
-        "/block/user/:userUid",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(blockUserController)
-    );
-    api.patch(
-        "/unblock/user/:userUid",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(unblockUserController)
-    );
-    api.delete(
-        "/delete/user/:userUid",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(deleteUserController)
-    );
-    api.patch(
-        "/update/user/:userUid",
+    api.put(
+        "/users/:userUid",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(updateUserController)
     );
-    api.post(
-        "/recover/password/:userUid",
-        useRouteController(recoverPasswordController)
+    api.delete(
+        "/users/:userUid",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(deleteUserController)
     );
-    api.post("/search/users/", useRouteController(searchUsersController));
+
+    api.put(
+        "/users/:userUid/block",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(blockUserController)
+    );
+    api.put(
+        "/users/:userUid/unblock",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(unblockUserController)
+    );
 };
 
 export default usersRouter;

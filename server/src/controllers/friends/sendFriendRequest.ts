@@ -12,7 +12,7 @@ import {
 const sendFriendRequestController: RouteController = async (
     req: Request & {
         params: {
-            friendUid?: string;
+            userUid?: string;
         };
     },
     res
@@ -21,16 +21,16 @@ const sendFriendRequestController: RouteController = async (
         const { user } = req;
         if (!user) throw new Unauthorized("You're not authenticated");
 
-        const { friendUid } = req.params;
-        if (!friendUid) throw new MissingPostParam("friendUid");
+        const { userUid } = req.params;
+        if (!userUid) throw new MissingPostParam("userUid");
 
-        const to = friendUid;
+        const to = userUid;
         const from = user.uid;
 
         if (user.friends.includes(to))
             throw new InvalidParam("You're already friends with " + to);
 
-        const friend = await UsersDB.getUserByUid(friendUid);
+        const friend = await UsersDB.getUserByUid(userUid);
         if (!friend) throw new NotFound("Friend not found");
 
         const alreadySent = await FriendRequestsDB.friendRequestAlreadySent(

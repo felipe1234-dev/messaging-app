@@ -2,62 +2,75 @@ import { HTTPRouter } from "@typings";
 import { useRouteController, useRouteMiddleware } from "@utils";
 import { authenticationMiddleware } from "@middlewares";
 import {
-    addChatAdminController,
-    addChatMemberController,
+    getChatByUidController,
     createChatController,
-    getChatMessagesController,
     deleteChatController,
     updateChatController,
+    addChatMemberController,
     removeChatMemberController,
-    getUserChatsController,
+    addChatAdminController,
     getChatMembersController,
+    getChatMessagesController,
+    getUserChatsController,
 } from "@controllers/chats";
 
 const chatsRouter: HTTPRouter = (api) => {
-    api.put(
-        "/create/chat",
+    // Create and query chats
+    api.post(
+        "/chats",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(createChatController)
     );
     api.get(
-        "/chat/:chatUid/messages",
+        "/chats",
         useRouteMiddleware(authenticationMiddleware),
-        useRouteController(getChatMessagesController)
+        useRouteController(getUserChatsController)
     );
+
+    // Specific chat
     api.get(
-        "/chat/:chatUid/members",
+        "/chats/:chatUid",
         useRouteMiddleware(authenticationMiddleware),
-        useRouteController(getChatMembersController)
+        useRouteController(getChatByUidController)
     );
-    api.patch(
-        "/add/chat/admin",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(addChatAdminController)
-    );
-    api.patch(
-        "/add/chat/member",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(addChatMemberController)
-    );
-    api.delete(
-        "/delete/chat/:chatUid",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(deleteChatController)
-    );
-    api.patch(
-        "/update/chat/:chatUid",
+    api.put(
+        "/chats/:chatUid",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(updateChatController)
     );
     api.delete(
-        "/remove/chat/member",
+        "/chats/:chatUid",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(deleteChatController)
+    );
+
+    // Chat messages
+    api.get(
+        "/chats/:chatUid/messages",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(getChatMessagesController)
+    );
+    
+    // Chat members
+    api.get(
+        "/chats/:chatUid/members",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(getChatMembersController)
+    );
+    api.post(
+        "/chats/:chatUid/members/:userUid",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(addChatMemberController)
+    );
+    api.post(
+        "/chats/:chatUid/admins/:memberUid",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(addChatAdminController)
+    );
+    api.delete(
+        "/chats/:chatUid/members/:memberUid",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(removeChatMemberController)
-    );
-    api.get(
-        "/get/chats",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(getUserChatsController)
     );
 };
 

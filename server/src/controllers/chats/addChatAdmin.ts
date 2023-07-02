@@ -11,23 +11,23 @@ import {
 
 const addChatAdminController: RouteController = async (
     req: Request & {
-        body: {
-            chat?: string;
-            admin?: string;
+        params: {
+            chatUid?: string;
+            memberUid?: string;
         };
     },
     res
 ) => {
     try {
-        const { chat: chatUid, admin: adminUid } = req.body;
+        const { chatUid, memberUid } = req.params;
 
         if (!chatUid) throw new MissingPostParam("chat");
-        if (!adminUid) throw new MissingPostParam("admin");
+        if (!memberUid) throw new MissingPostParam("admin");
 
         const chat = await ChatsDB.getChatByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
-        const admin = await UsersDB.getUserByUid(adminUid);
+        const admin = await UsersDB.getUserByUid(memberUid);
         if (!admin) throw new NotFound("User not found");
 
         const currentUser = req.user;

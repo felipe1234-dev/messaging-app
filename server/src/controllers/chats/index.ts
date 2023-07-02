@@ -1,3 +1,4 @@
+export { default as getChatByUidController } from "./getChatByUid";
 export { default as createChatController } from "./createChat";
 export { default as getChatMessagesController } from "./getMessages";
 export { default as addChatAdminController } from "./addChatAdmin";

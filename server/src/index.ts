@@ -9,6 +9,7 @@ import {
     logRequestsMiddleware,
 } from "@middlewares";
 import {
+    authRouter,
     usersRouter,
     messagesRouter,
     chatsRouter,
@@ -27,12 +28,13 @@ app.use("/*", useRouteMiddleware(logRequestsMiddleware));
 app.get("/ping", (req, res) => res.status(200).send("Ping"));
 
 // HTTP routes
+authRouter(app);
 usersRouter(app);
 messagesRouter(app);
 chatsRouter(app);
 friendsRouter(app);
 
 // Schedules
-setInterval(() => expireTokens(), 1 * 60 * 1000);
+expireTokens();
 
 export default functions.https.onRequest(app);

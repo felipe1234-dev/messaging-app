@@ -27,7 +27,8 @@ const refreshSessionController: RouteController = async (
 
         if (user.blocked) throw new Forbidden("User blocked");
 
-        if (!user.token || (await Token.isExpired(user.token))) {
+        const tokenExpired = user.token && await Token.isExpired(user.token);
+        if (!user.token || tokenExpired) {
             await UsersDB.updateUser(user.uid, { refreshToken: "" });
             throw new Unauthenticated("Token expired");
         }

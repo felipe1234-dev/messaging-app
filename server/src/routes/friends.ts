@@ -8,12 +8,12 @@ import {
 
 const friendsRouter: HTTPRouter = (api) => {
     api.get(
-        "/get/friends",
+        "/friends",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(getUserFriendsController)
     );
-    api.get(
-        "/send/friend/request/to/:friendUid",
+    api.post(
+        "/friends/request/:userUid",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(sendFriendRequestController)
     );

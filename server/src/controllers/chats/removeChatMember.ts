@@ -11,15 +11,15 @@ import {
 
 const removeChatMemberController: RouteController = async (
     req: Request & {
-        body: {
-            chat?: string;
-            member?: string;
+        params: {
+            chatUid?: string;
+            memberUid?: string;
         };
     },
     res
 ) => {
     try {
-        const { chat: chatUid, member: memberUid } = req.body;
+        const { chatUid, memberUid } = req.body;
 
         if (!chatUid) throw new MissingPostParam("chat");
         if (!memberUid) throw new MissingPostParam("member");
