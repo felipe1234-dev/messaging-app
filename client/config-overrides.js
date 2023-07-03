@@ -9,6 +9,7 @@ module.exports = function override(config, env) {
         "@functions": path.resolve(__dirname, "src/functions"),
         "@services": path.resolve(__dirname, "src/services"),
         "@pages": path.resolve(__dirname, "src/pages"),
+        "@modals": path.resolve(__dirname, "src/modals"),
         "@styles": path.resolve(__dirname, "src/styles"),
         "@constants": path.resolve(__dirname, "src/constants"),
         "@hooks": path.resolve(__dirname, "src/hooks"),

@@ -39,6 +39,12 @@
             "@pages/*": [
                 "src/pages/*"
             ],
+            "@modals": [
+                "src/modals"
+            ],
+            "@modals/*": [
+                "src/modals/*"
+            ],
             "@styles/*": [
                 "src/styles/*"
             ],
