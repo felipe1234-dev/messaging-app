@@ -29,6 +29,7 @@ const codes = {
     CHAT_UPDATED: "CHAT_UPDATED" as const,
     MEMBER_REMOVED: "MEMBER_REMOVED" as const,
     MEMBER_ADDED: "MEMBER_ADDED" as const,
+    CHAT_FETCHED: "CHAT_FETCHED" as const,
     CHATS_FETCHED: "CHATS_FETCHED" as const,
     MEMBERS_FETCHED: "MEMBERS_FETCHED" as const,
 
