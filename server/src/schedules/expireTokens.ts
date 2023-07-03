@@ -1,13 +1,9 @@
 import { UsersDB } from "@databases";
 import { Token } from "@services";
 
-let expiresInExecutions = 0;
+const timeInterval = 1 * 60 * 1000;
 
 async function expireTokens() {
-    if (expiresInExecutions > 0) return;
-
-    expiresInExecutions++;
-
     const onlineUsers = await UsersDB.getUsers({
         wheres: [["online", "==", true]],
     });
@@ -38,7 +34,7 @@ async function expireTokens() {
     await Promise.all(promises);
     promises.length = 0;
 
-    expiresInExecutions = 0;
+    setTimeout(expireTokens, timeInterval);
 }
 
 export default expireTokens;
