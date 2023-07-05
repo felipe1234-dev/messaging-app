@@ -18,6 +18,8 @@ class UsersDB {
             }
         }
 
+        
+
         if (params.startAfter) {
             query = query.startAfter(params.startAfter);
         }

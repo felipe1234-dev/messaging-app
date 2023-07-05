@@ -1,16 +1,22 @@
+import { UsersDB } from "@databases";
 import {
     codes,
     FilterParams,
     secureUserData,
     operators,
 } from "messaging-app-globals";
-import { UsersDB } from "@databases";
-import { RouteController, Request } from "@typings";
-import { ServerError, Unauthorized } from "@errors";
+import { 
+    RouteController, 
+    Request 
+} from "@typings";
+import { 
+    ServerError, 
+    Unauthorized 
+} from "@errors";
 
 const searchUsersController: RouteController = async (
     req: Request & {
-        params: {
+        query: {
             where?: string;
             startAfter?: string;
             limit?: string;
@@ -19,7 +25,7 @@ const searchUsersController: RouteController = async (
     res
 ) => {
     try {
-        const { where, limit, startAfter } = req.params;
+        const { where, limit, startAfter } = req.query;
         const currentUser = req.user;
         if (!currentUser) throw new Unauthorized("You're not authenticated");
 
