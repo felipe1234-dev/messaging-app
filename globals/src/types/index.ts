@@ -1,14 +1,6 @@
-export type Operator =
-    | "<"
-    | "<="
-    | "=="
-    | "!="
-    | ">="
-    | ">"
-    | "array-contains"
-    | "in"
-    | "not-in"
-    | "array-contains-any";
+import { operators } from "../constants";
+
+export type Operator = (typeof operators)[number];
 
 export interface FilterParams {
     wheres?: Array<[field: string, operator: Operator, value: any]>;
