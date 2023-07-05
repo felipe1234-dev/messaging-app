@@ -3,17 +3,19 @@ import { useRouteController, useRouteMiddleware } from "@utils";
 import { authenticationMiddleware } from "@middlewares";
 import {
     searchUsersController,
-    
     getUserByUidController,
     updateUserController,
     deleteUserController,
-
     blockUserController,
     unblockUserController,
 } from "@controllers/users";
 
 const usersRouter: HTTPRouter = (api) => {
-    api.get("/users/", useRouteController(searchUsersController));
+    api.get(
+        "/users/",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(searchUsersController)
+    );
 
     api.get(
         "/users/:userUid",
