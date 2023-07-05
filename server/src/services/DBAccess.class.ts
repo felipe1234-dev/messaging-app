@@ -3,14 +3,16 @@ import { firestore } from "@databases";
 import { Operator } from "messaging-app-globals";
 
 class DBAccess {
+    protected _index: number;
     protected _collection: CollectionReference;
     protected _uid?: string;
-    protected _wheres: Array<[field: string, operator: Operator, value: any]>;
+    protected _wheres: Array<[field: string, operator: Operator, value: any]>[];
     protected _startAfter?: string;
     protected _limit?: number;
     protected _orders: Array<[field: string, direction: "asc" | "desc"]>;
 
     constructor(dbName: string) {
+        this._index = 0;
         this._collection = firestore.collection(dbName);
         this._uid = undefined;
         this._wheres = [];
@@ -20,6 +22,7 @@ class DBAccess {
     }
 
     protected restartAllStates() {
+        this._index = 0;
         this._uid = undefined;
         this._wheres = [];
         this._startAfter = undefined;
@@ -32,11 +35,19 @@ class DBAccess {
     }
 
     public where(field: string, operator: Operator, value: any): DBAccess {
-        this._wheres.push([field, operator, value]);
+        if (!this._wheres[this._index]) this._wheres[this._index] = [];
+        
+        this._wheres[this._index].push([field, operator, value]);
+
         return this;
     }
 
     public and(field: string, operator: Operator, value: any): DBAccess {
+        return this.where(field, operator, value);
+    }
+
+    public or(field: string, operator: Operator, value: any): DBAccess {
+        this._index++;
         return this.where(field, operator, value);
     }
 
@@ -97,47 +108,50 @@ class DBAccess {
             return [(await this._collection.doc(uid).get()).data() as T];
         }
 
-        let lastDoc = undefined;
-        if (this._startAfter) {
-            lastDoc = await this._collection.doc(this._startAfter).get();
-        }
-
+        
         const results = [];
-
-        do {
-            let query: Query = this._collection;
-
-            for (const where of this._wheres) {
-                const [field, operator, value] = where;
-                query = query.where(field, operator, value);
+        
+        for (const whereSet of this._wheres) {
+            let lastDoc = undefined;
+            if (this._startAfter) {
+                lastDoc = await this._collection.doc(this._startAfter).get();
             }
 
-            for (const order of this._orders) {
-                const [field, direction] = order;
-                query = query.orderBy(field, direction);
-            }
-
-            if (lastDoc) {
-                query = query.startAfter(lastDoc);
-                lastDoc = undefined;
-            }
-
-            query = query.limit(1000);
-
-            const { docs } = await query.get();
-
-            for (const doc of docs) {
-                if (
-                    this._limit !== undefined &&
-                    results.length >= this._limit
-                ) {
-                    lastDoc = undefined;
-                    break;
+            do {
+                let query: Query = this._collection;
+    
+                for (const where of whereSet) {
+                    const [field, operator, value] = where;
+                    query = query.where(field, operator, value);
                 }
-                results.push(doc.data());
-                lastDoc = doc;
-            }
-        } while (lastDoc);
+    
+                for (const order of this._orders) {
+                    const [field, direction] = order;
+                    query = query.orderBy(field, direction);
+                }
+    
+                if (lastDoc) {
+                    query = query.startAfter(lastDoc);
+                    lastDoc = undefined;
+                }
+    
+                query = query.limit(1000);
+    
+                const { docs } = await query.get();
+    
+                for (const doc of docs) {
+                    if (
+                        this._limit !== undefined &&
+                        results.length >= this._limit
+                    ) {
+                        lastDoc = undefined;
+                        break;
+                    }
+                    results.push(doc.data());
+                    lastDoc = doc;
+                }
+            } while (lastDoc);
+        }
 
         this.restartAllStates();
 
