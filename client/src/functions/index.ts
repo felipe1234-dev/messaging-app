@@ -6,3 +6,4 @@ export { default as getEnv } from "./getEnv";
 export { default as shade } from "./shade";
 export { default as convertToHashMap } from "./convertToHashMap";
 export { default as timeAgo } from "./timeAgo";
+export { default as JSONToURLQuery } from "./JSONToURLQuery";

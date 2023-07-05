@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { isLocal } from "@functions";
+import { JSONToURLQuery, isLocal } from "@functions";
 import {
     FilterParams,
     User,
@@ -63,7 +63,7 @@ const Api = {
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
 
-                const { data } = await httpEndpoint.post("/refresh/session", {
+                const { data } = await httpEndpoint.post("/auth/session", {
                     refreshToken,
                 });
 
@@ -83,7 +83,7 @@ const Api = {
             password: string,
             rememberMe?: boolean
         ) => {
-            const { data } = await httpEndpoint.post("/login", {
+            const { data } = await httpEndpoint.post("/auth/login", {
                 email,
                 password,
                 rememberMe,
@@ -101,18 +101,18 @@ const Api = {
             return new User(data.user);
         },
         logout: async () => {
-            await httpEndpoint.post("/logout/");
+            await httpEndpoint.post("/auth/logout");
             httpEndpoint.defaults.headers.common.authorization = "";
             localStorage.removeItem("refreshToken");
             await auth.signOut();
         },
         register: async (name: string, email: string, password: string) => {
-            await httpEndpoint.put("/register", { name, email, password });
+            await httpEndpoint.post("/auth/register", { name, email, password });
         },
     },
     friends: {
         getUserFriends: async () => {
-            const { data } = await httpEndpoint.get("/get/friends");
+            const { data } = await httpEndpoint.get("/friends");
             return (data.friends as any[]).map((friend) => new User(friend));
         },
 
@@ -138,11 +138,13 @@ const Api = {
     },
     chats: {
         getUserChats: async () => {
-            const { data } = await httpEndpoint.get("/get/chats");
+            const { data } = await httpEndpoint.get("/chats");
             return (data.chats as any[]).map((chat) => new Chat(chat));
         },
         getChatMembers: async (chatUid: string) => {
-            const { data } = await httpEndpoint.get(`/chat/${chatUid}/members`);
+            const { data } = await httpEndpoint.get(
+                `/chats/${chatUid}/members`
+            );
             return (data.members as any[]).map((member) => new User(member));
         },
         getChatMessages: async (
@@ -153,16 +155,7 @@ const Api = {
                 orderBy?: [field: string, direction: "desc" | "asc"];
             } = {}
         ) => {
-            let url = `/chat/${chatUid}/messages/?`;
-            const urlQueries: string[] = [];
-
-            for (const [key, value] of Object.entries(filters)) {
-                urlQueries.push(`${key}=${value}`);
-            }
-
-            url += urlQueries.join("&");
-
-            const { data } = await httpEndpoint.get(url);
+            const { data } = await httpEndpoint.get(`/chats/${chatUid}/messages/?${JSONToURLQuery(filters)}`);
 
             return (data.messages as any[]).map((message) => {
                 if (TextMessage.isTextMessage(message)) {
@@ -344,22 +337,12 @@ const Api = {
     },
     users: {
         searchUsers: async (filters: FilterParams) => {
-            const { data } = await httpEndpoint.post("/search/users", {
-                filters,
-            });
+            const { data } = await httpEndpoint.get(`/users/?${JSONToURLQuery(filters)}`);
             return (data.user as any[]).map((user) => new User(user));
         },
         getUserByUid: async (userUid: string) => {
-            const { data } = await httpEndpoint.post("/search/users", {
-                filters: {
-                    wheres: [["uid", "==", userUid]],
-                },
-            });
-
-            if (data.length === 0) return undefined;
-
-            const user = new User(data[0]);
-
+            const { data } = await httpEndpoint.get(`/users/${userUid}`);
+            const user = new User(data);
             return user;
         },
         onUserUpdated: (
