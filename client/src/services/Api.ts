@@ -107,7 +107,11 @@ const Api = {
             await auth.signOut();
         },
         register: async (name: string, email: string, password: string) => {
-            await httpEndpoint.post("/auth/register", { name, email, password });
+            await httpEndpoint.post("/auth/register", {
+                name,
+                email,
+                password,
+            });
         },
     },
     friends: {
@@ -155,7 +159,9 @@ const Api = {
                 orderBy?: [field: string, direction: "desc" | "asc"];
             } = {}
         ) => {
-            const { data } = await httpEndpoint.get(`/chats/${chatUid}/messages/?${JSONToURLQuery(filters)}`);
+            const { data } = await httpEndpoint.get(
+                `/chats/${chatUid}/messages/?${JSONToURLQuery(filters)}`
+            );
 
             return (data.messages as any[]).map((message) => {
                 if (TextMessage.isTextMessage(message)) {
@@ -337,12 +343,22 @@ const Api = {
     },
     users: {
         searchUsers: async (filters: FilterParams) => {
-            const { data } = await httpEndpoint.get(`/users/?${JSONToURLQuery(filters)}`);
-            return (data.user as any[]).map((user) => new User(user));
+            const filtersCopy = { ...filters };
+            delete filtersCopy.wheres;
+
+            const urlQuery = JSONToURLQuery({
+                ...filtersCopy,
+                where: (filters.wheres || [])
+                    .map((where) => where.join(""))
+                    .join(","),
+            });
+
+            const { data } = await httpEndpoint.get(`/users/?${urlQuery}`);
+            return (data.users as any[]).map((user) => new User(user));
         },
         getUserByUid: async (userUid: string) => {
             const { data } = await httpEndpoint.get(`/users/${userUid}`);
-            const user = new User(data);
+            const user = new User(data.user);
             return user;
         },
         onUserUpdated: (
