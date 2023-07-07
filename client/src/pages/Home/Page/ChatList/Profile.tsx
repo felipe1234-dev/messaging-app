@@ -1,15 +1,25 @@
 import { Container, Paragraph, Icon } from "@styles/layout";
-import { Avatar, Button, Badge, OnlineNow } from "@components";
-import { useAuth } from "@providers";
+
+import { Avatar, Button, OnlineNow } from "@components";
+import { useAuth, useModal } from "@providers";
+import { ProfileModal } from "@modals";
 
 import { Settings } from "@styled-icons/ionicons-outline";
-import { Circle } from "@styled-icons/material-rounded";
 
 import { padding } from "./index";
 
 function Profile() {
     const { user } = useAuth();
+    const modal = useModal();
+
     if (!user) return <></>;
+
+    const handleEditProfile = () => {
+        modal.show({
+            header: "Your profile",
+            body: <ProfileModal />,
+        });
+    };
 
     return (
         <Container
@@ -64,9 +74,10 @@ function Profile() {
                 </Container>
 
                 <Button
-                    transparent
-                    iconed
                     round
+                    iconed
+                    transparent
+                    onClick={handleEditProfile}
                     p={8}
                 >
                     <Icon icon={<Settings />} />

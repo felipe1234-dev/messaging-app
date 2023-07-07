@@ -51,7 +51,7 @@ function ChatMessages() {
                 setText("");
                 scrollToBottom();
             })
-            .catch((err) => alert.error(err));
+            .catch((err: Error) => alert.error(err.message));
     };
 
     useEffect(() => {

@@ -53,11 +53,20 @@ function ChatCard(props: ChatCardProps) {
     const senderName = sender?.uid === user.uid ? "You" : sender?.name;
     const isSender = user?.uid === sender?.uid;
 
-    const cardText = TextMessage.isTextMessage(lastMessage) ? (
-        lastMessage.text
-    ) : (
-        <></>
+    const usersTyping = chat.members.filter(
+        (member) => member.uid !== user?.uid && chat.typing.includes(member.uid)
     );
+
+    const cardText =
+        usersTyping.length === 1 ? (
+            `${usersTyping[0].name} is typing...`
+        ) : usersTyping.length > 1 ? (
+            `${usersTyping.map((user) => user.name).join(", ")} are typing...`
+        ) : TextMessage.isTextMessage(lastMessage) ? (
+            lastMessage.text
+        ) : (
+            <></>
+        );
 
     const Profile = () => (
         <Avatar

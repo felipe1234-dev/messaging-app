@@ -57,7 +57,7 @@ function ChatInfo() {
                         alt={chatTitle}
                     />
                     <Rows
-                        align="center"
+                        align="start"
                         justify="center"
                         width="fit-content"
                         height="100%"

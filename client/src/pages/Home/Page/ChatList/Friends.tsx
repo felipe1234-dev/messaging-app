@@ -1,8 +1,9 @@
 import { Container, Icon, Title } from "@styles/layout";
 import { ShowItem } from "@styles/animations";
 
-import { useAuth } from "@providers";
+import { useAuth, useModal } from "@providers";
 import { Avatar, Carousel, Button, OnlineNow } from "@components";
+import { FindFriendsModal } from "@modals";
 
 import { PersonAdd } from "@styled-icons/ionicons-outline";
 
@@ -10,11 +11,19 @@ import { padding } from "./index";
 
 function Friends() {
     const { user } = useAuth();
+    const modal = useModal();
+
     if (!user) return <></>;
 
-    console.log("user.friends", user.friends);
-
     const onlineCount = user.friends.filter((friend) => friend.online).length;
+
+    const handleFindNewFriends = () => {
+        modal.show({
+            variant: "primary",
+            header: "Search for friends",
+            body: <FindFriendsModal />,
+        });
+    };
 
     return (
         <Container
@@ -72,10 +81,11 @@ function Friends() {
                     p={3}
                 >
                     <Button
-                        iconed
                         round
+                        iconed
                         transparent
                         variant="secondary"
+                        onClick={handleFindNewFriends}
                         p={16}
                     >
                         <Icon icon={<PersonAdd />} />

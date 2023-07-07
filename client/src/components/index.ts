@@ -56,3 +56,6 @@ export type { OnlineNowProps } from "./OnlineNow";
 
 export { default as Modal } from "./Modal";
 export type { ModalProps } from "./Modal";
+
+export { default as Spinner } from "./Spinner";
+export type { SpinnerProps } from "./Spinner";

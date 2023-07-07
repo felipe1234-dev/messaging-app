@@ -37,7 +37,7 @@ const StyledAvatar = styled.div<StyledAvatarProps>`
 
         width: fit-content;
         height: fit-content;
-        padding: 10px;
+        padding: 15px;
 
         font-size: ${size}em;
         line-height: 1;

@@ -7,6 +7,7 @@ import {
     ModalFooter,
 } from "./styles";
 import { useModal } from "@providers";
+import { Variant } from "@types";
 
 import Button from "../Button";
 
@@ -14,31 +15,46 @@ import { Icon, Whitespace } from "@styles/layout";
 import { Close } from "@styled-icons/ionicons-solid";
 
 interface ModalProps {
+    variant?: Variant;
+    textVariant?: Variant;
     visible?: boolean;
     onClose?: () => void;
     header?: ReactNode;
     body?: ReactNode;
     footer?: ReactNode;
     showCloseButton?: boolean;
+    hideOnClickBackground?: boolean;
 }
 
 function Modal(props: ModalProps) {
     const modal = useModal();
 
     const {
+        variant = "secondary",
+        textVariant = "primary",
         visible = false,
         onClose = () => modal.hide(),
         header,
         body,
         footer,
         showCloseButton = false,
+        hideOnClickBackground = true,
     } = props;
 
+    const handleBackgroundClick = () => {
+        if (!hideOnClickBackground) return;
+        onClose();
+    };
+
     return (
-        <DarkBackground visible={visible}>
+        <DarkBackground
+            visible={visible}
+            onClick={handleBackgroundClick}
+        >
             <ModalContainer
-                variant="secondary"
-                textVariant="primary"
+                variant={variant}
+                textVariant={textVariant}
+                onClick={(evt) => evt.stopPropagation()}
             >
                 {(header || showCloseButton) && (
                     <ModalHeader>
