@@ -1,14 +1,12 @@
 import { useState } from "react";
 
 import { Container, Icon, Paragraph } from "@styles/layout";
-import { Input, Button, Spinner } from "@components";
+import { Input, Button, Spinner, UserCard } from "@components";
 import { useAlert } from "@providers";
 import { Api } from "@services";
 
 import { User } from "messaging-app-globals";
 import { SearchAlt } from "@styled-icons/boxicons-regular";
-import { FaceSmileWink } from "@styled-icons/fa-regular";
-import { EmojiFrown } from "@styled-icons/bootstrap";
 
 import {
     OuterContainer,
@@ -26,20 +24,20 @@ function FindFriends() {
 
     const handleSearchForFriends = async () => {
         setLoading(true);
-        setFirstSearch(false);
 
         try {
             const results: User[] = [];
+            const trimmedSearch = search.trim();
 
             results.push(
                 ...(await Api.users.searchUsers({
-                    wheres: [["name", "==", search]],
+                    wheres: [["name", "==", trimmedSearch]],
                 }))
             );
 
             results.push(
                 ...(await Api.users.searchUsers({
-                    wheres: [["email", "==", search]],
+                    wheres: [["email", "==", trimmedSearch]],
                 }))
             );
 
@@ -49,6 +47,7 @@ function FindFriends() {
         } catch (error) {
             alert.error((error as Error).message);
         } finally {
+            setFirstSearch(false);
             setLoading(false);
         }
     };
@@ -59,10 +58,6 @@ function FindFriends() {
             align="center"
             justify="center"
         >
-            <Icon
-                variant="highlight"
-                icon={<FaceSmileWink />}
-            />
             <Paragraph>
                 Use the input above for searching for people and make friends!
             </Paragraph>
@@ -75,10 +70,6 @@ function FindFriends() {
             align="center"
             justify="center"
         >
-            <Icon
-                variant="highlight"
-                icon={<EmojiFrown />}
-            />
             <Paragraph>No users found</Paragraph>
         </Container>
     );
@@ -105,14 +96,19 @@ function FindFriends() {
                 </Button>
             </SearchInputContainer>
             <SearchResultsContainer>
-                {firstSearch ? (
+                {loading ? (
+                    <Spinner size={5} />
+                ) : firstSearch ? (
                     <FirstSearch />
                 ) : users.length === 0 ? (
                     <NoResults />
-                ) : loading ? (
-                    <Spinner />
                 ) : (
-                    <></>
+                    users.map((user) => (
+                        <UserCard
+                            key={user.uid}
+                            user={user}
+                        />
+                    ))
                 )}
             </SearchResultsContainer>
         </OuterContainer>

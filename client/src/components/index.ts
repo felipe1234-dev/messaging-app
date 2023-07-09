@@ -59,3 +59,6 @@ export type { ModalProps } from "./Modal";
 
 export { default as Spinner } from "./Spinner";
 export type { SpinnerProps } from "./Spinner";
+
+export { default as UserCard } from "./UserCard";
+export type { UserCardProps } from "./UserCard";

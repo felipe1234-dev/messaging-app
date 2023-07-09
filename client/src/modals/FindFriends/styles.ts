@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 const OuterContainer = styled.div`
     background-color: transparent;
@@ -6,7 +6,7 @@ const OuterContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    width: 550px;
+    min-width: 560px;
 `;
 
 const SearchInputContainer = styled.div`
@@ -25,8 +25,10 @@ const SearchResultsContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    gap: 10px;
     width: 100%;
     height: 300px;
+    padding: 30px 0;
 `;
 
 export { OuterContainer, SearchInputContainer, SearchResultsContainer };

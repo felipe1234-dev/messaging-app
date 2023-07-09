@@ -4,7 +4,14 @@ import { IconProps } from "@styles/layout/Icon";
 export * from "./is";
 
 export type Severity = "error" | "warning" | "info" | "success";
-export type Variant = "primary" | "secondary" | "highlight" | Severity;
+export type Variant =
+    | "primary"
+    | "secondary"
+    | "highlight"
+    | "remove"
+    | "reject"
+    | "cancel"
+    | Severity;
 export type Direction = "row" | "column";
 export type Align = "start" | "end" | "center" | "baseline";
 export type Justify =
@@ -25,11 +32,10 @@ export type Position =
     | "center"
     | "center-left"
     | "center-right";
+export type FontStyle = "normal" | "italic" | "oblique";
 export type Unsubscribe = () => void;
 
-export interface WrapperUser extends Omit<User, "friends"> {
-    friends: User[];
-}
+export interface WrapperUser extends User {}
 
 export interface WrapperChat
     extends Omit<Chat, "members" | "blocked" | "admins" | "createdBy"> {

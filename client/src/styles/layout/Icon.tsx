@@ -18,8 +18,8 @@ const StyledIcon = styled.span<StyledIconProps>`
         align-items: center;
         justify-content: center;
         color: ${theme.icon[variant]};
-        width: fit-content;
-        height: fit-content;
+        width: ${size}em;
+        height: ${size}em;
         padding-top: ${py ?? pt}px;
         padding-left: ${px ?? pl}px;
         padding-right: ${px ?? pr}px;

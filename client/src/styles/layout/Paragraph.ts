@@ -1,9 +1,11 @@
 import styled, { css } from "styled-components";
-import { Variant } from "@types";
+import { Variant, FontStyle } from "@types";
 
 interface ParagraphProps {
     variant?: Variant;
     size?: number;
+    fontStyle?: FontStyle;
+    fontWeight?: number;
     ml?: number;
     mr?: number;
     mt?: number;
@@ -15,8 +17,24 @@ interface ParagraphProps {
 }
 
 const Paragraph = styled.p<ParagraphProps>`
-    ${({ size, variant, ml, mr, mt, mb, pl, pr, pt, pb, theme }) => css`
+    ${({
+        size,
+        variant,
+        fontStyle,
+        fontWeight,
+        ml,
+        mr,
+        mt,
+        mb,
+        pl,
+        pr,
+        pt,
+        pb,
+        theme,
+    }) => css`
         font-size: ${size}em;
+        font-style: ${fontStyle};
+        font-weight: ${fontWeight};
         ${variant &&
         css`
             color: ${theme.text[variant]};
@@ -37,6 +55,8 @@ const Paragraph = styled.p<ParagraphProps>`
 Paragraph.defaultProps = {
     size: 1,
     variant: "primary",
+    fontStyle: "normal",
+    fontWeight: 500,
     ml: 0,
     mr: 0,
     mt: 0,
