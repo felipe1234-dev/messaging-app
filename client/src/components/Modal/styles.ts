@@ -57,6 +57,12 @@ const ModalContainer = styled.div<ModalContainerProps>`
         flex-direction: column;
         max-height: calc(100% - 64px);
         max-width: 600px;
+        opacity: 0.8;
+        transition: opacity ease-in-out ${time};
+
+        &:hover {
+            opacity: 1;
+        }
     `}
 `;
 
