@@ -24,5 +24,11 @@ export { firestore, storage, auth };
 const userCollection = firestore.collection("users");
 const messageCollection = firestore.collection("messages");
 const chatCollection = firestore.collection("chats");
+const friendRequestCollection = firestore.collection("friendRequests");
 
-export { userCollection, messageCollection, chatCollection };
+export {
+    userCollection,
+    messageCollection,
+    chatCollection,
+    friendRequestCollection,
+};

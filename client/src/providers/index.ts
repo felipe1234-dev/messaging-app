@@ -4,3 +4,4 @@ export * from "./Chats";
 export * from "./Loader";
 export * from "./Alert";
 export * from "./Modal";
+export * from "./Friends";

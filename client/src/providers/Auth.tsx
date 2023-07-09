@@ -18,29 +18,7 @@ const AuthContext = createContext<AuthValue | undefined>(undefined);
 
 function AuthProvider(props: { children: React.ReactNode }) {
     const [user, setUser] = useState<User>();
-    const [friends, setFriends] = useState<User[]>([]);
     const loader = useLoader();
-
-    const fetchFriends = async () => {
-        setFriends(
-            (await Api.friends.getUserFriends()).sort((a, b) => {
-                if (a.online && !b.online) return -1;
-                if (b.online && !a.online) return 1;
-
-                if (a.online && b.online && a.sessionStart && b.sessionStart) {
-                    if (a.sessionStart > b.sessionStart) return -1;
-                    if (a.sessionStart < b.sessionStart) return 1;
-                }
-
-                if (!a.online && !b.online && a.sessionEnd && b.sessionEnd) {
-                    if (a.sessionEnd > b.sessionEnd) return -1;
-                    if (a.sessionEnd < b.sessionEnd) return 1;
-                }
-
-                return 0;
-            })
-        );
-    };
 
     const login = async (
         email: string,
@@ -49,14 +27,12 @@ function AuthProvider(props: { children: React.ReactNode }) {
     ) => {
         const response = await Api.auth.login(email, password, rememberMe);
         setUser(response);
-        fetchFriends();
     };
 
     const logout = async () => {
         if (!user) return;
         await Api.auth.logout();
         setUser(undefined);
-        setFriends([]);
     };
 
     const onUserUpdated = (updatedUser: User) => {
@@ -66,47 +42,26 @@ function AuthProvider(props: { children: React.ReactNode }) {
         if (updatedUserJson !== currentUserJson) setUser(updatedUser);
     };
 
-    const onFriendUpdated = (updatedFriend: User) => {
-        setFriends((prev) =>
-            prev.map((friend) => {
-                if (friend.uid === updatedFriend.uid) return updatedFriend;
-                return friend;
-            })
-        );
-    };
-
     useEffect(() => {
         Api.httpEndpoint.interceptors.response.use(
             (response) => response,
             async (error) => {
+                console.log("error", error);
                 if (error.code === codes.UNAUTHENTICATED) await logout();
                 return Promise.reject(error);
             }
         );
 
         loader.show();
-        Api.auth
-            .recoverSession()
-            .then((user) => {
-                setUser(user);
-                fetchFriends();
-            })
-            .finally(loader.hide);
+        Api.auth.recoverSession().then(setUser).finally(loader.hide);
     }, []);
 
     useEffect(() => {
         if (!user) return;
-
         Api.users.onUserUpdated(user.uid, onUserUpdated);
-        Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
     }, [user?.uid]);
 
-    const wrapperUser = user
-        ? {
-              ...user,
-              friends,
-          }
-        : undefined;
+    const wrapperUser = user;
 
     return (
         <AuthContext.Provider

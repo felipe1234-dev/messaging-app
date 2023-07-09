@@ -5,6 +5,7 @@ import {
     User,
     Chat,
     Message,
+    FriendRequest,
     TextMessage,
     AudioMessage,
     VideoMessage,
@@ -22,6 +23,7 @@ import {
     chatCollection,
     messageCollection,
     userCollection,
+    friendRequestCollection,
 } from "./firebase";
 
 const apiURL = isLocal()
@@ -120,6 +122,13 @@ const Api = {
             return (data.friends as any[]).map((friend) => new User(friend));
         },
 
+        getUserFriendRequests: async () => {
+            const { data } = await httpEndpoint.get("/friend-requests");
+            return (data.friendRequests as any[]).map(
+                (friendRequest) => new FriendRequest(friendRequest)
+            );
+        },
+
         onFriendUpdated: (
             userUid: string,
             callback: (friend: User) => void
@@ -136,6 +145,90 @@ const Api = {
 
                         const friend = secureUserData(new User(doc.data()));
                         callback(friend);
+                    }
+                });
+        },
+
+        onFriendRequestReceived: (
+            userUid: string,
+            callback: (friendRequest: FriendRequest) => void
+        ): Unsubscribe => {
+            return friendRequestCollection
+                .where("to", "==", userUid)
+                .onSnapshot((snapshot) => {
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "added") continue;
+
+                        const doc = change.doc;
+                        if (!doc.exists)
+                            throw new Error("Friend request not found");
+
+                        const friendRequest = new FriendRequest(doc.data());
+                        callback(friendRequest);
+                    }
+                });
+        },
+
+        onFriendRequestSent: (
+            userUid: string,
+            callback: (friendRequest: FriendRequest) => void
+        ): Unsubscribe => {
+            return friendRequestCollection
+                .where("from", "==", userUid)
+                .onSnapshot((snapshot) => {
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "added") continue;
+
+                        const doc = change.doc;
+                        if (!doc.exists)
+                            throw new Error("Friend request not found");
+
+                        const friendRequest = new FriendRequest(doc.data());
+                        callback(friendRequest);
+                    }
+                });
+        },
+
+        onFriendRequestToMeUpdated: (
+            userUid: string,
+            callback: (friendRequest: FriendRequest) => void
+        ): Unsubscribe => {
+            return friendRequestCollection
+                .where("to", "==", userUid)
+                .onSnapshot((snapshot) => {
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "modified") continue;
+
+                        const doc = change.doc;
+                        if (!doc.exists)
+                            throw new Error("Friend request not found");
+
+                        const friendRequest = new FriendRequest(doc.data());
+                        callback(friendRequest);
+                    }
+                });
+        },
+
+        onFriendRequestFromMeUpdated: (
+            userUid: string,
+            callback: (friendRequest: FriendRequest) => void
+        ): Unsubscribe => {
+            return friendRequestCollection
+                .where("from", "==", userUid)
+                .onSnapshot((snapshot) => {
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "modified") continue;
+
+                        const doc = change.doc;
+                        if (!doc.exists)
+                            throw new Error("Friend request not found");
+
+                        const friendRequest = new FriendRequest(doc.data());
+                        callback(friendRequest);
                     }
                 });
         },

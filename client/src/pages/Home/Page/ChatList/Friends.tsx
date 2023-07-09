@@ -1,7 +1,7 @@
 import { Container, Icon, Title } from "@styles/layout";
 import { ShowItem } from "@styles/animations";
 
-import { useAuth, useModal } from "@providers";
+import { useAuth, useFriends, useModal } from "@providers";
 import { Avatar, Carousel, Button, OnlineNow } from "@components";
 import { FindFriendsModal } from "@modals";
 
@@ -11,11 +11,12 @@ import { padding } from "./index";
 
 function Friends() {
     const { user } = useAuth();
+    const { friends } = useFriends();
     const modal = useModal();
 
     if (!user) return <></>;
 
-    const onlineCount = user.friends.filter((friend) => friend.online).length;
+    const onlineCount = friends.filter((friend) => friend.online).length;
 
     const handleFindNewFriends = () => {
         modal.show({
@@ -91,7 +92,7 @@ function Friends() {
                         <Icon icon={<PersonAdd />} />
                     </Button>
                 </Container>
-                {user.friends.map((friend) => (
+                {friends.map((friend) => (
                     <ShowItem>
                         <Container
                             key={friend.uid}

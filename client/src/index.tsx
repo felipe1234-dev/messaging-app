@@ -4,12 +4,13 @@ import { BrowserRouter } from "react-router-dom";
 
 import reportWebVitals from "./reportWebVitals";
 import {
-    AuthProvider,
-    ChatsProvider,
     ThemeProvider,
     LoaderProvider,
     AlertProvider,
     ModalProvider,
+    AuthProvider,
+    FriendsProvider,
+    ChatsProvider,
 } from "./providers";
 import { Composer } from "./components";
 
@@ -28,6 +29,7 @@ const providers = [
     AlertProvider,
     ModalProvider,
     AuthProvider,
+    FriendsProvider,
     ChatsProvider,
 ];
 
