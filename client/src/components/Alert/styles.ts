@@ -6,7 +6,7 @@ const Container = styled.div`
     position: fixed;
     left: 0;
     top: 30px;
-    z-index: 1;
+    z-index: 11;
     width: 100%;
     display: flex;
     align-items: center;
