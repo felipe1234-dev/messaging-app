@@ -5,6 +5,7 @@ import {
     getUserFriendsController,
     getUserFriendRequestsController,
     sendFriendRequestController,
+    removeFriendController,
 } from "@controllers/friends";
 
 const friendsRouter: HTTPRouter = (api) => {
@@ -13,6 +14,12 @@ const friendsRouter: HTTPRouter = (api) => {
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(getUserFriendsController)
     );
+    api.delete(
+        "/friends/:friendUid",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(removeFriendController)
+    );
+
     api.get(
         "/friend-requests",
         useRouteMiddleware(authenticationMiddleware),
