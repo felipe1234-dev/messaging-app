@@ -27,6 +27,19 @@ class FriendRequestsDB {
         return new FriendRequest(friendRequest);
     }
 
+    public static async getUserFriendRequests(
+        userUid: string
+    ): Promise<FriendRequest[]> {
+        const friendRequests = await friendRequestsCollection()
+            .where("from", "==", userUid)
+            .and("deleted", "==", false)
+            .or("to", "==", userUid)
+            .and("deleted", "==", false)
+            .get<FriendRequest>();
+
+        return friendRequests.map((data) => new FriendRequest(data));
+    }
+
     public static updateFriendRequest(
         uid: string,
         updates: Partial<FriendRequest>

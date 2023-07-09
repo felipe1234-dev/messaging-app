@@ -3,6 +3,7 @@ import { useRouteController, useRouteMiddleware } from "@utils";
 import { authenticationMiddleware } from "@middlewares";
 import {
     getUserFriendsController,
+    getUserFriendRequestsController,
     sendFriendRequestController,
 } from "@controllers/friends";
 
@@ -12,8 +13,13 @@ const friendsRouter: HTTPRouter = (api) => {
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(getUserFriendsController)
     );
+    api.get(
+        "/friend-requests",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(getUserFriendRequestsController)
+    );
     api.post(
-        "/friends/request/:userUid",
+        "/friend-requests/:userUid",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(sendFriendRequestController)
     );
