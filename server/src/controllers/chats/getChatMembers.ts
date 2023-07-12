@@ -15,7 +15,10 @@ const getChatMembersController: RouteController = async (
         const { chatUid } = req.params;
         if (!chatUid) throw new MissingURLParam("chatUid");
 
-        const chat = await ChatsDB.getChatByUid(chatUid);
+        const chatsDB = new ChatsDB();
+        const usersDB = new UsersDB();
+
+        const chat = await chatsDB.getByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
@@ -31,7 +34,7 @@ const getChatMembersController: RouteController = async (
 
         const members: User[] = [];
         for (const userUid of chat.members) {
-            const user = await UsersDB.getUserByUid(userUid);
+            const user = await usersDB.getByUid(userUid);
             if (!user) continue;
             members.push(secureUserData(user));
         }

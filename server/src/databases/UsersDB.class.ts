@@ -1,104 +1,29 @@
 import DBAccess from "@services/DBAccess.class";
-import { User, FilterParams } from "messaging-app-globals";
-
-const userCollection = () => new DBAccess("users");
+import { User } from "messaging-app-globals";
 
 class UsersDB extends DBAccess<User> {
     constructor() {
         super("users");
     }
-}
 
-class UsersDB {
-    public static createUser(user: User): Promise<Date> {
-        return userCollection().doc(user.uid).create(user);
+    public override async get() {
+        const results = await super.get();
+        return results.map(data => new User(data));
     }
 
-    public static async getUsers(params: FilterParams): Promise<User[]> {
-        let query = userCollection();
-
-        if (params.wheres) {
-            for (const where of params.wheres) {
-                const [field, operator, value] = where;
-                query = query.where(field, operator, value);
-            }
-        }
-
-        if (params.startAfter) {
-            query = query.startAfter(params.startAfter);
-        }
-
-        if (params.limit) {
-            query = query.limit(params.limit);
-        }
-
-        const users = await query.get<User>();
-        return users.map((user) => new User(user));
+    public getByEmail(email: string) {
+        this.where("email", "==", email);
+        return this.getFirst();
     }
 
-    public static async getUserByEmail(
-        email: string
-    ): Promise<User | undefined> {
-        const user = (
-            await userCollection()
-                .where("email", "==", email)
-                .and("deleted", "==", false)
-                .get<User>()
-        )[0];
-
-        if (!user) return undefined;
-
-        return new User(user);
+    public async getByRefreshToken(refreshToken: string) {
+        this.where("refreshToken", "==", refreshToken);
+        return this.getFirst();
     }
 
-    public static async getUserByUid(uid: string): Promise<User | undefined> {
-        const user = (
-            await userCollection()
-                .where("uid", "==", uid)
-                .and("deleted", "==", false)
-                .get<User>()
-        )[0];
-
-        if (!user) return undefined;
-
-        return new User(user);
-    }
-
-    public static async getUserByRefreshToken(
-        refreshToken: string
-    ): Promise<User | undefined> {
-        const user = (
-            await userCollection()
-                .where("refreshToken", "==", refreshToken)
-                .and("deleted", "==", false)
-                .get<User>()
-        )[0];
-
-        if (!user) return undefined;
-
-        return new User(user);
-    }
-
-    public static async getUserByRememberMeToken(
-        rememberMeToken: string
-    ): Promise<User | undefined> {
-        const user = (
-            await userCollection()
-                .where("rememberMeToken", "==", rememberMeToken)
-                .where("deleted", "==", false)
-                .get<User>()
-        )[0];
-
-        if (!user) return undefined;
-
-        return new User(user);
-    }
-
-    public static updateUser(
-        uid: string,
-        updates: Partial<User>
-    ): Promise<Date> {
-        return userCollection().doc(uid).update(updates);
+    public async getByRememberMeToken(rememberMeToken: string) {
+        this.where("rememberMeToken", "==", rememberMeToken);
+        return this.getFirst();
     }
 }
 

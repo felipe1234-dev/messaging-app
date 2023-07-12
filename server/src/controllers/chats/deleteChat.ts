@@ -15,7 +15,9 @@ const deleteChatController: RouteController = async (
         const { chatUid } = req.params;
         if (!chatUid) throw new MissingURLParam("chatUid");
 
-        const chat = await ChatsDB.getChatByUid(chatUid);
+        const chatsDB = new ChatsDB();
+
+        const chat = await chatsDB.getByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
@@ -28,7 +30,7 @@ const deleteChatController: RouteController = async (
                 "You don't have permission to delete this chat"
             );
 
-        await ChatsDB.updateChat(chatUid, { deleted: true });
+        await chatsDB.uid(chatUid).update({ deleted: true });
 
         return res.sendResponse({
             status: 200,

@@ -75,8 +75,10 @@ const sendMessageController: RouteController = async (
 
         const { chat: chatUid } = req.body;
         if (!chatUid) throw new MissingPostParam("chat");
+ 
+        const chatsDB = new ChatsDB();
 
-        const chat = await ChatsDB.getChatByUid(chatUid);
+        const chat = await chatsDB.getByUid(chatUid);
 
         if (!chat) throw new NotFound("Chat not found");
         if (!chat.members.includes(currentUser.uid))

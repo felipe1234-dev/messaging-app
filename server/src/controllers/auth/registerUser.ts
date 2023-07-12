@@ -23,7 +23,9 @@ const registerUserController: RouteController = async (
         if (!validateEmail(email)) throw new InvalidParam("Invalid email");
         if (!password) throw new MissingPostParam("password");
 
-        const userAlreadyExists = !!(await UsersDB.getUserByEmail(email));
+        const usersDB = new UsersDB();
+
+        const userAlreadyExists = !!(await usersDB.getByEmail(email));
         if (userAlreadyExists) throw new InvalidParam("Email already taken");
 
         const salt = await Hash.generateSalt(10);
@@ -36,7 +38,7 @@ const registerUserController: RouteController = async (
             password: hashedPassword,
         });
 
-        await UsersDB.createUser(newUser);
+        await usersDB.uid(newUser.uid).create(newUser);
 
         return res.sendResponse({
             status: 200,

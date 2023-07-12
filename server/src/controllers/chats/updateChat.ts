@@ -15,8 +15,10 @@ const updateChatController: RouteController = async (
     try {
         const { chatUid } = req.params;
         if (!chatUid) throw new MissingURLParam("chatUid");
+        
+        const chatsDB = new ChatsDB();
 
-        const chat = await ChatsDB.getChatByUid(chatUid);
+        const chat = await chatsDB.getByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
@@ -39,7 +41,7 @@ const updateChatController: RouteController = async (
             ...secureUpdates
         } = req.body;
 
-        await ChatsDB.updateChat(chatUid, { ...secureUpdates });
+        await chatsDB.uid(chatUid).update({ ...secureUpdates });
 
         return res.sendResponse({
             status: 200,

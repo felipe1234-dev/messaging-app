@@ -35,7 +35,9 @@ const loginUserController: RouteController = async (
         if (!email) throw new MissingPostParam("email");
         if (!validateEmail(email)) throw new InvalidParam("Invalid email");
 
-        const user = await UsersDB.getUserByEmail(email);
+        const usersDB = new UsersDB();
+
+        const user = await usersDB.getByEmail(email);
         if (!user) throw new InvalidParam("Incorrect email");
         if (user.blocked) throw new Forbidden("User blocked");
 
@@ -56,7 +58,7 @@ const loginUserController: RouteController = async (
         user.refreshToken = refreshToken;
         if (rememberMe) user.rememberMeToken = rememberMeToken;
 
-        await UsersDB.updateUser(user.uid, { ...user });
+        await usersDB.uid(user.uid).update({ ...user });
 
         return res.sendResponse({
             status: 200,

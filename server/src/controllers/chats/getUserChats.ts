@@ -8,7 +8,9 @@ const getUserChatsController: RouteController = async (req, res) => {
         const { user } = req;
         if (!user) throw new Unauthorized("You're not authenticated");
 
-        const chats: Chat[] = await ChatsDB.getUserChats(user.uid);
+        const chatsDB = new ChatsDB();
+
+        const chats: Chat[] = await chatsDB.getUserChats(user.uid);
 
         res.sendResponse({
             status: 200,

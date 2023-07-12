@@ -22,7 +22,9 @@ const updateUserController: RouteController = async (
                 "You don't have permission to update this user"
             );
 
-        const userToBeUpdated = await UsersDB.getUserByUid(userUid);
+        const usersDB = new UsersDB();
+
+        const userToBeUpdated = await usersDB.getByUid(userUid);
         if (!userToBeUpdated) throw new NotFound("User not found");
 
         const {
@@ -36,7 +38,7 @@ const updateUserController: RouteController = async (
             ...secureUpdates
         } = req.body;
 
-        await UsersDB.updateUser(userUid, { ...secureUpdates });
+        await usersDB.uid(userUid).update({ ...secureUpdates });
 
         return res.sendResponse({
             status: 200,

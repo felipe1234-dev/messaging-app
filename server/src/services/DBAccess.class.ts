@@ -29,16 +29,25 @@ class DBAccess<T = { [key: string]: any }> {
         this._limit = undefined;
     }
 
-    public doc(uid = ""): DBAccess<T> {
+    public doc(uid: string) {
         this._uid = uid;
         return this;
     }
 
-    public byUid(uid = ""): DBAccess<T> {
+    public byUid(uid: string) {
         return this.doc(uid);
     }
 
-    public where(field: keyof T, operator: Operator, value: T[keyof T]): DBAccess<T> {
+    public uid(uid: string) {
+        return this.doc(uid);
+    }
+
+    public getByUid(uid: string) {
+        this.doc(uid);
+        return this.getFirst();
+    }
+
+    public where(field: keyof T, operator: Operator, value: T[keyof T]) {
         if (!this._wheres[this._index]) this._wheres[this._index] = [];
         
         this._wheres[this._index].push([field, operator, value]);
@@ -46,32 +55,32 @@ class DBAccess<T = { [key: string]: any }> {
         return this;
     }
 
-    public and(field: keyof T, operator: Operator, value: T[keyof T]): DBAccess<T> {
+    public and(field: keyof T, operator: Operator, value: T[keyof T]) {
         return this.where(field, operator, value);
     }
 
-    public or(field: keyof T, operator: Operator, value: T[keyof T]): DBAccess<T> {
+    public or(field: keyof T, operator: Operator, value: T[keyof T]) {
         this._index++;
         return this.where(field, operator, value);
     }
 
-    public startAfter(uid: string): DBAccess<T> {
+    public startAfter(uid: string) {
         this._startAfter = uid;
         return this;
     }
 
-    public limit(limit = 1000): DBAccess<T> {
+    public limit(limit: number) {
         this._limit = limit;
         return this;
     }
 
-    public orderBy(field: keyof T, direction: "asc" | "desc"): DBAccess<T> {
+    public orderBy(field: keyof T, direction: "asc" | "desc") {
         this._orders.push([field, direction]);
         return this;
     }
 
-    public async update(updates: Partial<T>): Promise<Date> {
-        if (!this._uid) return new Date();
+    public async update(updates: Partial<T>) {
+        if (!this._uid) throw new Error("DBAccess.uid required");
 
         for (const key in updates) {
             if (updates[key] === undefined) delete updates[key];
@@ -84,15 +93,15 @@ class DBAccess<T = { [key: string]: any }> {
         return updateTime.writeTime.toDate();
     }
 
-    public async delete(): Promise<Date> {
-        if (!this._uid) return new Date();
+    public async delete() {
+        if (!this._uid) throw new Error("DBAccess.uid required");
         const deleteTime = await this._collection.doc(this._uid).delete();
         this.restartAllStates();
         return deleteTime.writeTime.toDate();
     }
 
-    public async create(data: T): Promise<Date> {
-        if (!this._uid) return new Date();
+    public async create(data: T) {
+        if (!this._uid) throw new Error("DBAccess.uid required");
 
         for (const key in data) {
             if (data[key] === undefined) delete data[key];
@@ -105,7 +114,7 @@ class DBAccess<T = { [key: string]: any }> {
         return createTime.writeTime.toDate();
     }
 
-    public async get(): Promise<T[]> {
+    public async get() {
         if (this._uid) {
             const uid = this._uid;
             this.restartAllStates();
@@ -159,6 +168,16 @@ class DBAccess<T = { [key: string]: any }> {
         this.restartAllStates();
 
         return results as T[];
+    }
+
+    public async getFirst(): Promise<T | undefined> {
+        const results = await this.get();
+        return results[0];
+    }
+
+    public async getLast(): Promise<T | undefined> {
+        const results = await this.get();
+        return results[results.length - 1];
     }
 }
 

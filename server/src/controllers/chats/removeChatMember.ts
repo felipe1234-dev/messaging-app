@@ -24,10 +24,13 @@ const removeChatMemberController: RouteController = async (
         if (!chatUid) throw new MissingURLParam("chat");
         if (!memberUid) throw new MissingURLParam("member");
 
-        const chat = await ChatsDB.getChatByUid(chatUid);
+        const chatsDB = new ChatsDB();
+        const usersDB = new UsersDB();
+
+        const chat = await chatsDB.getByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
-        const member = await UsersDB.getUserByUid(memberUid);
+        const member = await usersDB.getByUid(memberUid);
         if (!member) throw new NotFound("User not found");
 
         const currentUser = req.user;
@@ -42,7 +45,7 @@ const removeChatMemberController: RouteController = async (
         const isNotAMember = !chat.members.includes(member.uid);
         if (isNotAMember) throw new Forbidden("This user is not a member");
 
-        await ChatsDB.updateChat(chatUid, {
+        await chatsDB.uid(chatUid).update({
             members: chat.members.filter((uid) => uid !== member.uid),
         });
 

@@ -24,10 +24,13 @@ const addChatAdminController: RouteController = async (
         if (!chatUid) throw new MissingURLParam("chat");
         if (!memberUid) throw new MissingURLParam("admin");
 
-        const chat = await ChatsDB.getChatByUid(chatUid);
+        const chatsDB = new ChatsDB();
+        const usersDB = new UsersDB();
+
+        const chat = await chatsDB.getByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
-        const admin = await UsersDB.getUserByUid(memberUid);
+        const admin = await usersDB.getByUid(memberUid);
         if (!admin) throw new NotFound("User not found");
 
         const currentUser = req.user;
@@ -46,7 +49,7 @@ const addChatAdminController: RouteController = async (
         const isAlreadyAdmin = chat.admins.includes(admin.uid);
         if (isAlreadyAdmin) throw new Forbidden("User is already an admin");
 
-        await ChatsDB.updateChat(chatUid, {
+        await chatsDB.uid(chatUid).update({
             admins: [...chat.admins, admin.uid],
         });
 

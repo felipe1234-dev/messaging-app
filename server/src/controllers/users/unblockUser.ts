@@ -21,10 +21,12 @@ const unblockUserController: RouteController = async (
         const { userUid } = req.params;
         if (!userUid) throw new MissingURLParam("userUid");
 
-        const userToBeBlocked = await UsersDB.getUserByUid(userUid);
+        const usersDB = new UsersDB();
+
+        const userToBeBlocked = await usersDB.getByUid(userUid);
         if (!userToBeBlocked) throw new NotFound("User not found");
 
-        await UsersDB.updateUser(userUid, {
+        await usersDB.uid(userUid).update({
             blocked: false,
             unblockedAt: new Date(),
             unblockedBy: currentUser.uid,

@@ -22,14 +22,16 @@ const refreshSessionController: RouteController = async (
         const { refreshToken } = req.body;
         if (!refreshToken) throw new MissingPostParam("refreshToken");
 
-        const user = await UsersDB.getUserByRefreshToken(refreshToken);
+        const usersDB = new UsersDB();
+
+        const user = await usersDB.getByRefreshToken(refreshToken);
         if (!user) throw new NotFound("Token not found");
 
         if (user.blocked) throw new Forbidden("User blocked");
 
         const tokenExpired = user.token && await Token.isExpired(user.token);
         if (!user.token || tokenExpired) {
-            await UsersDB.updateUser(user.uid, { refreshToken: "" });
+            await usersDB.uid(user.uid).update({ refreshToken: "" });
             throw new Unauthenticated("Token expired");
         }
 

@@ -29,8 +29,10 @@ const sendFriendRequestController: RouteController = async (
 
         if (user.friends.includes(to))
             throw new InvalidParam("You're already friends with " + to);
+        
+        const usersDB = new UsersDB();
 
-        const friend = await UsersDB.getUserByUid(userUid);
+        const friend = await usersDB.getByUid(userUid);
         if (!friend) throw new NotFound("Friend not found");
 
         const alreadySent = await FriendRequestsDB.friendRequestAlreadySent(

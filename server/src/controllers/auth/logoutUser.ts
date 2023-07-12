@@ -8,8 +8,10 @@ const logoutUserController: RouteController = async (req, res) => {
         const currentUser = req.user;
         if (!currentUser?.uid)
             throw new Unauthenticated("You're not authenticated!");
+        
+        const usersDB = new UsersDB();
 
-        await UsersDB.updateUser(currentUser.uid, {
+        await usersDB.uid(currentUser.uid).update({
             online: false,
             sessionEnd: new Date(),
             token: "",

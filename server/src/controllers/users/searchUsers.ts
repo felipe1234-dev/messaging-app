@@ -1,9 +1,10 @@
 import { UsersDB } from "@databases";
 import {
     codes,
-    FilterParams,
     secureUserData,
     operators,
+    User,
+    Operator,
 } from "messaging-app-globals";
 import { 
     RouteController, 
@@ -14,10 +15,21 @@ import {
     Unauthorized 
 } from "@errors";
 
+const stringToWhere = (str: string) => {
+    if (!str) return undefined;
+
+    const operator = operators.find((operator) => str.includes(operator));
+    if (!operator) return undefined;
+
+    const [field, value] = str.split(operator);
+    return [field, operator, value] as [field: keyof User, operator: Operator, value: User[keyof User]];
+};
+
 const searchUsersController: RouteController = async (
     req: Request & {
         query: {
             where?: string;
+            or?: string;
             startAfter?: string;
             limit?: string;
         };
@@ -25,37 +37,48 @@ const searchUsersController: RouteController = async (
     res
 ) => {
     try {
-        const { where, limit, startAfter } = req.query;
+        const { where, or, limit, startAfter } = req.query;
         const currentUser = req.user;
         if (!currentUser) throw new Unauthorized("You're not authenticated");
 
-        const filterParams: FilterParams = {};
+        let query = new UsersDB();
 
-        if (limit) {
-            filterParams.limit = Number(limit);
+        if (where) {
+            for (const operation of where.split(",")) {
+                const args = stringToWhere(operation);
+                if (!args) continue;
+
+                query = query.where(...args);
+            }
+        }
+
+        if (or) {
+            const operations = or.split(",");
+            const firstWhere = stringToWhere(operations[0]);
+
+            operations.shift();
+
+            if (firstWhere) {
+                query = query.or(...firstWhere);
+
+                for (const operation of operations) {
+                    const args = stringToWhere(operation);
+                    if (!args) continue;
+    
+                    query = query.where(...args);
+                }
+            }
         }
 
         if (startAfter) {
-            filterParams.startAfter = startAfter;
+            query = query.startAfter(startAfter);
         }
 
-        if (where) {
-            filterParams.wheres = where
-                .split(",")
-                .reduce((wheres, operation) => {
-                    const operator = operators.find((operator) =>
-                        operation.includes(operator)
-                    );
-                    if (!operator) return wheres;
-
-                    const [field, value] = operation.split(operator);
-                    wheres.push([field, operator, value]);
-
-                    return wheres;
-                }, [] as Required<FilterParams>["wheres"]);
+        if (limit) {
+            query = query.limit(Number(limit));
         }
 
-        let users = await UsersDB.getUsers(filterParams);
+        let users = await query.get();
 
         const isAdmin = currentUser.admin;
         if (!isAdmin) {

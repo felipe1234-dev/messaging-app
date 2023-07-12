@@ -19,10 +19,12 @@ const deleteUserController: RouteController = async (
         const { userUid } = req.params;
         if (!userUid) throw new MissingURLParam("userUid");
 
-        const userToBeDeleted = await UsersDB.getUserByUid(userUid);
+        const usersDB = new UsersDB();
+
+        const userToBeDeleted = await usersDB.getByUid(userUid);
         if (!userToBeDeleted) throw new NotFound("User not found");
 
-        await UsersDB.updateUser(userUid, {
+        await usersDB.uid(userUid).update({
             deleted: true,
             deletedAt: new Date(),
             deletedBy: currentUser.uid,

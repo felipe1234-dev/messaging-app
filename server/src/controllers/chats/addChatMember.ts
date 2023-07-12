@@ -24,10 +24,13 @@ const addChatMemberController: RouteController = async (
         if (!chatUid) throw new MissingURLParam("chat");
         if (!userUid) throw new MissingURLParam("member");
 
-        const chat = await ChatsDB.getChatByUid(chatUid);
+        const chatsDB = new ChatsDB();
+        const usersDB = new UsersDB();
+
+        const chat = await chatsDB.getByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
-        const member = await UsersDB.getUserByUid(userUid);
+        const member = await usersDB.getByUid(userUid);
         if (!member) throw new NotFound("User not found");
 
         const currentUser = req.user;
@@ -43,7 +46,7 @@ const addChatMemberController: RouteController = async (
         if (!isAlreadyMember)
             throw new Forbidden("This user is already a member");
 
-        await ChatsDB.updateChat(chatUid, {
+        await chatsDB.uid(chatUid).update({
             members: [...chat.members, member.uid],
         });
 

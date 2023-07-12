@@ -4,16 +4,16 @@ import { Token } from "@services";
 const timeInterval = 1 * 60 * 1000;
 
 async function expireTokens() {
-    const onlineUsers = await UsersDB.getUsers({
-        wheres: [["online", "==", true]],
-    });
+    const usersDB = new UsersDB();
+
+    const onlineUsers = await usersDB.where("online", "==", true).get();
 
     const promises: Promise<void>[] = [];
 
     for (const user of onlineUsers) {
         const promise = new Promise<void>(async (resolve) => {
             if (!user.token || (await Token.isExpired(user.token))) {
-                await UsersDB.updateUser(user.uid, {
+                await usersDB.uid(user.uid).update({
                     online: false,
                     sessionEnd: new Date(),
                     token: "",

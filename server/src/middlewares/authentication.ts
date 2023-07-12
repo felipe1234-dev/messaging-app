@@ -35,8 +35,10 @@ const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
             return res.sendResponse(new Unauthenticated("Session expired"));
         }
 
+        const usersDB = new UsersDB();
+
         const decodedUser = await Token.decode(token);
-        const user = await UsersDB.getUserByUid(decodedUser.uid);
+        const user = await usersDB.getByUid(decodedUser.uid);
 
         if (!user) return res.sendResponse(new NotFound("User not found"));
         if (user.blocked)
@@ -45,7 +47,7 @@ const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
         const newToken = await Token.encode(user);
         user.token = newToken;
 
-        await UsersDB.updateUser(user.uid, { token: newToken });
+        await usersDB.uid(user.uid).update({ token: newToken });
 
         req.user = user;
 

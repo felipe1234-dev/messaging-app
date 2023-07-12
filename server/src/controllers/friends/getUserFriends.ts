@@ -8,10 +8,11 @@ const getUserFriendsController: RouteController = async (req, res) => {
         const { user } = req;
         if (!user) throw new Unauthorized("You're not authenticated");
 
+        const usersDB = new UsersDB();
         const friends: User[] = [];
 
         for (const friendUid of user.friends) {
-            const friend = await UsersDB.getUserByUid(friendUid);
+            const friend = await usersDB.getByUid(friendUid);
             if (friend) friends.push(friend);
         }
 

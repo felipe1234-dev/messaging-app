@@ -17,11 +17,13 @@ const recoverPasswordController: RouteController = async (
         const { userUid } = req.params;
         if (!userUid) throw new MissingURLParam("userUid");
 
-        const user = await UsersDB.getUserByUid(userUid);
+        const usersDB = new UsersDB();
+
+        const user = await usersDB.getByUid(userUid);
         if (!user) throw new NotFound("User not found");
 
         const recoveryToken = generateUid("", 15);
-        await UsersDB.updateUser(userUid, { recoveryToken });
+        await usersDB.doc(userUid).update({ recoveryToken });
 
         await Email.send({
             to: user.email,

@@ -14,6 +14,8 @@ const createChatController: RouteController = async (
         const currentUser = req.user;
         if (!currentUser) throw new Unauthorized("You're not authenticated");
 
+        const chatsDB = new ChatsDB();
+
         const newChat = new Chat({
             ...chatProps,
             admins: Array.from(
@@ -25,7 +27,7 @@ const createChatController: RouteController = async (
             createdBy: currentUser.uid,
         });
 
-        await ChatsDB.createChat(newChat);
+        await chatsDB.uid(newChat.uid).create(newChat);
 
         return res.sendResponse({
             status: 200,
