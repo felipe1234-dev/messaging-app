@@ -3,6 +3,12 @@ import { User, FilterParams } from "messaging-app-globals";
 
 const userCollection = () => new DBAccess("users");
 
+class UsersDB extends DBAccess<User> {
+    constructor() {
+        super("users");
+    }
+}
+
 class UsersDB {
     public static createUser(user: User): Promise<Date> {
         return userCollection().doc(user.uid).create(user);
@@ -17,8 +23,6 @@ class UsersDB {
                 query = query.where(field, operator, value);
             }
         }
-
-        
 
         if (params.startAfter) {
             query = query.startAfter(params.startAfter);

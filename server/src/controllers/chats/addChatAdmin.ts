@@ -3,7 +3,7 @@ import { ChatsDB, UsersDB } from "@databases";
 import { codes } from "messaging-app-globals";
 import {
     Forbidden,
-    MissingPostParam,
+    MissingURLParam,
     NotFound,
     ServerError,
     Unauthorized,
@@ -21,8 +21,8 @@ const addChatAdminController: RouteController = async (
     try {
         const { chatUid, memberUid } = req.params;
 
-        if (!chatUid) throw new MissingPostParam("chat");
-        if (!memberUid) throw new MissingPostParam("admin");
+        if (!chatUid) throw new MissingURLParam("chat");
+        if (!memberUid) throw new MissingURLParam("admin");
 
         const chat = await ChatsDB.getChatByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");

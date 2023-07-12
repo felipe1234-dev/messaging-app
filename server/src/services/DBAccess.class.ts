@@ -2,14 +2,14 @@ import { CollectionReference, Query } from "@google-cloud/firestore";
 import { firestore } from "@databases";
 import { Operator } from "messaging-app-globals";
 
-class DBAccess {
+class DBAccess<T = { [key: string]: any }> {
     protected _index: number;
     protected _collection: CollectionReference;
     protected _uid?: string;
-    protected _wheres: Array<[field: string, operator: Operator, value: any]>[];
+    protected _wheres: Array<[field: keyof T, operator: Operator, value: T[keyof T]]>[];
     protected _startAfter?: string;
     protected _limit?: number;
-    protected _orders: Array<[field: string, direction: "asc" | "desc"]>;
+    protected _orders: Array<[field: keyof T, direction: "asc" | "desc"]>;
 
     constructor(dbName: string) {
         this._index = 0;
@@ -29,12 +29,16 @@ class DBAccess {
         this._limit = undefined;
     }
 
-    public doc(uid = ""): DBAccess {
+    public doc(uid = ""): DBAccess<T> {
         this._uid = uid;
         return this;
     }
 
-    public where(field: string, operator: Operator, value: any): DBAccess {
+    public byUid(uid = ""): DBAccess<T> {
+        return this.doc(uid);
+    }
+
+    public where(field: keyof T, operator: Operator, value: T[keyof T]): DBAccess<T> {
         if (!this._wheres[this._index]) this._wheres[this._index] = [];
         
         this._wheres[this._index].push([field, operator, value]);
@@ -42,31 +46,31 @@ class DBAccess {
         return this;
     }
 
-    public and(field: string, operator: Operator, value: any): DBAccess {
+    public and(field: keyof T, operator: Operator, value: T[keyof T]): DBAccess<T> {
         return this.where(field, operator, value);
     }
 
-    public or(field: string, operator: Operator, value: any): DBAccess {
+    public or(field: keyof T, operator: Operator, value: T[keyof T]): DBAccess<T> {
         this._index++;
         return this.where(field, operator, value);
     }
 
-    public startAfter(uid: string): DBAccess {
+    public startAfter(uid: string): DBAccess<T> {
         this._startAfter = uid;
         return this;
     }
 
-    public limit(limit = 1000): DBAccess {
+    public limit(limit = 1000): DBAccess<T> {
         this._limit = limit;
         return this;
     }
 
-    public orderBy(field: string, direction: "asc" | "desc"): DBAccess {
+    public orderBy(field: keyof T, direction: "asc" | "desc"): DBAccess<T> {
         this._orders.push([field, direction]);
         return this;
     }
 
-    public async update(updates: any): Promise<Date> {
+    public async update(updates: Partial<T>): Promise<Date> {
         if (!this._uid) return new Date();
 
         for (const key in updates) {
@@ -87,7 +91,7 @@ class DBAccess {
         return deleteTime.writeTime.toDate();
     }
 
-    public async create<T>(data: T): Promise<Date> {
+    public async create(data: T): Promise<Date> {
         if (!this._uid) return new Date();
 
         for (const key in data) {
@@ -101,13 +105,12 @@ class DBAccess {
         return createTime.writeTime.toDate();
     }
 
-    public async get<T>(): Promise<T[]> {
+    public async get(): Promise<T[]> {
         if (this._uid) {
             const uid = this._uid;
             this.restartAllStates();
             return [(await this._collection.doc(uid).get()).data() as T];
         }
-
         
         const results = [];
         
@@ -122,12 +125,12 @@ class DBAccess {
     
                 for (const where of whereSet) {
                     const [field, operator, value] = where;
-                    query = query.where(field, operator, value);
+                    query = query.where(field as string, operator, value);
                 }
     
                 for (const order of this._orders) {
                     const [field, direction] = order;
-                    query = query.orderBy(field, direction);
+                    query = query.orderBy(field as string, direction);
                 }
     
                 if (lastDoc) {

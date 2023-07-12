@@ -3,7 +3,7 @@ import { FriendRequest, codes } from "messaging-app-globals";
 import { UsersDB, FriendRequestsDB } from "@databases";
 import {
     InvalidParam,
-    MissingPostParam,
+    MissingURLParam,
     NotFound,
     ServerError,
     Unauthorized,
@@ -22,7 +22,7 @@ const sendFriendRequestController: RouteController = async (
         if (!user) throw new Unauthorized("You're not authenticated");
 
         const { userUid } = req.params;
-        if (!userUid) throw new MissingPostParam("userUid");
+        if (!userUid) throw new MissingURLParam("userUid");
 
         const to = userUid;
         const from = user.uid;

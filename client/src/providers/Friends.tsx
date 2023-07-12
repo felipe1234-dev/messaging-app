@@ -88,10 +88,17 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
             user.uid,
             onUpdateFriendRequests
         );
-    }, [user?.uid]);
+    }, [user?.uid, user?.friends]);
 
     return (
-        <FriendsContext.Provider value={{ friends, friendRequests }}>
+        <FriendsContext.Provider
+            value={{
+                friends,
+                friendRequests: friendRequests.filter(
+                    (friendRequest) => !friendRequest.deleted
+                ),
+            }}
+        >
             {children}
         </FriendsContext.Provider>
     );

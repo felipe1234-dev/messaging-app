@@ -3,7 +3,7 @@ import { codes } from "messaging-app-globals";
 import { ChatsDB, UsersDB } from "@databases";
 import {
     Forbidden,
-    MissingPostParam,
+    MissingURLParam,
     NotFound,
     ServerError,
     Unauthorized,
@@ -21,8 +21,8 @@ const removeChatMemberController: RouteController = async (
     try {
         const { chatUid, memberUid } = req.body;
 
-        if (!chatUid) throw new MissingPostParam("chat");
-        if (!memberUid) throw new MissingPostParam("member");
+        if (!chatUid) throw new MissingURLParam("chat");
+        if (!memberUid) throw new MissingURLParam("member");
 
         const chat = await ChatsDB.getChatByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");

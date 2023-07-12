@@ -61,12 +61,10 @@ function AuthProvider(props: { children: React.ReactNode }) {
         Api.users.onUserUpdated(user.uid, onUserUpdated);
     }, [user?.uid]);
 
-    const wrapperUser = user;
-
     return (
         <AuthContext.Provider
             value={{
-                user: wrapperUser,
+                user,
                 login,
                 logout,
             }}

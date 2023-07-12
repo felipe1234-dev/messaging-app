@@ -56,8 +56,17 @@ class FriendRequestsDB {
         for (const friendRequest of friendRequests) {
             await FriendRequestsDB.updateFriendRequest(friendRequest.uid, {
                 deleted: true,
+                deletedAt: new Date(),
+                deletedBy: userUid,
             });
         }
+    }
+
+    public static async getFriendRequestWithFriend(
+        userUid: string,
+        friendUid: string
+    ): Promise<void> {
+        
     }
 
     public static updateFriendRequest(
@@ -79,6 +88,7 @@ class FriendRequestsDB {
             await friendRequestsCollection()
                 .where("from", "==", from)
                 .and("to", "==", to)
+                .and("deleted", "==", false)
                 .get<FriendRequest>()
         )[0];
 

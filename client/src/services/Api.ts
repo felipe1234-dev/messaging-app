@@ -129,6 +129,18 @@ const Api = {
             );
         },
 
+        removeFriend: async (friendUid: string) => {
+            await httpEndpoint.delete(`/friends/${friendUid}`);
+        },
+
+        sendFriendRequest: async (userUid: string) => {
+            await httpEndpoint.post(`/friend-requests/${userUid}`);
+        },
+
+        cancelFriendRequest: async (userUid: string) => {
+            await httpEndpoint.delete(`/friend-requests/${userUid}`);
+        },
+
         onFriendUpdated: (
             userUid: string,
             callback: (friend: User) => void

@@ -1,5 +1,5 @@
 import { Request, RouteController } from "@typings";
-import { User, codes } from "messaging-app-globals";
+import { codes } from "messaging-app-globals";
 import { UsersDB, FriendRequestsDB } from "@databases";
 import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
 
