@@ -8,6 +8,7 @@ class FriendRequest {
     public acceptedAt?: Date;
     public rejected: boolean;
     public rejectedAt?: Date;
+    public users: string[];
     public sentAt: Date;
     public deleted: boolean;
     public deletedAt?: Date;
@@ -31,6 +32,7 @@ class FriendRequest {
         this.uid = uid;
         this.from = from;
         this.to = to;
+        this.users = [from, to];
         this.accepted = accepted;
         if (acceptedAt) this.acceptedAt = toDate(acceptedAt);
         this.rejected = rejected;
@@ -48,6 +50,8 @@ class FriendRequest {
                 typeof obj.uid === "string" &&
                 typeof obj.from === "string" &&
                 typeof obj.to === "string" &&
+                Array.isArray(obj.users) &&
+                obj.users.every((item: any) => typeof item === "string") &&
                 obj.sentAt instanceof Date &&
                 typeof obj.accepted === "boolean" &&
                 (obj.acceptedAt === undefined ||
