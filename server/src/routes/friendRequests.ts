@@ -5,9 +5,11 @@ import {
     getUserFriendRequestsController,
     sendFriendRequestController,
     deleteFriendRequestController,
+    acceptFriendRequestController,
+    rejectFriendRequestController,
 } from "@controllers/friendRequests";
 
-const friendsRouter: HTTPRouter = (api) => {
+const friendRequestsRouter: HTTPRouter = (api) => {
     api.get(
         "/friend-requests",
         useRouteMiddleware(authenticationMiddleware),
@@ -23,6 +25,16 @@ const friendsRouter: HTTPRouter = (api) => {
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(deleteFriendRequestController)
     );
+    api.post(
+        "/friend-requests/:friendRequestUid/accept",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(acceptFriendRequestController)
+    );
+    api.post(
+        "/friend-requests/:friendRequestUid/reject",
+        useRouteMiddleware(authenticationMiddleware),
+        useRouteController(rejectFriendRequestController)
+    );
 };
 
-export default friendsRouter;
+export default friendRequestsRouter;

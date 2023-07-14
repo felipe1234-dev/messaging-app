@@ -33,7 +33,7 @@ async function createTextMessage(params: TextMessageBody & { user: User }) {
         chat,
     });
 
-    await MessagesDB.createMessage(textMessage);
+    await new MessagesDB().uid(textMessage.uid).create(textMessage);
 }
 
 async function createVideoMessage(params: VideoMessageBody & { user: User }) {
@@ -54,7 +54,7 @@ async function createVideoMessage(params: VideoMessageBody & { user: User }) {
         sentBy: user.uid,
     });
 
-    await MessagesDB.createMessage(videoMessage);
+    await new MessagesDB().uid(videoMessage.uid).create(videoMessage);
 }
 
 const sendMessageController: RouteController = async (

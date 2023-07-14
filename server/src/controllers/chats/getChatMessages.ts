@@ -1,5 +1,5 @@
 import { Request, RouteController } from "@typings";
-import { codes } from "messaging-app-globals";
+import { Message, codes } from "messaging-app-globals";
 import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
 import { ChatsDB, MessagesDB } from "@databases";
 
@@ -43,11 +43,19 @@ const getChatMessagesController: RouteController = async (
         } = req.query;
         const [field, direction] = orderBy.split(",");
 
-        let messages = await MessagesDB.getChatMessages(chatUid, {
-            limit,
-            startAfter,
-            orderBy: [field, direction === "desc" ? "desc" : "asc"],
-        });
+        let query = new MessagesDB();
+
+        query.where("chat", "==", chatUid);
+
+        if (startAfter) query.startAfter(startAfter);
+        if (limit) query.limit(limit);
+
+        query.orderBy(
+            field as keyof Message,
+            direction === "desc" ? "desc" : "asc"
+        );
+
+        let messages = await query.get();
 
         const canSeeDeletedMessages =
             currentUser.admin || chat.admins.includes(currentUser.uid);
