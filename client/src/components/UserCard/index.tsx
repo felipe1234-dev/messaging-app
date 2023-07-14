@@ -12,9 +12,9 @@ interface UserCardProps {
 }
 
 const actions = {
-    REMOVE_FRIEND: 1,
+    UNFRIEND: 1,
     SEND_FRIEND_REQUEST: 2,
-    CANCEL_FRIEND_REQUEST: 3,
+    DELETE_FRIEND_REQUEST: 3,
     REJECT_FRIEND_REQUEST: 4,
     ACCEPT_FRIEND_REQUEST: 5,
 };
@@ -44,7 +44,7 @@ function UserCard(props: UserCardProps) {
     const friendsSince =
         acceptedFriendRequest?.acceptedAt?.toDateString() || undefined;
 
-    const friendRequestToUserFromYou = !!friendRequests.find(
+    const friendRequestToUserFromYou = friendRequests.find(
         (fr) =>
             fr.from === auth.user?.uid &&
             fr.to === user.uid &&
@@ -73,31 +73,53 @@ function UserCard(props: UserCardProps) {
     const handleSendFriendRequest = () => {
         addLoading(actions.SEND_FRIEND_REQUEST);
 
-        Api.friends
-            .sendFriendRequest(user.uid)
+        Api.friendRequests
+            .send(user.uid)
             .catch((error) => alert.error(error.message))
             .finally(removeLoading);
     };
 
-    const handleRemoveFriend = () => {
-        addLoading(actions.REMOVE_FRIEND);
+    const handleUndoFriendship = () => {
+        addLoading(actions.UNFRIEND);
 
         Api.friends
-            .removeFriend(user.uid)
+            .unfriend(user.uid)
             .catch((error) => alert.error(error.message))
             .finally(removeLoading);
     };
 
-    const handleCancelFriendRequest = () => {
-        addLoading(actions.CANCEL_FRIEND_REQUEST);
+    const handleDeleteFriendRequest = () => {
+        if (!friendRequestToUserFromYou) return;
 
-        Api.friends
-            .cancelFriendRequest(user.uid)
+        addLoading(actions.DELETE_FRIEND_REQUEST);
+
+        Api.friendRequests
+            .delete(friendRequestToUserFromYou.uid)
             .catch((error) => alert.error(error.message))
             .finally(removeLoading);
     };
 
-    
+    const handleAcceptFriendRequest = () => {
+        if (!friendRequestToYouFromUser) return;
+
+        addLoading(actions.ACCEPT_FRIEND_REQUEST);
+
+        Api.friendRequests
+            .accept(friendRequestToYouFromUser.uid)
+            .catch((error) => alert.error(error.message))
+            .finally(removeLoading);
+    };
+
+    const handleRejectFriendRequest = () => {
+        if (!friendRequestToYouFromUser) return;
+
+        addLoading(actions.REJECT_FRIEND_REQUEST);
+
+        Api.friendRequests
+            .reject(friendRequestToYouFromUser.uid)
+            .catch((error) => alert.error(error.message))
+            .finally(removeLoading);
+    };
 
     const baseButtonProps = (action: number) => ({
         loading: loading === action,
@@ -134,12 +156,14 @@ function UserCard(props: UserCardProps) {
                     <>
                         <Button
                             variant="reject"
+                            onClick={handleRejectFriendRequest}
                             {...baseButtonProps(actions.REJECT_FRIEND_REQUEST)}
                         >
                             Reject
                         </Button>
                         <Button
                             variant="success"
+                            onClick={handleAcceptFriendRequest}
                             {...baseButtonProps(actions.ACCEPT_FRIEND_REQUEST)}
                         >
                             Accept
@@ -148,18 +172,18 @@ function UserCard(props: UserCardProps) {
                 ) : youSentAFriendRequestToThem ? (
                     <Button
                         variant="cancel"
-                        onClick={handleCancelFriendRequest}
-                        {...baseButtonProps(actions.CANCEL_FRIEND_REQUEST)}
+                        onClick={handleDeleteFriendRequest}
+                        {...baseButtonProps(actions.DELETE_FRIEND_REQUEST)}
                     >
                         Cancel friend request
                     </Button>
                 ) : areFriendsWithEachOther ? (
                     <Button
                         variant="remove"
-                        onClick={handleRemoveFriend}
-                        {...baseButtonProps(actions.REMOVE_FRIEND)}
+                        onClick={handleUndoFriendship}
+                        {...baseButtonProps(actions.UNFRIEND)}
                     >
-                        Remove friend
+                        Unfriend
                     </Button>
                 ) : (
                     <Button

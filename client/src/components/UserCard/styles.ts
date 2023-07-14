@@ -12,9 +12,9 @@ const Card = styled.div`
 
 const Info = styled.div`
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
     gap: 8px;
 `;
 
