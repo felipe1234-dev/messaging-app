@@ -1,6 +1,6 @@
 import { Request, RouteController } from "@typings";
 import { codes, validateEmail } from "messaging-app-globals";
-import { InvalidParam, MissingPostParam, ServerError } from "@errors";
+import { InvalidParam, MissingBodyParam, ServerError } from "@errors";
 import { Hash } from "@services";
 import { User } from "messaging-app-globals";
 import { UsersDB } from "@databases";
@@ -18,10 +18,10 @@ const registerUserController: RouteController = async (
     try {
         const { name, email, password } = req.body;
 
-        if (!name) throw new MissingPostParam("name");
-        if (!email) throw new MissingPostParam("email");
+        if (!name) throw new MissingBodyParam("name");
+        if (!email) throw new MissingBodyParam("email");
         if (!validateEmail(email)) throw new InvalidParam("Invalid email");
-        if (!password) throw new MissingPostParam("password");
+        if (!password) throw new MissingBodyParam("password");
 
         const usersDB = new UsersDB();
 

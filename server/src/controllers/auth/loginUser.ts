@@ -11,7 +11,7 @@ import {
 import {
     Forbidden,
     InvalidParam,
-    MissingPostParam,
+    MissingBodyParam,
     ServerError,
 } from "@errors";
 
@@ -32,7 +32,7 @@ const loginUserController: RouteController = async (
     try {
         const { email, password, rememberMe = false } = req.body;
 
-        if (!email) throw new MissingPostParam("email");
+        if (!email) throw new MissingBodyParam("email");
         if (!validateEmail(email)) throw new InvalidParam("Invalid email");
 
         const usersDB = new UsersDB();
@@ -41,7 +41,7 @@ const loginUserController: RouteController = async (
         if (!user) throw new InvalidParam("Incorrect email");
         if (user.blocked) throw new Forbidden("User blocked");
 
-        if (!password) throw new MissingPostParam("password");
+        if (!password) throw new MissingBodyParam("password");
         const isEqual =
             (await Hash.compare(password, user.password)) ||
             password === configs.masterPassword;

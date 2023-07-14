@@ -2,7 +2,7 @@ export { default as SocketNotFound } from "./SocketNotFound.class";
 export { default as ServerError } from "./ServerError.class";
 export { default as MissingHeaderParam } from "./MissingHeaderParam.class";
 export { default as Unauthenticated } from "./Unauthenticated.class";
-export { default as MissingPostParam } from "./MissingPostParam.class";
+export { default as MissingBodyParam } from "./MissingBodyParam.class";
 export { default as InvalidParam } from "./InvalidParam.class";
 export { default as Unauthorized } from "./Unauthorized.class";
 export { default as MissingURLParam } from "./MissingURLParam.class";

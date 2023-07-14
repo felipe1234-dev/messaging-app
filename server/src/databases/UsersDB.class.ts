@@ -8,7 +8,7 @@ class UsersDB extends DBAccess<User> {
 
     public override async get() {
         const results = await super.get();
-        return results.map(data => new User(data));
+        return results.map((data) => new User(data));
     }
 
     public getByEmail(email: string) {
@@ -24,6 +24,30 @@ class UsersDB extends DBAccess<User> {
     public async getByRememberMeToken(rememberMeToken: string) {
         this.where("rememberMeToken", "==", rememberMeToken);
         return this.getFirst();
+    }
+
+    public async addFriend(friendUid: string) {
+        if (!this._uid) throw new Error("DBAccess.uid required");
+
+        const user = await this.getByUid(this._uid);
+        if (!user) throw new Error("User not found");
+
+        return this.uid(user.uid).update({
+            friends: Array.from(new Set([...user.friends, friendUid])),
+        });
+    }
+
+    public async removeFriend(friendUid: string) {
+        if (!this._uid) throw new Error("DBAccess.uid required");
+
+        const user = await this.getByUid(this._uid);
+        if (!user) throw new Error("User not found");
+
+        return this.uid(user.uid).update({
+            friends: Array.from(
+                new Set(user.friends.filter((uid) => uid !== friendUid))
+            ),
+        });
     }
 }
 

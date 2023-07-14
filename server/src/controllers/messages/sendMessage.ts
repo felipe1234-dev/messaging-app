@@ -5,7 +5,7 @@ import { MessagesDB, ChatsDB } from "@databases";
 import { codes, User, TextMessage, VideoMessage } from "messaging-app-globals";
 import {
     InvalidParam,
-    MissingPostParam,
+    MissingBodyParam,
     MissingURLParam,
     NotFound,
     ServerError,
@@ -25,7 +25,7 @@ interface VideoMessageBody {
 async function createTextMessage(params: TextMessageBody & { user: User }) {
     const { text, chat, user } = params;
 
-    if (!text) throw new MissingPostParam("text");
+    if (!text) throw new MissingBodyParam("text");
 
     const textMessage = new TextMessage({
         text,
@@ -39,7 +39,7 @@ async function createTextMessage(params: TextMessageBody & { user: User }) {
 async function createVideoMessage(params: VideoMessageBody & { user: User }) {
     const { videoURL, chat, user } = params;
 
-    if (!videoURL) throw new MissingPostParam("videoURL");
+    if (!videoURL) throw new MissingBodyParam("videoURL");
 
     const file = await fileUrlToFile(videoURL);
     const newVideoURL = await FileStorage.upload(file, file.name, {
@@ -74,8 +74,8 @@ const sendMessageController: RouteController = async (
         if (!currentUser) throw new Unauthorized("You're not authenticated");
 
         const { chat: chatUid } = req.body;
-        if (!chatUid) throw new MissingPostParam("chat");
- 
+        if (!chatUid) throw new MissingBodyParam("chat");
+
         const chatsDB = new ChatsDB();
 
         const chat = await chatsDB.getByUid(chatUid);

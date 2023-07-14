@@ -22,23 +22,31 @@ const removeFriendController: RouteController = async (
         if (!isFriendsWithThem) throw new NotFound("Friend not found");
         
         const usersDB = new UsersDB();
+        const friendRequestsDB = new FriendRequestsDB();
+
         const friend = await usersDB.getByUid(friendUid);
 
         if (friend) {
-            await usersDB.uid(friendUid).update({
-                friends: Array.from(
-                    new Set(friend.friends.filter((uid) => uid !== user.uid))
-                ),
-            });
+            await usersDB.uid(friendUid).removeFriend(user.uid);
+            await usersDB.uid(user.uid).removeFriend(friend.uid);
         }
 
-        await usersDB.uid(user.uid).update({
-            friends: Array.from(
-                new Set(user.friends.filter((uid) => uid !== friend?.uid))
-            ),
-        });
+        const friendRequests = await friendRequestsDB
+            .where("from", "==", user.uid)
+            .and("to", "==", friendUid)
+            .and("deleted", "==", false)
+            .or("from", "==", friendUid)
+            .and("to", "==", user.uid)
+            .and("deleted", "==", false)
+            .get();
 
-        await FriendRequestsDB.removeFriendRequestWithFriend(user.uid, friendUid);
+        for (const friendRequest of friendRequests) {
+            await FriendRequestsDB.updateFriendRequest(friendRequest.uid, {
+                deleted: true,
+                deletedAt: new Date(),
+                deletedBy: user.uid,
+            });
+        }
 
         res.sendResponse({
             status: 200,

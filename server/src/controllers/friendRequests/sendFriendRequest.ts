@@ -3,7 +3,7 @@ import { FriendRequest, codes } from "messaging-app-globals";
 import { UsersDB, FriendRequestsDB } from "@databases";
 import {
     InvalidParam,
-    MissingURLParam,
+    MissingBodyParam,
     NotFound,
     ServerError,
     Unauthorized,
@@ -11,8 +11,8 @@ import {
 
 const sendFriendRequestController: RouteController = async (
     req: Request & {
-        params: {
-            userUid?: string;
+        body: {
+            to?: string;
         };
     },
     res
@@ -21,31 +21,28 @@ const sendFriendRequestController: RouteController = async (
         const { user } = req;
         if (!user) throw new Unauthorized("You're not authenticated");
 
-        const { userUid } = req.params;
-        if (!userUid) throw new MissingURLParam("userUid");
+        const { to } = req.body;
+        if (!to) throw new MissingBodyParam("to");
 
-        const to = userUid;
         const from = user.uid;
 
         if (user.friends.includes(to))
             throw new InvalidParam("You're already friends with " + to);
-        
-        const usersDB = new UsersDB();
 
-        const friend = await usersDB.getByUid(userUid);
+        const usersDB = new UsersDB();
+        const friendRequestsDB = new FriendRequestsDB();
+
+        const friend = await usersDB.getByUid(to);
         if (!friend) throw new NotFound("Friend not found");
 
-        const alreadySent = await FriendRequestsDB.friendRequestAlreadySent(
-            from,
-            to
-        );
+        const alreadySent = await friendRequestsDB.alreadySent(from, to);
         if (alreadySent)
             throw new InvalidParam(
-                "You've already sent a friend request to " + to
+                `You've already sent a friend request to ${friend.name} (UID: ${friend.uid})`
             );
 
         const friendRequest = new FriendRequest({ from, to });
-        await FriendRequestsDB.createFriendRequest(friendRequest);
+        await friendRequestsDB.uid(friendRequest.uid).create(friendRequest);
 
         res.sendResponse({
             status: 200,

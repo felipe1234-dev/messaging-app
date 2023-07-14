@@ -4,7 +4,7 @@ import { UsersDB } from "@databases";
 import { Token } from "@services";
 import {
     Forbidden,
-    MissingPostParam,
+    MissingBodyParam,
     NotFound,
     ServerError,
     Unauthenticated,
@@ -20,7 +20,7 @@ const refreshSessionController: RouteController = async (
 ) => {
     try {
         const { refreshToken } = req.body;
-        if (!refreshToken) throw new MissingPostParam("refreshToken");
+        if (!refreshToken) throw new MissingBodyParam("refreshToken");
 
         const usersDB = new UsersDB();
 
@@ -29,7 +29,7 @@ const refreshSessionController: RouteController = async (
 
         if (user.blocked) throw new Forbidden("User blocked");
 
-        const tokenExpired = user.token && await Token.isExpired(user.token);
+        const tokenExpired = user.token && (await Token.isExpired(user.token));
         if (!user.token || tokenExpired) {
             await usersDB.uid(user.uid).update({ refreshToken: "" });
             throw new Unauthenticated("Token expired");
