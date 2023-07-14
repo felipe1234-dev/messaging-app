@@ -122,23 +122,8 @@ const Api = {
             return (data.friends as any[]).map((friend) => new User(friend));
         },
 
-        getUserFriendRequests: async () => {
-            const { data } = await httpEndpoint.get("/friend-requests");
-            return (data.friendRequests as any[]).map(
-                (friendRequest) => new FriendRequest(friendRequest)
-            );
-        },
-
         removeFriend: async (friendUid: string) => {
             await httpEndpoint.delete(`/friends/${friendUid}`);
-        },
-
-        sendFriendRequest: async (userUid: string) => {
-            await httpEndpoint.post(`/friend-requests/${userUid}`);
-        },
-
-        cancelFriendRequest: async (userUid: string) => {
-            await httpEndpoint.delete(`/friend-requests/${userUid}`);
         },
 
         onFriendUpdated: (
@@ -159,6 +144,22 @@ const Api = {
                         callback(friend);
                     }
                 });
+        },
+    },
+    friendRequests: {
+        getUserFriendRequests: async () => {
+            const { data } = await httpEndpoint.get("/friend-requests");
+            return (data.friendRequests as any[]).map(
+                (friendRequest) => new FriendRequest(friendRequest)
+            );
+        },
+
+        sendFriendRequest: async (userUid: string) => {
+            await httpEndpoint.post("/friend-requests", { to: userUid });
+        },
+
+        cancelFriendRequest: async (friendRequestUid: string) => {
+            await httpEndpoint.delete(`/friend-requests/${friendRequestUid}`);
         },
 
         onFriendRequestReceived: (

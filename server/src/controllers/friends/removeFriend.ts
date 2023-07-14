@@ -20,7 +20,7 @@ const removeFriendController: RouteController = async (
 
         const isFriendsWithThem = user.friends.includes(friendUid);
         if (!isFriendsWithThem) throw new NotFound("Friend not found");
-        
+
         const usersDB = new UsersDB();
         const friendRequestsDB = new FriendRequestsDB();
 
@@ -41,7 +41,7 @@ const removeFriendController: RouteController = async (
             .get();
 
         for (const friendRequest of friendRequests) {
-            await FriendRequestsDB.updateFriendRequest(friendRequest.uid, {
+            await friendRequestsDB.uid(friendRequest.uid).update({
                 deleted: true,
                 deletedAt: new Date(),
                 deletedBy: user.uid,

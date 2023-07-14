@@ -14,7 +14,7 @@ const friendsRouter: HTTPRouter = (api) => {
         useRouteController(getUserFriendRequestsController)
     );
     api.post(
-        "/friend-requests/:userUid",
+        "/friend-requests",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(sendFriendRequestController)
     );

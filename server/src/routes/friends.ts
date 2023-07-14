@@ -3,10 +3,7 @@ import { useRouteController, useRouteMiddleware } from "@utils";
 import { authenticationMiddleware } from "@middlewares";
 import {
     getUserFriendsController,
-    getUserFriendRequestsController,
-    sendFriendRequestController,
     removeFriendController,
-    cancelFriendRequestController,
 } from "@controllers/friends";
 
 const friendsRouter: HTTPRouter = (api) => {
@@ -19,22 +16,6 @@ const friendsRouter: HTTPRouter = (api) => {
         "/friends/:friendUid",
         useRouteMiddleware(authenticationMiddleware),
         useRouteController(removeFriendController)
-    );
-
-    api.get(
-        "/friend-requests",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(getUserFriendRequestsController)
-    );
-    api.post(
-        "/friend-requests/:userUid",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(sendFriendRequestController)
-    );
-    api.delete(
-        "/friend-requests/:friendUid",
-        useRouteMiddleware(authenticationMiddleware),
-        useRouteController(cancelFriendRequestController)
     );
 };
 
