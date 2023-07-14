@@ -30,13 +30,13 @@ function FindFriends() {
             const trimmedSearch = search.trim();
 
             results.push(
-                ...(await Api.users.searchUsers({
+                ...(await Api.users.list({
                     wheres: [["name", "==", trimmedSearch]],
                 }))
             );
 
             results.push(
-                ...(await Api.users.searchUsers({
+                ...(await Api.users.list({
                     wheres: [["email", "==", trimmedSearch]],
                 }))
             );

@@ -117,16 +117,16 @@ const Api = {
         },
     },
     friends: {
-        getUserFriends: async () => {
+        list: async () => {
             const { data } = await httpEndpoint.get("/friends");
             return (data.friends as any[]).map((friend) => new User(friend));
         },
 
-        removeFriend: async (friendUid: string) => {
+        unfriend: async (friendUid: string) => {
             await httpEndpoint.delete(`/friends/${friendUid}`);
         },
 
-        onFriendUpdated: (
+        onFriendListUpdated: (
             userUid: string,
             callback: (friend: User) => void
         ): Unsubscribe => {
@@ -147,19 +147,31 @@ const Api = {
         },
     },
     friendRequests: {
-        getUserFriendRequests: async () => {
+        list: async () => {
             const { data } = await httpEndpoint.get("/friend-requests");
             return (data.friendRequests as any[]).map(
                 (friendRequest) => new FriendRequest(friendRequest)
             );
         },
 
-        sendFriendRequest: async (userUid: string) => {
+        send: async (userUid: string) => {
             await httpEndpoint.post("/friend-requests", { to: userUid });
         },
 
-        cancelFriendRequest: async (friendRequestUid: string) => {
+        delete: async (friendRequestUid: string) => {
             await httpEndpoint.delete(`/friend-requests/${friendRequestUid}`);
+        },
+
+        accept: async (friendRequestUid: string) => {
+            await httpEndpoint.post(
+                `/friend-requests/${friendRequestUid}/accept`
+            );
+        },
+
+        reject: async (friendRequestUid: string) => {
+            await httpEndpoint.post(
+                `/friend-requests/${friendRequestUid}/reject`
+            );
         },
 
         onFriendRequestReceived: (
@@ -204,33 +216,12 @@ const Api = {
                 });
         },
 
-        onFriendRequestToMeUpdated: (
+        onFriendRequestUpdated: (
             userUid: string,
             callback: (friendRequest: FriendRequest) => void
         ): Unsubscribe => {
             return friendRequestCollection
-                .where("to", "==", userUid)
-                .onSnapshot((snapshot) => {
-                    for (const change of snapshot.docChanges()) {
-                        const type = change.type;
-                        if (type !== "modified") continue;
-
-                        const doc = change.doc;
-                        if (!doc.exists)
-                            throw new Error("Friend request not found");
-
-                        const friendRequest = new FriendRequest(doc.data());
-                        callback(friendRequest);
-                    }
-                });
-        },
-
-        onFriendRequestFromMeUpdated: (
-            userUid: string,
-            callback: (friendRequest: FriendRequest) => void
-        ): Unsubscribe => {
-            return friendRequestCollection
-                .where("from", "==", userUid)
+                .where("users", "array-contains", userUid)
                 .onSnapshot((snapshot) => {
                     for (const change of snapshot.docChanges()) {
                         const type = change.type;
@@ -448,7 +439,7 @@ const Api = {
         },
     },
     users: {
-        searchUsers: async (filters: FilterParams) => {
+        list: async (filters: FilterParams) => {
             const filtersCopy = { ...filters };
             delete filtersCopy.wheres;
 
@@ -462,7 +453,7 @@ const Api = {
             const { data } = await httpEndpoint.get(`/users/?${urlQuery}`);
             return (data.users as any[]).map((user) => new User(user));
         },
-        getUserByUid: async (userUid: string) => {
+        byUid: async (userUid: string) => {
             const { data } = await httpEndpoint.get(`/users/${userUid}`);
             const user = new User(data.user);
             return user;

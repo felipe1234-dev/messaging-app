@@ -20,7 +20,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
 
     const fetchFriends = async () => {
         setFriends(
-            (await Api.friends.getUserFriends()).sort((a, b) => {
+            (await Api.friends.list()).sort((a, b) => {
                 if (a.online && !b.online) return -1;
                 if (b.online && !a.online) return 1;
 
@@ -40,7 +40,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
     };
 
     const fetchFriendRequests = async () => {
-        setFriendRequests(await Api.friendRequests.getUserFriendRequests());
+        setFriendRequests(await Api.friendRequests.list());
     };
 
     const onFriendUpdated = (updatedFriend: Friend) => {
@@ -75,8 +75,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
         fetchFriends();
         fetchFriendRequests();
 
-        Api.friends.onFriendUpdated(user.uid, onFriendUpdated);
-
+        Api.friends.onFriendListUpdated(user.uid, onFriendUpdated);
         Api.friendRequests.onFriendRequestReceived(
             user.uid,
             onUpdateFriendRequests
@@ -85,12 +84,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
             user.uid,
             onUpdateFriendRequests
         );
-
-        Api.friendRequests.onFriendRequestFromMeUpdated(
-            user.uid,
-            onUpdateFriendRequests
-        );
-        Api.friendRequests.onFriendRequestToMeUpdated(
+        Api.friendRequests.onFriendRequestUpdated(
             user.uid,
             onUpdateFriendRequests
         );
