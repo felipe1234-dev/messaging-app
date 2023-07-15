@@ -4,16 +4,19 @@ import { Variant } from "@types";
 import { timeAgo } from "@functions";
 
 import { useChatWindow } from "../../providers";
-import { useAuth } from "@providers";
+import { useAuth, useModal } from "@providers";
+import { EditChatModal } from "@modals";
 
 import { CameraReels, FileEarmarkImage } from "@styled-icons/bootstrap";
 import { PhoneCallOutline } from "@styled-icons/evaicons-outline";
 import { Images } from "@styled-icons/icomoon";
 import { Circle } from "@styled-icons/material-rounded";
+import { Paint } from "@styled-icons/boxicons-regular";
 
 function ChatInfo() {
     const { chatWindow } = useChatWindow();
     const { user } = useAuth();
+    const modal = useModal();
 
     if (!chatWindow || !user) return <></>;
 
@@ -32,6 +35,13 @@ function ChatInfo() {
         transparent: true,
         variant: "secondary" as Variant,
         p: 12,
+    };
+
+    const handleEditChatBackground = () => {
+        modal.show({
+            header: "Edit chat",
+            body: <EditChatModal chat={chatWindow} />,
+        });
     };
 
     return (
@@ -110,6 +120,12 @@ function ChatInfo() {
                     </Button>
                     <Button {...baseIconButton}>
                         <Icon icon={<FileEarmarkImage />} />
+                    </Button>
+                    <Button
+                        onClick={handleEditChatBackground}
+                        {...baseIconButton}
+                    >
+                        <Icon icon={<Paint />} />
                     </Button>
                 </Columns>
             </Columns>

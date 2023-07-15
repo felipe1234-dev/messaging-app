@@ -10,6 +10,14 @@ const Card = styled.div`
     animation: ${showItemAnimation};
 `;
 
+const Main = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+`;
+
 const Info = styled.div`
     display: flex;
     flex-direction: column;
@@ -26,4 +34,4 @@ const Actions = styled.div`
     gap: 8px;
 `;
 
-export { Card, Info, Actions };
+export { Card, Main, Info, Actions };

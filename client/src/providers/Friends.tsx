@@ -44,12 +44,21 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
     };
 
     const onFriendUpdated = (updatedFriend: Friend) => {
-        setFriends((prev) =>
-            prev.map((friend) => {
+        setFriends((prev) => {
+            const nonUpdatedData = prev.find(
+                (friend) => friend.uid === updatedFriend.uid
+            );
+            const updatedFriendJson = JSON.stringify(updatedFriend);
+            const nonUpdatedFriendJson = JSON.stringify(nonUpdatedData);
+            const areDifferent = updatedFriendJson !== nonUpdatedFriendJson;
+
+            if (!areDifferent) return prev; // Prevent state rerender by returning the same variable reference
+
+            return prev.map((friend) => {
                 if (friend.uid === updatedFriend.uid) return updatedFriend;
                 return friend;
-            })
-        );
+            });
+        });
     };
 
     const onUpdateFriendRequests = (friendRequest: FriendRequest) => {
@@ -71,6 +80,8 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (!user?.uid) return;
+
+        console.log("Requesting friends and friend requests again");
 
         fetchFriends();
         fetchFriendRequests();

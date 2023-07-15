@@ -470,6 +470,23 @@ const Api = {
             });
         },
     },
+    files: {
+        uploadImage: async (file: File, path: string): Promise<string> => {
+            const formData = new FormData();
+
+            formData.append("image", file, file.name);
+            formData.append("path", path);
+
+            const { data } = await httpEndpoint.post(
+                "/files/images/",
+                formData
+            );
+
+            const { url = "" } = data;
+
+            return url;
+        },
+    },
 };
 
 export default Api;

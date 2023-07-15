@@ -62,3 +62,6 @@ export type { SpinnerProps } from "./Spinner";
 
 export { default as UserCard } from "./UserCard";
 export type { UserCardProps } from "./UserCard";
+
+export { default as Overlay } from "./Overlay";
+export type { OverlayProps } from "./Overlay";

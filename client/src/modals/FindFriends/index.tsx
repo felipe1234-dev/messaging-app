@@ -80,6 +80,7 @@ function FindFriends() {
                 <Input
                     placeholder="Search for the name or email"
                     onChange={(evt) => setSearch(evt.target.value)}
+                    onEnterPress={handleSearchForFriends}
                     value={search}
                     light={0.05}
                 />
@@ -87,7 +88,7 @@ function FindFriends() {
                 <Button
                     variant="highlight"
                     onClick={handleSearchForFriends}
-                    width="100px"
+                    width="130px"
                     loading={loading}
                     fullWidth={false}
                 >

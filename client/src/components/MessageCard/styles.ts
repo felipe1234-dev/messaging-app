@@ -15,7 +15,7 @@ const MessageRow = styled.div<MessageRowProps>`
         width: 100%;
     `}
 `;
-
+ 
 interface MessageContainerProps {
     isSender: boolean;
 }
