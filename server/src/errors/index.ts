@@ -9,3 +9,4 @@ export { default as MissingURLParam } from "./MissingURLParam.class";
 export { default as NotFound } from "./NotFound.class";
 export { default as Forbidden } from "./Forbidden.class";
 export { default as MissingQueryParam } from "./MissingQueryParam.class";
+export { default as MissingFormDataParam } from "./MissingFormDataParam.class";

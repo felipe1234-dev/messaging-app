@@ -14,7 +14,8 @@ import {
     messagesRouter,
     chatsRouter,
     friendsRouter,
-    friendRequestsRouter
+    friendRequestsRouter,
+    filesRouter,
 } from "@routes";
 import { expireTokens } from "@schedules";
 
@@ -35,6 +36,7 @@ messagesRouter(app);
 chatsRouter(app);
 friendsRouter(app);
 friendRequestsRouter(app);
+filesRouter(app);
 
 // Schedules
 expireTokens();
