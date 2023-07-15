@@ -9,6 +9,7 @@ import {
     MissingURLParam,
     NotFound,
     ServerError,
+    Unauthenticated,
     Unauthorized,
 } from "@errors";
 
@@ -71,7 +72,7 @@ const sendMessageController: RouteController = async (
         if (!type) throw new MissingURLParam("type");
 
         const currentUser = req.user;
-        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        if (!currentUser) throw new Unauthenticated("You're not authenticated");
 
         const { chat: chatUid } = req.body;
         if (!chatUid) throw new MissingBodyParam("chat");

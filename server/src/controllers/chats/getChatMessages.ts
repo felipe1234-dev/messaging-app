@@ -1,7 +1,13 @@
 import { Request, RouteController } from "@typings";
 import { Message, codes } from "messaging-app-globals";
-import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
 import { ChatsDB, MessagesDB } from "@databases";
+import {
+    MissingURLParam,
+    NotFound,
+    ServerError,
+    Unauthenticated,
+    Unauthorized,
+} from "@errors";
 
 const getChatMessagesController: RouteController = async (
     req: Request & {
@@ -26,7 +32,7 @@ const getChatMessagesController: RouteController = async (
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
-        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        if (!currentUser) throw new Unauthenticated("You're not authenticated");
 
         const canSeeChat =
             chat.members.includes(currentUser.uid) || currentUser.admin;

@@ -1,7 +1,12 @@
 import { Request, RouteController } from "@typings";
 import { codes } from "messaging-app-globals";
 import { UsersDB, FriendRequestsDB } from "@databases";
-import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
+import {
+    MissingURLParam,
+    NotFound,
+    ServerError,
+    Unauthenticated,
+} from "@errors";
 
 const removeFriendController: RouteController = async (
     req: {
@@ -16,7 +21,7 @@ const removeFriendController: RouteController = async (
         if (!friendUid) throw new MissingURLParam("friendUid");
 
         const { user } = req;
-        if (!user) throw new Unauthorized("You're not authenticated");
+        if (!user) throw new Unauthenticated("You're not authenticated");
 
         const isFriendsWithThem = user.friends.includes(friendUid);
         if (!isFriendsWithThem) throw new NotFound("Friend not found");

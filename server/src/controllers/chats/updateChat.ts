@@ -1,7 +1,13 @@
 import { Request, RouteController } from "@typings";
 import { codes, Chat } from "messaging-app-globals";
 import { ChatsDB } from "@databases";
-import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
+import {
+    MissingURLParam,
+    NotFound,
+    ServerError,
+    Unauthorized,
+    Unauthenticated,
+} from "@errors";
 
 const updateChatController: RouteController = async (
     req: Request & {
@@ -15,14 +21,14 @@ const updateChatController: RouteController = async (
     try {
         const { chatUid } = req.params;
         if (!chatUid) throw new MissingURLParam("chatUid");
-        
+
         const chatsDB = new ChatsDB();
 
         const chat = await chatsDB.getByUid(chatUid);
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
-        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        if (!currentUser) throw new Unauthenticated("You're not authenticated");
 
         const canUpdateChat =
             currentUser.admin || chat.admins.includes(currentUser.uid);

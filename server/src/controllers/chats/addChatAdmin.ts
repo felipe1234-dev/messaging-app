@@ -6,6 +6,7 @@ import {
     MissingURLParam,
     NotFound,
     ServerError,
+    Unauthenticated,
     Unauthorized,
 } from "@errors";
 
@@ -34,7 +35,7 @@ const addChatAdminController: RouteController = async (
         if (!admin) throw new NotFound("User not found");
 
         const currentUser = req.user;
-        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        if (!currentUser) throw new Unauthenticated("You're not authenticated");
 
         const canAddAdmins = chat.admins.includes(currentUser.uid);
         if (!canAddAdmins)

@@ -1,7 +1,12 @@
 import { Request, RouteController } from "@typings";
 import { codes } from "messaging-app-globals";
 import { UsersDB } from "@databases";
-import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
+import {
+    MissingURLParam,
+    NotFound,
+    ServerError,
+    Unauthenticated,
+} from "@errors";
 
 const getUserByUidController: RouteController = async (
     req: Request & {
@@ -14,9 +19,9 @@ const getUserByUidController: RouteController = async (
     try {
         const { userUid } = req.params;
         if (!userUid) throw new MissingURLParam("userUid");
-        
+
         const currentUser = req.user;
-        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        if (!currentUser) throw new Unauthenticated("You're not authenticated");
 
         const usersDB = new UsersDB();
 

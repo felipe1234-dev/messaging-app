@@ -6,7 +6,7 @@ import {
     MissingBodyParam,
     NotFound,
     ServerError,
-    Unauthorized,
+    Unauthenticated,
 } from "@errors";
 
 const sendFriendRequestController: RouteController = async (
@@ -19,7 +19,7 @@ const sendFriendRequestController: RouteController = async (
 ) => {
     try {
         const { user } = req;
-        if (!user) throw new Unauthorized("You're not authenticated");
+        if (!user) throw new Unauthenticated("You're not authenticated");
 
         const { to } = req.body;
         if (!to) throw new MissingBodyParam("to");

@@ -1,7 +1,12 @@
 import { Request, RouteController } from "@typings";
 import { codes } from "messaging-app-globals";
 import { ChatsDB } from "@databases";
-import { MissingURLParam, NotFound, ServerError, Unauthorized } from "@errors";
+import {
+    MissingURLParam,
+    NotFound,
+    ServerError,
+    Unauthenticated,
+} from "@errors";
 
 const getChatByUidController: RouteController = async (
     req: Request & {
@@ -21,7 +26,7 @@ const getChatByUidController: RouteController = async (
         if (!chat) throw new NotFound("Chat not found");
 
         const currentUser = req.user;
-        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        if (!currentUser) throw new Unauthenticated("You're not authenticated");
 
         return res.sendResponse({
             status: 200,

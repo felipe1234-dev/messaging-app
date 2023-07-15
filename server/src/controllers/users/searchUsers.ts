@@ -6,14 +6,8 @@ import {
     User,
     Operator,
 } from "messaging-app-globals";
-import { 
-    RouteController, 
-    Request 
-} from "@typings";
-import { 
-    ServerError, 
-    Unauthorized 
-} from "@errors";
+import { RouteController, Request } from "@typings";
+import { ServerError, Unauthenticated } from "@errors";
 
 const stringToWhere = (str: string) => {
     if (!str) return undefined;
@@ -22,7 +16,11 @@ const stringToWhere = (str: string) => {
     if (!operator) return undefined;
 
     const [field, value] = str.split(operator);
-    return [field, operator, value] as [field: keyof User, operator: Operator, value: User[keyof User]];
+    return [field, operator, value] as [
+        field: keyof User,
+        operator: Operator,
+        value: User[keyof User],
+    ];
 };
 
 const searchUsersController: RouteController = async (
@@ -39,7 +37,7 @@ const searchUsersController: RouteController = async (
     try {
         const { where, or, limit, startAfter } = req.query;
         const currentUser = req.user;
-        if (!currentUser) throw new Unauthorized("You're not authenticated");
+        if (!currentUser) throw new Unauthenticated("You're not authenticated");
 
         let query = new UsersDB();
 
@@ -64,7 +62,7 @@ const searchUsersController: RouteController = async (
                 for (const operation of operations) {
                     const args = stringToWhere(operation);
                     if (!args) continue;
-    
+
                     query = query.where(...args);
                 }
             }

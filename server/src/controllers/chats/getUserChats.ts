@@ -1,12 +1,12 @@
 import { RouteController } from "@typings";
 import { Chat, codes } from "messaging-app-globals";
 import { ChatsDB } from "@databases";
-import { ServerError, Unauthorized } from "@errors";
+import { ServerError, Unauthenticated } from "@errors";
 
 const getUserChatsController: RouteController = async (req, res) => {
     try {
         const { user } = req;
-        if (!user) throw new Unauthorized("You're not authenticated");
+        if (!user) throw new Unauthenticated("You're not authenticated");
 
         const chatsDB = new ChatsDB();
 
