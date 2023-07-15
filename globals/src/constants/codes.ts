@@ -41,6 +41,10 @@ const codes = {
     FRIEND_REQUEST_CANCELED: "FRIEND_REQUEST_CANCELED" as const,
     FRIEND_REQUEST_REJECTED: "FRIEND_REQUEST_REJECTED" as const,
     FRIEND_REQUEST_ACCEPTED: "FRIEND_REQUEST_ACCEPTED" as const,
+
+    FILE_SAVED: "FILE_SAVED" as const,
+    FILE_DELETED: "FILE_DELETED" as const,
+    FILE_FETCHED: "FILE_FETCHED" as const,
 };
 
 export default codes;
