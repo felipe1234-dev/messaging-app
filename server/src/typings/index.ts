@@ -3,24 +3,27 @@ import {
     Request as ExpressRequest,
     Response as ExpressResponse,
 } from "express";
-import formidable from "formidable";
 import { User, codes } from "messaging-app-globals";
 
 export interface App extends Express {}
 
 export type Code = keyof typeof codes;
 
-export interface File extends formidable.File {}
+export interface File {
+    filename: string;
+    mimetype: string;
+    extension: string;
+    size: number;
+    buffer: Buffer;
+}
 
-export interface Request extends Omit<ExpressRequest, "socket" | "files"> {
+export interface Request extends Omit<ExpressRequest, "socket"> {
     headers: {
         authorization?: string;
         origin?: string;
+        "content-type": string;
     };
     user?: User;
-    files?: {
-        [key: string]: File;
-    };
     body: {
         [key: string]: any;
     };

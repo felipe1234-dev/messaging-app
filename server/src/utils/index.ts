@@ -6,3 +6,4 @@ export { default as fileUrlToFile } from "./fileUrlToFile";
 export { default as useRouteMiddleware } from "./useRouteMiddleware";
 export { default as useRouteController } from "./useRouteController";
 export { default as emailTemplates } from "./emailTemplates";
+export { default as getFileExtension } from "./getFileExtension";

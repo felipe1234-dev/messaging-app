@@ -477,6 +477,8 @@ const Api = {
             formData.append("image", file, file.name);
             formData.append("path", path);
 
+            console.log("file", file);
+
             const { data } = await httpEndpoint.post(
                 "/files/images/",
                 formData

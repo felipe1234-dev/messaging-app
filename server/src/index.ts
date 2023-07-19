@@ -22,6 +22,7 @@ import { expireTokens } from "@schedules";
 const app = express();
 
 // Global route middlewares
+app.use("/*", express.json());
 app.use("/*", useRouteMiddleware(responseFormatterMiddleware));
 app.use("/*", useRouteMiddleware(corsMiddleware));
 app.use("/*", useRouteMiddleware(logRequestsMiddleware));

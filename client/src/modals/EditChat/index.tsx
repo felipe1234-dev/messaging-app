@@ -31,12 +31,14 @@ function EditChat(props: EditChatProps) {
 
         input.setAttribute("type", "file");
         input.setAttribute("accept", "image/png, image/gif, image/jpeg");
-        input.addEventListener("change", () => {
+        input.addEventListener("change", async () => {
             const file = (input.files || [])[0];
             if (!file) return;
 
+            console.log("file", await file.text());
+
             Api.files
-                .uploadImage(file, `./chats/${chat.uid}/${file.name}`)
+                .uploadImage(file, `chats/${chat.uid}/${file.name}`)
                 .then((url) => {
                     console.log("url", url);
                     updateChat({ cover: url });

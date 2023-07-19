@@ -1,7 +1,9 @@
 import { bucket } from "@databases";
-import { fileToBuffer } from "@utils";
+import { File } from "@typings";
 import { generateUid } from "messaging-app-globals";
-import * as fs from "fs";
+
+import fs from "fs";
+import os from "os";
 
 class FileStorage {
     static async upload(
@@ -9,8 +11,7 @@ class FileStorage {
         destination: string,
         metadata?: any
     ): Promise<string> {
-        const extension = file.name.split(".").at(-1);
-        const localPath = await FileStorage.saveLocally(file);
+        const localPath = FileStorage.saveLocally(file);
 
         try {
             await bucket.upload(localPath, {
@@ -18,14 +19,16 @@ class FileStorage {
                 resumable: true,
                 public: true,
                 metadata: {
-                    filename: file.name,
-                    mime: file.type,
-                    extension,
-                    lastModified: file.lastModified,
+                    filename: file.filename,
+                    mime: file.mimetype,
+                    extension: file.extension,
+                    lastModified: new Date(),
                     size: file.size,
                     ...metadata,
                 },
             });
+
+            fs.unlinkSync(localPath);
 
             const url = FileStorage.getURL(destination);
             return url;
@@ -43,10 +46,9 @@ class FileStorage {
         return url;
     }
 
-    static async saveLocally(file: File) {
-        const extension = file.name.split(".").at(-1);
-        const localPath = `./${generateUid()}.${extension}`;
-        const buffer = await fileToBuffer(file);
+    static saveLocally(file: File) {
+        const localPath = `${os.tmpdir}/${generateUid()}.${file.extension}`;
+        const buffer = file.buffer;
 
         fs.writeFileSync(localPath, buffer);
 

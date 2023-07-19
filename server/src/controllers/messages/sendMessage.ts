@@ -43,8 +43,8 @@ async function createVideoMessage(params: VideoMessageBody & { user: User }) {
     if (!videoURL) throw new MissingBodyParam("videoURL");
 
     const file = await fileUrlToFile(videoURL);
-    const newVideoURL = await FileStorage.upload(file, file.name, {
-        type: file.type,
+    const newVideoURL = await FileStorage.upload(file, file.filename, {
+        type: file.mimetype,
     });
     const videoDuration = await getVideoDuration(videoURL);
 

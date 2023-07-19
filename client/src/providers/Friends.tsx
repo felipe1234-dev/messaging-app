@@ -81,8 +81,6 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (!user?.uid) return;
 
-        console.log("Requesting friends and friend requests again");
-
         fetchFriends();
         fetchFriendRequests();
 

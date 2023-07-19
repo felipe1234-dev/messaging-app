@@ -1,4 +1,4 @@
-import { Request, RouteController } from "@typings";
+import { Request, RouteController, File } from "@typings";
 import { codes } from "messaging-app-globals";
 import { FileStorage } from "@services";
 import { MissingFormDataParam, ServerError, Unauthenticated } from "@errors";
@@ -16,13 +16,11 @@ const uploadImageController: RouteController = async (
     res
 ) => {
     try {
-        console.log("req.body", JSON.stringify(req.body));
-
         const { image, path, metadata = {} } = req.body;
 
         if (!image) throw new MissingFormDataParam("image");
         if (!path) throw new MissingFormDataParam("path");
-
+    
         const { user } = req;
         if (!user) throw new Unauthenticated("You're not authenticated");
 
