@@ -53,6 +53,7 @@ const authenticationMiddleware: RouteMiddleware = async (req, res, next) => {
 
         console.log(`Accessing as ${user.uid}...`);
         console.log("User name -", user.name);
+        console.log("User email -", user.email);
 
         return next();
     } catch (error) {

@@ -1,7 +1,7 @@
-import { RouteMiddleware, File } from "@typings";
+import { RouteMiddleware /*, File*/ } from "@typings";
 import { codes } from "messaging-app-globals";
 import { ServerError } from "@errors";
-import { getFileExtension } from "@utils";
+//import { getFileExtension } from "@utils";
 import fs from "fs";
 
 const formDataParserMiddleware: RouteMiddleware = async (req, res, next) => {
@@ -15,11 +15,6 @@ const formDataParserMiddleware: RouteMiddleware = async (req, res, next) => {
         const chunkString = Buffer.from(formBuffer).toString();
 
         fs.writeFileSync("chunkString.txt", chunkString);
-
-        console.log(
-            "formBuffer.length === chunkString.length",
-            formBuffer.length === chunkString.length
-        );
 
         let loadedBytes = 0;
         const totalBytes = chunkString.length;
@@ -48,15 +43,23 @@ const formDataParserMiddleware: RouteMiddleware = async (req, res, next) => {
             );
         };
 
-        const body: { [field: string]: any } = {};
+        //const body: { [field: string]: any } = {};
 
         logProgress();
 
-        const fields = chunkString.split(boundary).map(str => str.replace(/^--/, "").replace(/--$/, ""));
+        const fields = chunkString
+            .split(boundary)
+            .map((str) =>
+                str
+                    .replace(/^--/, "")
+                    .replace(/--$/, "")
+                    .replace(/(\r\n|\r|\n)/g, "\n")
+            )
+            .filter((str) => !!str.trim());
 
-        for (let field of fields) {
+        for (let [, field] of Object.entries(fields)) {
             const headers = field.split(/\n\n/)[0];
-            const body = field.split(/\n\n/)[1];
+            const body = field.replace(headers, "");
 
             if (!headers) continue;
 
@@ -65,9 +68,12 @@ const formDataParserMiddleware: RouteMiddleware = async (req, res, next) => {
 
             const lines = headers.split(/\n/);
 
-            for (const line of lines) {    
+            for (const line of lines) {
                 if (line.includes("Content-Disposition")) {
-                    contentDisposition = line.replace("Content-Disposition:", "");
+                    contentDisposition = line.replace(
+                        "Content-Disposition:",
+                        ""
+                    );
                 } else if (line.includes("Content-Type")) {
                     contentType = line.replace("Content-Type:", "");
                 }
@@ -76,7 +82,7 @@ const formDataParserMiddleware: RouteMiddleware = async (req, res, next) => {
             let fieldname = "";
             let filename = "";
             let mimetype = "";
-            
+
             if (contentDisposition) {
                 const nameMatch = field.match(/name="([^"]+)"/);
                 const filenameMatch = field.match(/filename="([^"]+)"/);
@@ -98,9 +104,14 @@ const formDataParserMiddleware: RouteMiddleware = async (req, res, next) => {
             console.log("filename", filename);
             console.log("mimetype", mimetype);
 
+            const isFile = !!filename;
+
+            if (isFile) {
+                fs.writeFileSync(filename, Buffer.from(body.trim()));
+            }
         }
 
-            const lines = fieldStr.split(/[\n\r]/);
+        /*    const lines = fieldStr.split(/[\n\r]/);
 
             let fieldName = "";
             let isFile = false;
@@ -175,11 +186,11 @@ const formDataParserMiddleware: RouteMiddleware = async (req, res, next) => {
                 console.log("");
                 body[fieldName] = value;
             }
-        }
+        }*/
 
         logProgress();
 
-        req.body = body;
+        //req.body = body;
 
         next();
     } catch (error) {
