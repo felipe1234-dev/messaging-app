@@ -470,19 +470,18 @@ const Api = {
             });
         },
     },
-    files: {
+    media: {
         uploadImage: async (file: File, path: string): Promise<string> => {
-            const formData = new FormData();
+            const arrayBuffer = new Uint8Array(await file.arrayBuffer());
+            const bufferAsNums = Array.from(arrayBuffer);
 
-            formData.append("image", file, file.name);
-            formData.append("path", path);
-
-            console.log("file", file);
-
-            const { data } = await httpEndpoint.post(
-                "/files/images/",
-                formData
-            );
+            const { data } = await httpEndpoint.post("/media/images/", {
+                filename: file.name,
+                size: file.size,
+                mimetype: file.type,
+                buffer: bufferAsNums,
+                path,
+            });
 
             const { url = "" } = data;
 

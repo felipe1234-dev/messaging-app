@@ -1,5 +1,4 @@
 import { bucket } from "@databases";
-import { File } from "@typings";
 import { generateUid } from "messaging-app-globals";
 
 import fs from "fs";
@@ -7,11 +6,11 @@ import os from "os";
 
 class FileStorage {
     static async upload(
-        file: File,
+        buffer: Buffer,
         destination: string,
         metadata?: any
     ): Promise<string> {
-        const localPath = FileStorage.saveLocally(file);
+        const localPath = FileStorage.saveLocally(buffer);
 
         try {
             await bucket.upload(localPath, {
@@ -19,11 +18,6 @@ class FileStorage {
                 resumable: true,
                 public: true,
                 metadata: {
-                    filename: file.filename,
-                    mime: file.mimetype,
-                    extension: file.extension,
-                    lastModified: new Date(),
-                    size: file.size,
                     ...metadata,
                 },
             });
@@ -46,12 +40,9 @@ class FileStorage {
         return url;
     }
 
-    static saveLocally(file: File) {
-        const localPath = `${os.tmpdir}/${generateUid()}.${file.extension}`;
-        const buffer = file.buffer;
-
+    static saveLocally(buffer: Buffer) {
+        const localPath = `${os.tmpdir}/${generateUid()}.png`;
         fs.writeFileSync(localPath, buffer);
-
         return localPath;
     }
 }

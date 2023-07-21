@@ -4,4 +4,4 @@ export { default as messagesRouter } from "./messages";
 export { default as chatsRouter } from "./chats";
 export { default as friendsRouter } from "./friends";
 export { default as friendRequestsRouter } from "./friendRequests";
-export { default as filesRouter } from "./files";
+export { default as mediaRouter } from "./media";

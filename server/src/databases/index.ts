@@ -20,3 +20,4 @@ export { default as UsersDB } from "./UsersDB.class";
 export { default as MessagesDB } from "./MessagesDB.class";
 export { default as ChatsDB } from "./ChatsDB.class";
 export { default as FriendRequestsDB } from "./FriendRequestsDB.class";
+export { default as MediaDB } from "./MediaDB.class";

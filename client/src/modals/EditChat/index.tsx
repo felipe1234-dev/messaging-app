@@ -4,6 +4,7 @@ import { Icon, Paragraph } from "@styles/layout";
 import { WrapperChat } from "@types";
 import { Overlay, Button } from "@components";
 import { Api } from "@services";
+import { useAlert } from "@providers";
 
 import { Images } from "@styled-icons/entypo";
 import { Form, CoverImageContainer, CoverImageOverlay } from "./styles";
@@ -14,7 +15,10 @@ interface EditChatProps {
 
 function EditChat(props: EditChatProps) {
     const { chat: originalChat } = props;
+    const alert = useAlert();
+
     const [chat, setChat] = useState(originalChat);
+    const [loading, setLoading] = useState(false);
 
     const updateChat = (updates: Partial<WrapperChat>) => {
         setChat((prev) => ({ ...prev, ...updates }));
@@ -35,15 +39,12 @@ function EditChat(props: EditChatProps) {
             const file = (input.files || [])[0];
             if (!file) return;
 
-            console.log("file", await file.text());
-
-            Api.files
+            setLoading(true);
+            Api.media
                 .uploadImage(file, `chats/${chat.uid}/${file.name}`)
-                .then((url) => {
-                    console.log("url", url);
-                    updateChat({ cover: url });
-                })
-                .catch(console.error);
+                .then((url) => updateChat({ cover: url }))
+                .catch((err) => alert.error((err as Error).message))
+                .finally(() => setLoading(false));
         });
         input.click();
     };
@@ -61,6 +62,7 @@ function EditChat(props: EditChatProps) {
                             variant="highlight"
                             onClick={handleChangeBackgroundImage}
                             fullWidth={false}
+                            loading={loading}
                         >
                             <Icon icon={<Images />} />
                             Change image
@@ -68,6 +70,9 @@ function EditChat(props: EditChatProps) {
                     </CoverImageOverlay>
                 }
             >
+                <Paragraph>
+
+                </Paragraph>
                 <CoverImageContainer>
                     {chat.cover ? (
                         <img

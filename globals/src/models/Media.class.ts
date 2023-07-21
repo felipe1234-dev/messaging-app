@@ -8,6 +8,7 @@ class Media {
     public mimetype: string;
     public size: number;
     public path: string;
+    public url: string;
     public metadata?: {
         [key: string]: any;
     };
@@ -26,6 +27,7 @@ class Media {
             mimetype = "",
             size = 0,
             path = "",
+            url = "",
             metadata = {},
             deleted = false,
             deletedAt,
@@ -41,6 +43,7 @@ class Media {
         this.mimetype = mimetype;
         this.size = size;
         this.path = path;
+        this.url = url;
         this.metadata = metadata;
 
         this.deleted = deleted;
