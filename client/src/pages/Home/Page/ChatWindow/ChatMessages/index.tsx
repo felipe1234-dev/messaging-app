@@ -11,6 +11,8 @@ import { useChatWindow } from "@pages/Home/providers";
 
 import { SendPlane } from "@styled-icons/remix-fill";
 
+import { MessageList } from "./styles";
+
 const paddingX = 50;
 const paddingY = 25;
 
@@ -131,17 +133,9 @@ function ChatMessages() {
             overflowY="hidden"
             overflowX="hidden"
         >
-            <Container
+            <MessageList
                 ref={(el) => setMessageEl(el)}
-                transparent
-                direction="column"
-                align="center"
-                justify="start"
-                width={`calc(100% - ${2 * paddingX}px)`}
-                px={paddingX}
-                py={paddingY}
-                overflowY="auto"
-                overflowX="hidden"
+                cover={chatWindow?.cover}
             >
                 {Object.entries(chatMessages).map(
                     ([timeAgo, messagesAndSenders]) => (
@@ -168,7 +162,7 @@ function ChatMessages() {
                         </Fragment>
                     )
                 )}
-            </Container>
+            </MessageList>
             <Container
                 transparent
                 direction="column"

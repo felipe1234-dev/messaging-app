@@ -35,4 +35,15 @@ const CoverImageOverlay = styled.div`
     height: 100%;
 `;
 
-export { Form, CoverImageContainer, CoverImageOverlay };
+const Actions = styled.footer`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    height: auto;
+    margin-top: 8px;
+`;
+
+export { Form, CoverImageContainer, CoverImageOverlay, Actions };

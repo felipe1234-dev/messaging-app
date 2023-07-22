@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 const OverlayContent = styled.div`
     position: absolute;
@@ -13,14 +13,27 @@ const OverlayContent = styled.div`
     background-color: transparent;
 `;
 
-const OverlayContainer = styled.div`
-    position: relative;
-    width: fit-content;
-    height: fit-content;
+interface OverlayContainerProps {
+    lockOverlay: boolean;
+}
 
-    &:hover ${OverlayContent} {
-        opacity: 1;
-    }
+const OverlayContainer = styled.div<OverlayContainerProps>`
+    ${({ lockOverlay }) => css`
+        position: relative;
+        width: fit-content;
+        height: fit-content;
+
+        &:hover ${OverlayContent} {
+            opacity: 1;
+        }
+
+        ${lockOverlay &&
+        css`
+            ${OverlayContent} {
+                opacity: 1;
+            }
+        `}
+    `}
 `;
 
 export { OverlayContainer, OverlayContent };

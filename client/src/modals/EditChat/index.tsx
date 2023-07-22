@@ -4,10 +4,15 @@ import { Icon, Paragraph } from "@styles/layout";
 import { WrapperChat } from "@types";
 import { Overlay, Button } from "@components";
 import { Api } from "@services";
-import { useAlert } from "@providers";
+import { useAlert, useModal } from "@providers";
 
 import { Images } from "@styled-icons/entypo";
-import { Form, CoverImageContainer, CoverImageOverlay } from "./styles";
+import {
+    Form,
+    CoverImageContainer,
+    CoverImageOverlay,
+    Actions,
+} from "./styles";
 
 interface EditChatProps {
     chat: WrapperChat;
@@ -16,9 +21,11 @@ interface EditChatProps {
 function EditChat(props: EditChatProps) {
     const { chat: originalChat } = props;
     const alert = useAlert();
+    const modal = useModal();
 
     const [chat, setChat] = useState(originalChat);
-    const [loading, setLoading] = useState(false);
+    const [loadingBgImage, setLoadingBgImage] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     const updateChat = (updates: Partial<WrapperChat>) => {
         setChat((prev) => ({ ...prev, ...updates }));
@@ -39,14 +46,31 @@ function EditChat(props: EditChatProps) {
             const file = (input.files || [])[0];
             if (!file) return;
 
-            setLoading(true);
+            setLoadingBgImage(true);
             Api.media
                 .uploadImage(file, `chats/${chat.uid}/${file.name}`)
                 .then((url) => updateChat({ cover: url }))
                 .catch((err) => alert.error((err as Error).message))
-                .finally(() => setLoading(false));
+                .finally(() => setLoadingBgImage(false));
         });
         input.click();
+    };
+
+    const handleSaveChanges = () => {
+        setSaving(true);
+
+        const { cover } = chat;
+
+        Api.chats
+            .update(chat.uid, {
+                cover,
+            })
+            .then(() => {
+                modal.hide();
+                alert.success("Chat updated successfully");
+            })
+            .catch((err) => alert.error((err as Error).message))
+            .finally(() => setSaving(false));
     };
 
     useEffect(() => {
@@ -56,13 +80,15 @@ function EditChat(props: EditChatProps) {
     return (
         <Form>
             <Overlay
+                lockOverlay={loadingBgImage}
                 overlay={
                     <CoverImageOverlay>
                         <Button
                             variant="highlight"
                             onClick={handleChangeBackgroundImage}
                             fullWidth={false}
-                            loading={loading}
+                            loading={loadingBgImage}
+                            width="163px"
                         >
                             <Icon icon={<Images />} />
                             Change image
@@ -70,9 +96,7 @@ function EditChat(props: EditChatProps) {
                     </CoverImageOverlay>
                 }
             >
-                <Paragraph>
-
-                </Paragraph>
+                <Paragraph mb={10}>Change chat cover image:</Paragraph>
                 <CoverImageContainer>
                     {chat.cover ? (
                         <img
@@ -86,6 +110,18 @@ function EditChat(props: EditChatProps) {
                     )}
                 </CoverImageContainer>
             </Overlay>
+
+            <Actions>
+                <Button
+                    variant="success"
+                    onClick={handleSaveChanges}
+                    fullWidth={false}
+                    loading={saving}
+                    width="163px"
+                >
+                    Save changes
+                </Button>
+            </Actions>
         </Form>
     );
 }

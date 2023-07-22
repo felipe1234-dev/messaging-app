@@ -9,7 +9,7 @@ import { User, Message, TextMessage } from "messaging-app-globals";
 
 import Avatar from "../Avatar";
 
-const width = "35px";
+const width = "44px";
 
 interface MessageCardProps {
     message: Message;
@@ -62,7 +62,12 @@ function MessageCard(props: MessageCardProps) {
                 </MessageBalloon>
             </MessageContainer>
             {isSender && showSender && <SenderPhoto />}
-            {isSender && !showSender && <Container width={width} />}
+            {isSender && !showSender && (
+                <Container
+                    transparent
+                    width={width}
+                />
+            )}
         </MessageRow>
     );
 }

@@ -272,6 +272,11 @@ const Api = {
                 }
             });
         },
+
+        update: async (chatUid: string, updates: Partial<Chat>) => {
+            await httpEndpoint.put(`/chats/${chatUid}/`, updates);
+        },
+
         onUserChatUpdated: (
             userUid: string,
             callback: (chat: Chat) => void
@@ -471,7 +476,13 @@ const Api = {
         },
     },
     media: {
-        uploadImage: async (file: File, path: string): Promise<string> => {
+        uploadImage: async (
+            file: File,
+            path: string,
+            metadata?: {
+                [key: string]: any;
+            }
+        ): Promise<string> => {
             const arrayBuffer = new Uint8Array(await file.arrayBuffer());
             const bufferAsNums = Array.from(arrayBuffer);
 
@@ -481,6 +492,7 @@ const Api = {
                 mimetype: file.type,
                 buffer: bufferAsNums,
                 path,
+                metadata,
             });
 
             const { url = "" } = data;

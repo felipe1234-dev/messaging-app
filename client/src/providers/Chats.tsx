@@ -111,6 +111,8 @@ function ChatsProvider(props: { children: React.ReactNode }) {
     const wrapperChats = Object.values(chats)
         .map((chat) => ({
             ...chat,
+            isGroupChat: chat.isGroupChat,
+            isDirectChat: chat.isDirectChat,
             members: Object.values(members).filter((member) => {
                 return chat.members.includes(member.uid);
             }),
