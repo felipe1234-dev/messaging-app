@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { Icon, Paragraph } from "@styles/layout";
 import { WrapperChat } from "@types";
-import { Overlay, Button } from "@components";
+import { Overlay, Button, Input } from "@components";
 import { Api } from "@services";
 import { useAlert, useModal } from "@providers";
 
@@ -31,7 +31,7 @@ function EditChat(props: EditChatProps) {
         setChat((prev) => ({ ...prev, ...updates }));
     };
 
-    const handleUpdateChat =
+    const handleChatChange =
         (prop: keyof WrapperChat) =>
         (evt: React.ChangeEvent<HTMLInputElement>) => {
             updateChat({ [prop]: evt.target.value });
@@ -59,10 +59,11 @@ function EditChat(props: EditChatProps) {
     const handleSaveChanges = () => {
         setSaving(true);
 
-        const { cover } = chat;
+        const { title, cover } = chat;
 
         Api.chats
             .update(chat.uid, {
+                title,
                 cover,
             })
             .then(() => {
@@ -79,6 +80,14 @@ function EditChat(props: EditChatProps) {
 
     return (
         <Form>
+            <Input 
+                variant="secondary"
+                placeholder={chat.isDirectChat ? "Nickname" : "Chat title"}
+                onChange={handleChatChange("title")}
+                value={chat.title}
+                light={0.05}
+            />
+
             <Overlay
                 lockOverlay={loadingBgImage}
                 overlay={

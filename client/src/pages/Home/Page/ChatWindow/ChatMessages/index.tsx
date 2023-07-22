@@ -1,7 +1,7 @@
 import React, { Fragment, useMemo, useState, useEffect } from "react";
 
 import { MessageCard, Input, Avatar } from "@components";
-import { Container, Icon, Columns, Rows, Paragraph } from "@styles/layout";
+import { Icon, Columns, Rows, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
 import { Api } from "@services";
@@ -11,25 +11,22 @@ import { useChatWindow } from "@pages/Home/providers";
 
 import { SendPlane } from "@styled-icons/remix-fill";
 
-import { MessageList } from "./styles";
-
-const paddingX = 50;
-const paddingY = 25;
+import { ChatBackground, MessageList, NewMessageContainer } from "./styles";
 
 function ChatMessages() {
     const { user } = useAuth();
     const { chatWindow } = useChatWindow();
     const alert = useAlert();
 
-    const [messageEl, setMessageEl] = useState<HTMLDivElement | null>(null);
+    const [messageListEl, setMessageListEl] = useState<HTMLDivElement | null>(null);
     const [text, setText] = useState("");
     const [startedTypingAt, setStartedTypingAt] = useState<Date>();
 
     const scrollToBottom = () => {
-        if (!messageEl) return;
+        if (!messageListEl) return;
 
-        messageEl.scrollTo({
-            top: messageEl.scrollHeight,
+        messageListEl.scrollTo({
+            top: messageListEl.scrollHeight,
             behavior: "smooth",
         });
     };
@@ -58,7 +55,7 @@ function ChatMessages() {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messageEl]);
+    }, [messageListEl]);
 
     useInterval(
         (timerId) => {
@@ -115,28 +112,18 @@ function ChatMessages() {
         );
     }, [chatWindow]);
 
-    const usersTyping = chatWindow?.members.filter(
-        (member) =>
-            member.uid !== user?.uid && chatWindow?.typing.includes(member.uid)
-    );
+    const usersTyping = useMemo(() => {
+        return chatWindow?.members.filter(
+            (member) =>
+                member.uid !== user?.uid && chatWindow?.typing.includes(member.uid)
+        );
+    }, [chatWindow?.members, chatWindow?.typing, user?.uid]);
 
     if (!user || !chatWindow) return <></>;
 
     return (
-        <Container
-            variant="primary"
-            direction="column"
-            align="center"
-            justify="start"
-            flex="1 1"
-            width="100%"
-            overflowY="hidden"
-            overflowX="hidden"
-        >
-            <MessageList
-                ref={(el) => setMessageEl(el)}
-                cover={chatWindow?.cover}
-            >
+        <ChatBackground cover={chatWindow?.cover}>
+            <MessageList ref={(el) => setMessageListEl(el)}>
                 {Object.entries(chatMessages).map(
                     ([timeAgo, messagesAndSenders]) => (
                         <Fragment key={timeAgo}>
@@ -163,17 +150,7 @@ function ChatMessages() {
                     )
                 )}
             </MessageList>
-            <Container
-                transparent
-                direction="column"
-                align="center"
-                justify="start"
-                width={`calc(100% - ${2 * paddingX}px)`}
-                flex="1 1"
-                px={paddingX}
-                pt={paddingY / 2}
-                pb={paddingY}
-            >
+            <NewMessageContainer>
                 {usersTyping && (
                     <Rows
                         transparent
@@ -219,8 +196,8 @@ function ChatMessages() {
                     value={text}
                     light={0.05}
                 />
-            </Container>
-        </Container>
+            </NewMessageContainer>
+        </ChatBackground>
     );
 }
 
