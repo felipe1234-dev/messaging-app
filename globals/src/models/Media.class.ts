@@ -56,7 +56,6 @@ class Media {
             obj instanceof Media ||
             (obj instanceof Object &&
                 typeof obj.uid === "string" &&
-                typeof obj.ref === "string" &&
                 typeof obj.filename === "string" &&
                 typeof obj.extension === "string" &&
                 typeof obj.mimetype === "string" &&
