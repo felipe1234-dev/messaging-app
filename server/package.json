@@ -33,7 +33,7 @@
         "firebase-functions": "^3.24.1",
         "fluent-ffmpeg": "^2.1.2",
         "formidable": "^3.5.0",
-        "messaging-app-globals": "^1.4.4",
+        "messaging-app-globals": "^1.4.6",
         "mime-types": "^2.1.35",
         "multiparty": "^4.2.3",
         "nodemailer": "^6.9.1",
