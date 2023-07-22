@@ -52,6 +52,14 @@ class Chat {
         this.createdBy = createdBy;
     }
 
+    public get isGroupChat() {
+        return this.members.length > 2;
+    }
+
+    public get isDirectChat() {
+        return !this.isGroupChat;
+    }
+
     public static isChat(obj: any): obj is Chat {
         return (
             obj instanceof Chat ||

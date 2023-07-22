@@ -2,7 +2,6 @@ import { generateUid, toDate } from "../functions";
 
 class Media {
     public uid: string;
-    public ref: string;
     public filename: string;
     public extension: string;
     public mimetype: string;
@@ -21,7 +20,6 @@ class Media {
     constructor(data: Partial<Media> = {}) {
         const {
             uid = generateUid("media-", 6 + 25),
-            ref = "",
             filename = "",
             extension = "",
             mimetype = "",
@@ -37,7 +35,6 @@ class Media {
         } = data;
 
         this.uid = uid;
-        this.ref = ref;
         this.filename = filename;
         this.extension = extension;
         this.mimetype = mimetype;
