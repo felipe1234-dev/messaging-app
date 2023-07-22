@@ -1,6 +1,6 @@
 import { Request, RouteController } from "@typings";
-import { codes } from "messaging-app-globals";
-import { FriendRequestsDB, UsersDB } from "@databases";
+import { codes, Chat } from "messaging-app-globals";
+import { FriendRequestsDB, UsersDB, ChatsDB } from "@databases";
 import {
     MissingURLParam,
     NotFound,
@@ -26,6 +26,7 @@ const acceptFriendRequestController: RouteController = async (
 
         const friendRequestsDB = new FriendRequestsDB();
         const usersDB = new UsersDB();
+        const chatsDB = new ChatsDB();
 
         const friendRequest = await friendRequestsDB.getByUid(friendRequestUid);
         if (!friendRequest) throw new NotFound("Friend request not found");
@@ -43,6 +44,21 @@ const acceptFriendRequestController: RouteController = async (
 
         await usersDB.uid(user.uid).addFriend(friendUid);
         await usersDB.uid(friendUid).addFriend(user.uid);
+
+        const userDirects = await chatsDB.getUserDirects(user.uid);
+        const chatUserAndFriend = userDirects.find((chat) =>
+            chat.members.includes(friendUid)
+        );
+        const directAlreadyExists = !!chatUserAndFriend;
+
+        if (!directAlreadyExists) {
+            const newChat = new Chat({
+                members: [user.uid, friendUid],
+                createdBy: user.uid,
+            });
+
+            await chatsDB.uid(newChat.uid).create(newChat);
+        }
 
         res.sendResponse({
             status: 200,

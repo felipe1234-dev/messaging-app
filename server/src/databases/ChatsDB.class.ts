@@ -8,12 +8,26 @@ class ChatsDB extends DBAccess<Chat> {
 
     public override async get() {
         const results = await super.get();
-        return results.map(data => new Chat(data));
+        return results.map((data) => new Chat(data));
     }
 
     public getUserChats(userUid: string) {
-        this.where("members", "array-contains", userUid).and("deleted", "==", false);
+        this.where("members", "array-contains", userUid).and(
+            "deleted",
+            "==",
+            false
+        );
         return this.get();
+    }
+
+    public async getUserDirects(userUid: string) {
+        const chats = await this.getUserChats(userUid);
+        return chats.filter((chat) => chat.isDirectChat);
+    }
+
+    public async getUserGroupChats(userUid: string) {
+        const chats = await this.getUserChats(userUid);
+        return chats.filter((chat) => chat.isGroupChat);
     }
 }
 
