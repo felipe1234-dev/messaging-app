@@ -11,7 +11,6 @@ import {
 import {
     authRouter,
     usersRouter,
-    messagesRouter,
     chatsRouter,
     friendsRouter,
     friendRequestsRouter,
@@ -33,7 +32,6 @@ app.get("/ping", (req, res) => res.status(200).send("Ping"));
 // HTTP routes
 authRouter(app);
 usersRouter(app);
-messagesRouter(app);
 chatsRouter(app);
 friendsRouter(app);
 friendRequestsRouter(app);

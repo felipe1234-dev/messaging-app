@@ -7,7 +7,7 @@ ffprobe.setFfprobePath(ffmpegPath);
 /** Returns the video duration in milliseconds */
 async function getVideoDuration(videoURL: string): Promise<number> {
     const file = await fileUrlToFile(videoURL);
-    const filePath = await FileStorage.saveLocally(file);
+    const filePath = FileStorage.saveLocally(file.buffer);
 
     return new Promise((resolve, reject) => {
         ffprobe.ffprobe(filePath, (err, metadata) => {
