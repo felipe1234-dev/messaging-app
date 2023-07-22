@@ -42,20 +42,24 @@ const uploadImageController: RouteController = async (
         const size = bufferArr.length;
         const buffer = Buffer.from(bufferArr);
 
-        const url = await FileStorage.upload(buffer, path, {
+        const newMetadata = {
             ...metadata,
             filename,
             mimetype,
             extension,
             size,
-        });
+        };
+
+        const url = await FileStorage.upload(buffer, path, newMetadata);
 
         const newMedia = new Media({
             filename,
             mimetype,
             extension,
             size,
-            metadata,
+            metadata: newMetadata,
+            path,
+            url,
             createdBy: user.uid,
         });
 
