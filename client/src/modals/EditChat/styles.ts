@@ -6,6 +6,7 @@ const Form = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    gap: 15px;
 `;
 
 const CoverImageContainer = styled.figure`
@@ -14,14 +15,13 @@ const CoverImageContainer = styled.figure`
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-width: 300px;
-        min-height: 300px;
         background-color: ${shade(theme.background.secondary, 0.1)};
         border-radius: 5px;
 
+        &,
         img {
-            width: 100%;
-            height: 100%;
+            width: 350px;
+            height: 300px;
         }
     `}
 `;
@@ -43,7 +43,7 @@ const Actions = styled.footer`
     gap: 6px;
     width: 100%;
     height: auto;
-    margin-top: 8px;
+    margin-top: 15px;
 `;
 
 export { Form, CoverImageContainer, CoverImageOverlay, Actions };

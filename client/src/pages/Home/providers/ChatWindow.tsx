@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { useChats } from "@providers";
 import { WrapperChat } from "@types";
 

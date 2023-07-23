@@ -21,12 +21,16 @@ function ChatInfo() {
     if (!chatWindow || !user) return <></>;
 
     const padding = 20;
-    const isGroupChat = chatWindow.members.length > 2;
-    const otherMember = chatWindow.members.filter(
+    const isGroupChat = chatWindow.isGroupChat;
+    const members = chatWindow.members;
+    const otherMembers = chatWindow.members.filter(
         (member) => member.uid !== user.uid
-    )[0];
+    );
+    const otherMember = otherMembers[0];
     const chatTitle =
-        (isGroupChat ? chatWindow.title : otherMember?.name) || "No name";
+        chatWindow.title ||
+        otherMembers.map((member) => member.name).join(", ") ||
+        "No name";
     const chatThumbnail = chatWindow.thumbnail || otherMember?.photo;
 
     const baseIconButton = {
@@ -121,6 +125,12 @@ function ChatInfo() {
                     <Button {...baseIconButton}>
                         <Icon icon={<FileEarmarkImage />} />
                     </Button>
+                </Columns>
+                <Columns
+                    align="center"
+                    justify="start"
+                    width="fit-content"
+                >
                     <Button
                         onClick={handleEditChatBackground}
                         {...baseIconButton}

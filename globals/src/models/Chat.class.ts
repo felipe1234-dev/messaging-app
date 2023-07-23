@@ -6,6 +6,7 @@ class Chat {
     public description: string;
     public thumbnail: string;
     public cover: string;
+    public color?: string;
     public blocked: string[];
     public members: string[];
     public admins: string[];
@@ -23,6 +24,7 @@ class Chat {
             description = "",
             thumbnail = "",
             cover = "",
+            color = "",
             blocked = [],
             members = [],
             admins = [],
@@ -39,6 +41,7 @@ class Chat {
         this.description = description;
         this.thumbnail = thumbnail;
         this.cover = cover;
+        this.color = color;
         this.blocked = blocked;
         this.members = members;
         this.admins = admins;

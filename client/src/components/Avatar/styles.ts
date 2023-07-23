@@ -57,6 +57,8 @@ const StyledAvatar = styled.div<StyledAvatarProps>`
         outline-width: ${borderWidth}px;
         outline-color: ${theme.background[borderVariant]};
         outline-offset: ${borderOffset}px;
+
+        min-width: 15px;
     `}
 `;
 

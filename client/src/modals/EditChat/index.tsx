@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 
-import { Icon, Paragraph } from "@styles/layout";
-import { WrapperChat } from "@types";
-import { Overlay, Button, Input } from "@components";
 import { Api } from "@services";
+import { WrapperChat } from "@types";
+import { Overlay, Button, Input, ColorPicker } from "@components";
 import { useAlert, useModal } from "@providers";
+import { Icon, Paragraph } from "@styles/layout";
 
 import { Images } from "@styled-icons/entypo";
 import {
@@ -56,15 +56,20 @@ function EditChat(props: EditChatProps) {
         input.click();
     };
 
+    const handleChangeColor = (color: string) => {
+        updateChat({ color });
+    };
+
     const handleSaveChanges = () => {
         setSaving(true);
 
-        const { title, cover } = chat;
+        const { title, cover, color } = chat;
 
         Api.chats
             .update(chat.uid, {
                 title,
                 cover,
+                color,
             })
             .then(() => {
                 modal.hide();
@@ -80,12 +85,20 @@ function EditChat(props: EditChatProps) {
 
     return (
         <Form>
-            <Input 
+            <Paragraph>Title:</Paragraph>
+            <Input
                 variant="secondary"
-                placeholder={chat.isDirectChat ? "Nickname" : "Chat title"}
+                placeholder="Chat title"
                 onChange={handleChatChange("title")}
                 value={chat.title}
                 light={0.05}
+            />
+
+            <Paragraph>Color:</Paragraph>
+            <ColorPicker
+                fullWidth
+                onChange={handleChangeColor}
+                value={chat.color || ""}
             />
 
             <Overlay

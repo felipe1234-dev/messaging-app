@@ -52,9 +52,11 @@ function ChatCard(props: ChatCardProps) {
     const sender = chat.members.find((member) => member.uid === senderUid);
     const senderName = sender?.uid === user.uid ? "You" : sender?.name;
     const isSender = user?.uid === sender?.uid;
+    const chatTitle =
+        chat.title || otherMembers.map((member) => member.name).join(", ");
 
-    const usersTyping = chat.members.filter(
-        (member) => member.uid !== user?.uid && chat.typing.includes(member.uid)
+    const usersTyping = otherMembers.filter((member) =>
+        chat.typing.includes(member.uid)
     );
 
     const cardText =
@@ -89,7 +91,7 @@ function ChatCard(props: ChatCardProps) {
                     <Profile />
                 )}
                 <CardBody>
-                    <Title level={5}>{firstMember.name}</Title>
+                    <Title level={5}>{chatTitle}</Title>
                     <CardInfo>
                         <CardSender>
                             {isSender ? "You: " : senderName}

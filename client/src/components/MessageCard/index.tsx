@@ -1,8 +1,9 @@
-import { useAuth } from "@providers";
+import { useAuth, useChats } from "@providers";
 import { timeAgo } from "@functions";
 import { useInterval, useForceUpdate } from "@hooks";
 
 import { Title, Columns, Paragraph, Container } from "@styles/layout";
+import { ShowItem } from "@styles/animations";
 import { MessageRow, MessageContainer, MessageBalloon } from "./styles";
 
 import { User, Message, TextMessage } from "messaging-app-globals";
@@ -20,9 +21,12 @@ interface MessageCardProps {
 function MessageCard(props: MessageCardProps) {
     const { sender, message, showSender = true } = props;
     const { user } = useAuth();
+    const { chats } = useChats();
     const { forceUpdate } = useForceUpdate();
 
     const isSender = user?.uid === sender.uid;
+    const chat = chats.find((chat) => chat.uid === message.chat);
+    const color = chat?.color || "";
 
     const SenderPhoto = () => (
         <Avatar
@@ -31,7 +35,7 @@ function MessageCard(props: MessageCardProps) {
         />
     );
 
-    const baseProps = { isSender, showSender };
+    const baseProps = { isSender, showSender, color };
 
     useInterval(() => forceUpdate(), 1000);
 
@@ -43,19 +47,21 @@ function MessageCard(props: MessageCardProps) {
             {!isSender && !showSender && <Container width={width} />}
             <MessageContainer {...baseProps}>
                 {showSender && (
-                    <Columns
-                        justify="center"
-                        align="center"
-                        width="fit-content"
-                        gap={5}
-                    >
-                        <Title level={6}>
-                            {isSender ? "You" : sender.name}
-                        </Title>
-                        <Paragraph variant="secondary">
-                            {timeAgo(message.createdAt)}
-                        </Paragraph>
-                    </Columns>
+                    <ShowItem>
+                        <Columns
+                            justify="center"
+                            align="center"
+                            width="fit-content"
+                            gap={5}
+                        >
+                            <Title level={6}>
+                                {isSender ? "You" : sender.name}
+                            </Title>
+                            <Paragraph variant="secondary">
+                                {timeAgo(message.createdAt)}
+                            </Paragraph>
+                        </Columns>
+                    </ShowItem>
                 )}
                 <MessageBalloon {...baseProps}>
                     {TextMessage.isTextMessage(message) ? message.text : <></>}

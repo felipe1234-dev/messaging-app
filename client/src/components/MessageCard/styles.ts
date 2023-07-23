@@ -15,7 +15,7 @@ const MessageRow = styled.div<MessageRowProps>`
         width: 100%;
     `}
 `;
- 
+
 interface MessageContainerProps {
     isSender: boolean;
 }
@@ -34,13 +34,14 @@ const MessageContainer = styled.div<MessageContainerProps>`
 interface MessageBalloonProps {
     isSender: boolean;
     showSender: boolean;
+    color: string;
 }
 
 const MessageBalloon = styled.p<MessageBalloonProps>`
-    ${({ isSender, showSender, theme }) => css`
+    ${({ isSender, showSender, color, theme }) => css`
         background-color: ${shade(
-            theme.background[isSender ? "highlight" : "secondary"],
-            isSender ? 0 : 0.1
+            color || theme.background[isSender ? "highlight" : "secondary"],
+            color ? (isSender ? 0 : -0.3) : isSender ? 0 : 0.1
         )};
         color: ${theme.text.primary};
         padding: 10px;

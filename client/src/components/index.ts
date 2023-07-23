@@ -65,3 +65,6 @@ export type { UserCardProps } from "./UserCard";
 
 export { default as Overlay } from "./Overlay";
 export type { OverlayProps } from "./Overlay";
+
+export { default as ColorPicker } from "./ColorPicker";
+export type { ColorPickerProps } from "./ColorPicker";
