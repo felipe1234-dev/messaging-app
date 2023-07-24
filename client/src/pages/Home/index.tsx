@@ -1,9 +1,9 @@
 import { Composer } from "@components";
-import { ChatWindowProvider } from "./providers";
+import { ChatWindowProvider, TabsProvider } from "./providers";
 import Page from "./Page";
 
 function Home() {
-    const providers = [ChatWindowProvider];
+    const providers = [ChatWindowProvider, TabsProvider];
 
     return (
         <Composer components={providers}>

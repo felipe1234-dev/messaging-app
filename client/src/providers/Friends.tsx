@@ -6,11 +6,13 @@ import { Api } from "@services";
 interface FriendsValue {
     friends: Friend[];
     friendRequests: FriendRequest[];
+    unasweredFriendRequests: FriendRequest[];
 }
 
 const FriendsContext = createContext<FriendsValue>({
     friends: [],
     friendRequests: [],
+    unasweredFriendRequests: [],
 });
 
 function FriendsProvider({ children }: { children: React.ReactNode }) {
@@ -99,6 +101,14 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
         );
     }, [user?.uid, user?.friends]);
 
+    const unasweredFriendRequests = friendRequests.filter(
+        (req) =>
+            req.to === user?.uid &&
+            !req.accepted &&
+            !req.rejected &&
+            !req.deleted
+    );
+
     return (
         <FriendsContext.Provider
             value={{
@@ -106,6 +116,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
                 friendRequests: friendRequests.filter(
                     (friendRequest) => !friendRequest.deleted
                 ),
+                unasweredFriendRequests,
             }}
         >
             {children}
