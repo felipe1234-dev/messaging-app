@@ -44,7 +44,12 @@ function MessageCard(props: MessageCardProps) {
     return (
         <MessageRow {...baseProps}>
             {!isSender && showSender && <SenderPhoto />}
-            {!isSender && !showSender && <Container width={width} />}
+            {!isSender && !showSender && (
+                <Container
+                    transparent
+                    width={width}
+                />
+            )}
             <MessageContainer {...baseProps}>
                 {showSender && (
                     <ShowItem>
