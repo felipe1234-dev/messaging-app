@@ -12,6 +12,7 @@ import { Variant } from "@types";
 import Button from "../Button";
 
 import { Icon, Whitespace } from "@styles/layout";
+import { ShowItem } from "@styles/animations";
 import { Close } from "@styled-icons/ionicons-solid";
 
 interface ModalProps {
@@ -51,32 +52,34 @@ function Modal(props: ModalProps) {
             visible={visible}
             onClick={handleBackgroundClick}
         >
-            <ModalContainer
-                variant={variant}
-                textVariant={textVariant}
-                onClick={(evt) => evt.stopPropagation()}
-            >
-                {(header || showCloseButton) && (
-                    <ModalHeader>
-                        {header}
-                        {!header && showCloseButton && <Whitespace />}
-                        {showCloseButton && (
-                            <Button
-                                round
-                                iconed
-                                transparent
-                                onClick={onClose}
-                                size={1.2}
-                                p={8}
-                            >
-                                <Icon icon={<Close />} />
-                            </Button>
-                        )}
-                    </ModalHeader>
-                )}
-                {body && <ModalBody>{body}</ModalBody>}
-                {footer && <ModalFooter>{footer}</ModalFooter>}
-            </ModalContainer>
+            <ShowItem>
+                <ModalContainer
+                    variant={variant}
+                    textVariant={textVariant}
+                    onClick={(evt) => evt.stopPropagation()}
+                >
+                    {(header || showCloseButton) && (
+                        <ModalHeader>
+                            {header}
+                            {!header && showCloseButton && <Whitespace />}
+                            {showCloseButton && (
+                                <Button
+                                    round
+                                    iconed
+                                    transparent
+                                    onClick={onClose}
+                                    size={1.2}
+                                    p={8}
+                                >
+                                    <Icon icon={<Close />} />
+                                </Button>
+                            )}
+                        </ModalHeader>
+                    )}
+                    {body && <ModalBody>{body}</ModalBody>}
+                    {footer && <ModalFooter>{footer}</ModalFooter>}
+                </ModalContainer>
+            </ShowItem>
         </DarkBackground>
     );
 }
