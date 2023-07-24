@@ -1,12 +1,18 @@
-import { Container, Columns } from "@styles/layout";
+import { Columns } from "@styles/layout";
 import { useAuth } from "@providers";
+import { useTabs, useChatWindow } from "../providers";
 
 import Sidebar from "./Sidebar";
-import ChatList from "./ChatList";
+import TextChats from "./TextChats";
+import FriendRequests from "./FriendRequests";
 import ChatWindow from "./ChatWindow";
+import NoChat from "./NoChat";
 
 function Page() {
     const { user } = useAuth();
+    const { tab } = useTabs();
+    const { chatWindow } = useChatWindow();
+
     if (!user) return <></>;
 
     return (
@@ -18,8 +24,9 @@ function Page() {
             gap={0}
         >
             <Sidebar />
-            <ChatList />
-            <ChatWindow />
+            {tab === "textChats" && <TextChats />}
+            {tab === "friendRequests" && <FriendRequests />}
+            {chatWindow ? <ChatWindow /> : <NoChat />}
         </Columns>
     );
 }

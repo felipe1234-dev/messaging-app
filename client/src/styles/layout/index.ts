@@ -27,3 +27,6 @@ export type { RowProps } from "./Row";
 
 export { default as Divider } from "./Divider";
 export type { DividerProps } from "./Divider";
+
+export { default as TextSpan } from "./TextSpan";
+export type { TextSpanProps } from "./TextSpan";

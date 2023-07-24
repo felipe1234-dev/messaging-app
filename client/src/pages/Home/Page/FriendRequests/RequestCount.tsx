@@ -25,7 +25,7 @@ function RequestCount() {
                 height="fit-content"
                 p={padding}
             >
-                <Title level={5}>Friend requests</Title>
+                <Title level={5}>Unaswered</Title>
 
                 <Button
                     round
