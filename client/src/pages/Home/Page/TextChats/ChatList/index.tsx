@@ -44,15 +44,15 @@ const DropdownList = ({ label, action, list }: DropdownListProps) => (
             round
             iconed
             transparent
-            p={8}
             onClick={action.onClick}
+            p={8}
         >
             <Icon icon={action.icon} />
         </Button>
     </Container>
 );
 
-function Chats() {
+function ChatList() {
     return (
         <Container
             transparent
@@ -94,4 +94,4 @@ function Chats() {
     );
 }
 
-export default Chats;
+export default ChatList;

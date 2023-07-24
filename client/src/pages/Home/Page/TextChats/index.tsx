@@ -2,18 +2,18 @@ import { Container, Divider } from "@styles/layout";
 
 import Profile from "./Profile";
 import Friends from "./Friends";
-import Chats from "./Chats";
+import ChatList from "./ChatList";
 
 export const padding = 25;
 
-function ChatList() {
+function TextChats() {
     return (
         <Container
             variant="secondary"
             direction="column"
             justify="start"
             align="start"
-            width="fit-content"
+            width="460px"
             height="100%"
             gap={0}
         >
@@ -23,9 +23,9 @@ function ChatList() {
                 thickness={0.5}
             />
             <Friends />
-            <Chats />
+            <ChatList />
         </Container>
     );
 }
 
-export default ChatList;
+export default TextChats;

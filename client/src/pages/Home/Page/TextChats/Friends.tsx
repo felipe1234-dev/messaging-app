@@ -49,9 +49,9 @@ function Friends() {
                 <Title level={5}>Online now</Title>
 
                 <Button
-                    noInteraction
-                    iconed
                     round
+                    iconed
+                    noInteraction
                     variant="highlight"
                     py={0}
                     px={9}

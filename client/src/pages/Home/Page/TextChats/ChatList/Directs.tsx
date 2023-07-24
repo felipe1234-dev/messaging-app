@@ -16,7 +16,7 @@ function Directs() {
             direction="column"
             justify="start"
             align="center"
-            width="113%"
+            width="363px"
             gap={25}
             p={0}
         >
