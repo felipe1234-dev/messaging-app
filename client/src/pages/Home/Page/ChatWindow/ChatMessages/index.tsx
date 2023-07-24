@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo, useState, useEffect } from "react";
 
-import { MessageCard, Input, Avatar } from "@components";
+import { MessageCard, Input, Avatar, UserIsTyping } from "@components";
 import { Icon, Columns, Rows, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
@@ -18,7 +18,9 @@ function ChatMessages() {
     const { chatWindow } = useChatWindow();
     const alert = useAlert();
 
-    const [messageListEl, setMessageListEl] = useState<HTMLDivElement | null>(null);
+    const [messageListEl, setMessageListEl] = useState<HTMLDivElement | null>(
+        null
+    );
     const [text, setText] = useState("");
     const [startedTypingAt, setStartedTypingAt] = useState<Date>();
 
@@ -113,9 +115,10 @@ function ChatMessages() {
     }, [chatWindow]);
 
     const usersTyping = useMemo(() => {
-        return chatWindow?.members.filter(
+        return (chatWindow?.members || []).filter(
             (member) =>
-                member.uid !== user?.uid && chatWindow?.typing.includes(member.uid)
+                member.uid !== user?.uid &&
+                chatWindow?.typing.includes(member.uid)
         );
     }, [chatWindow?.members, chatWindow?.typing, user?.uid]);
 
@@ -149,31 +152,14 @@ function ChatMessages() {
                         </Fragment>
                     )
                 )}
+                {usersTyping.map((user) => (
+                    <UserIsTyping
+                        key={user.uid}
+                        user={user}
+                    />
+                ))}
             </MessageList>
             <NewMessageContainer>
-                {usersTyping && (
-                    <Rows
-                        transparent
-                        align="start"
-                        justify="center"
-                        width="100%"
-                    >
-                        {usersTyping.map((user) => (
-                            <Columns
-                                transparent
-                                align="center"
-                                justify="start"
-                                width="fit-content"
-                            >
-                                <Avatar
-                                    src={user.photo}
-                                    alt={user.name}
-                                />
-                                <Paragraph>{user.name} is typing...</Paragraph>
-                            </Columns>
-                        ))}
-                    </Rows>
-                )}
                 <Input
                     variant="secondary"
                     leftIcon={

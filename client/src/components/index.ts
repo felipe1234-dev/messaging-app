@@ -68,3 +68,6 @@ export type { OverlayProps } from "./Overlay";
 
 export { default as ColorPicker } from "./ColorPicker";
 export type { ColorPickerProps } from "./ColorPicker";
+
+export { default as UserIsTyping } from "./UserIsTyping";
+export type { UserIsTypingProps } from "./UserIsTyping";
