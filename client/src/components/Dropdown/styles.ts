@@ -1,6 +1,21 @@
 import styled, { css, keyframes } from "styled-components";
 import { Variant } from "@types";
 
+const DropdownContainer = styled.div`
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+`;
+
+const ButtonContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+`;
+
 interface ArrowButtonProps {
     open: boolean;
     iconVariant: Variant;
@@ -40,24 +55,15 @@ interface DropdownContentProps {
     open: boolean;
 }
 
-const dropdownOpeningAnimation = keyframes`
-    from {
-        height: 0;
-        opacity: 0;
-    }
-
-    to {
-        height: fit-content;
-        opacity: 1;
-    }
-`;
-
 const DropdownContent = styled.div<DropdownContentProps>`
+    transition: all 0.5s ease-in;
+
     ${({ open }) =>
         open
             ? css`
-                  animation-name: ${dropdownOpeningAnimation};
-                  animation-duration: 200ms;
+                  height: fit-content;
+                  overflow: auto;
+                  opacitty: 1;
               `
             : css`
                   height: 0;
@@ -66,5 +72,4 @@ const DropdownContent = styled.div<DropdownContentProps>`
               `}
 `;
 
-export { ArrowButton, DropdownContent };
-export type { ArrowButtonProps, DropdownContentProps };
+export { DropdownContainer, ButtonContainer, ArrowButton, DropdownContent };

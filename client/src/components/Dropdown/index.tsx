@@ -4,7 +4,12 @@ import { Container, Icon } from "@styles/layout";
 import { Button, ButtonProps } from "@components";
 
 import { ArrowIosForward } from "@styled-icons/evaicons-solid";
-import { ArrowButton, DropdownContent } from "./styles";
+import {
+    DropdownContainer,
+    ButtonContainer,
+    ArrowButton,
+    DropdownContent,
+} from "./styles";
 
 interface DropdownProps extends Omit<ButtonProps, "onClick"> {
     label: string;
@@ -14,6 +19,7 @@ interface DropdownProps extends Omit<ButtonProps, "onClick"> {
     height?: string;
     gap?: number;
     arrow?: React.ReactNode;
+    secondaryActions?: React.ReactNode;
 }
 
 function Dropdown(props: DropdownProps) {
@@ -27,8 +33,9 @@ function Dropdown(props: DropdownProps) {
         height = "fit-content",
         gap = 0,
         arrow = <ArrowIosForward />,
+        secondaryActions = <></>,
         children,
-        ...buttonProps
+        ...containerProps
     } = props;
 
     const [open, setOpen] = useState(defaultOpen);
@@ -36,37 +43,28 @@ function Dropdown(props: DropdownProps) {
     const toggleDropdown = () => setOpen((prev) => !prev);
 
     return (
-        <Container
-            transparent
-            direction="column"
-            justify="start"
-            align="start"
-            width="fit-content"
-            height="fit-content"
-            gap={5}
-        >
-            <Button
-                {...buttonProps}
-                transparent={transparent}
-                fullWidth={fullWidth}
-                onClick={toggleDropdown}
-                direction="row"
-                justify="space-between"
-                align="center"
-                gap={gap}
-                width={width}
-                height={height}
-            >
-                <span>{label}</span>
-                <ArrowButton
-                    iconVariant={iconVariant}
-                    open={open}
+        <DropdownContainer>
+            <ButtonContainer>
+                <Button
+                    fullWidth
+                    transparent
+                    onClick={toggleDropdown}
+                    direction="row"
+                    justify="space-between"
                 >
-                    <Icon icon={arrow} />
-                </ArrowButton>
-            </Button>
+                    <span>{label}</span>
+                    <ArrowButton
+                        iconVariant={iconVariant}
+                        open={open}
+                    >
+                        <Icon icon={arrow} />
+                    </ArrowButton>
+                </Button>
+
+                {secondaryActions}
+            </ButtonContainer>
             <DropdownContent open={open}>{children}</DropdownContent>
-        </Container>
+        </DropdownContainer>
     );
 }
 
