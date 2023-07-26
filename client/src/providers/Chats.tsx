@@ -73,6 +73,8 @@ function ChatsProvider(props: { children: React.ReactNode }) {
                 orderBy: ["createdAt", "desc"],
             });
 
+            console.log("messageList on init", messageList);
+
             Api.messages.onMessageSentToChat(chat.uid, onMessageSent);
 
             setMessages((prev) => {
@@ -90,22 +92,45 @@ function ChatsProvider(props: { children: React.ReactNode }) {
         Api.chats.onUserChatUpdated(user.uid, onUserChatUpdated);
     }, [user?.uid]);
 
-    const sortMessages = (messages: Message[]) => {
-        return messages.sort((a, b) => {
-            if (a.createdAt > b.createdAt) return 1;
-            if (a.createdAt < b.createdAt) return -1;
+    const sortMessages = (chat: Chat) => {
+        const chatMessages = Object.values(messages).filter((message) => {
+            return message.chat === chat.uid;
+        });
+
+        return chatMessages.sort((a, b) => {
+            if (a.createdAt > b.createdAt) return -1;
+            if (a.createdAt < b.createdAt) return 1;
             return 0;
         });
     };
 
-    const getLastMessage = (chat: Chat) => () => {
-        const chatMessages = sortMessages(
-            Object.values(messages).filter((message) => {
-                return message.chat === chat.uid;
-            })
-        );
+    const getNewestMessage = (chat: Chat) => () => {
+        const chatMessages = sortMessages(chat);
+        return chatMessages[0];
+    };
 
+    const getOldestMessage = (chat: Chat) => () => {
+        const chatMessages = sortMessages(chat);
         return chatMessages[chatMessages.length - 1];
+    };
+
+    const loadMoreMessages = (chat: Chat) => async () => {
+        const oldestMessage = getOldestMessage(chat)();
+        if (!oldestMessage) return;
+
+        const messageList = await Api.chats.getChatMessages(chat.uid, {
+            limit: 10,
+            startAfter: oldestMessage.uid,
+            orderBy: ["createdAt", "desc"],
+        });
+
+        setMessages((prev) => {
+            const messagesHashMap = convertToHashMap(
+                [...Object.values(prev), ...messageList],
+                (message) => message.uid
+            );
+            return messagesHashMap;
+        });
     };
 
     const wrapperChats = Object.values(chats)
@@ -125,17 +150,14 @@ function ChatsProvider(props: { children: React.ReactNode }) {
             createdBy: Object.values(members).find((member) => {
                 return member.uid === chat.createdBy;
             }) as User,
-            messages: sortMessages(
-                Object.values(messages).filter((message) => {
-                    return message.chat === chat.uid;
-                })
-            ),
-
-            getLastMessage: getLastMessage(chat),
+            messages: sortMessages(chat),
+            getNewestMessage: getNewestMessage(chat),
+            getOldestMessage: getOldestMessage(chat),
+            loadMoreMessages: loadMoreMessages(chat),
         }))
         .sort((a, b) => {
-            const aLastMessage = a.getLastMessage();
-            const bLastMessage = b.getLastMessage();
+            const aLastMessage = a.getNewestMessage();
+            const bLastMessage = b.getNewestMessage();
 
             if (aLastMessage.createdAt > bLastMessage.createdAt) return -1;
             if (aLastMessage.createdAt < bLastMessage.createdAt) return 1;

@@ -47,7 +47,7 @@ function ChatCard(props: ChatCardProps) {
     const firstMember = otherMembers[0];
     if (!firstMember) return <></>;
 
-    const lastMessage = chat.getLastMessage();
+    const lastMessage = chat.getNewestMessage();
     const senderUid = lastMessage?.sentBy;
     const sender = chat.members.find((member) => member.uid === senderUid);
     const senderName = sender?.uid === user.uid ? "You" : sender?.name;

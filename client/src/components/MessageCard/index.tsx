@@ -2,7 +2,7 @@ import { useAuth, useChats } from "@providers";
 import { timeAgo } from "@functions";
 import { useInterval, useForceUpdate } from "@hooks";
 
-import { Title, Columns, Paragraph, Container } from "@styles/layout";
+import { Title, Columns, Paragraph, Container, TextSpan } from "@styles/layout";
 import { ShowItem } from "@styles/animations";
 import { MessageRow, MessageContainer, MessageBalloon } from "./styles";
 
@@ -42,7 +42,10 @@ function MessageCard(props: MessageCardProps) {
     if (!user) return <></>;
 
     return (
-        <MessageRow {...baseProps}>
+        <MessageRow
+            id={`${message.uid}`}
+            {...baseProps}
+        >
             {!isSender && showSender && <SenderPhoto />}
             {!isSender && !showSender && (
                 <Container

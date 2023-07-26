@@ -1,7 +1,7 @@
 import React, { Fragment, useMemo, useState, useEffect } from "react";
 
 import { MessageCard, Input, Avatar, UserIsTyping } from "@components";
-import { Icon, Columns, Rows, Paragraph } from "@styles/layout";
+import { Icon, Columns, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
 import { Api } from "@services";
@@ -10,8 +10,12 @@ import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
 
 import { SendPlane } from "@styled-icons/remix-fill";
-
-import { ChatBackground, MessageList, NewMessageContainer } from "./styles";
+import {
+    ChatBackground,
+    MessageList,
+    NewMessageContainer,
+    TimeGroupedMessages,
+} from "./styles";
 
 function ChatMessages() {
     const { user } = useAuth();
@@ -23,6 +27,8 @@ function ChatMessages() {
     );
     const [text, setText] = useState("");
     const [startedTypingAt, setStartedTypingAt] = useState<Date>();
+    const [loadingMessages, setLoadingMessages] = useState(false);
+    const [startAfter, setStartAfter] = useState("");
 
     const scrollToBottom = () => {
         if (!messageListEl) return;
@@ -31,6 +37,30 @@ function ChatMessages() {
             top: messageListEl.scrollHeight,
             behavior: "smooth",
         });
+    };
+
+    const loadMoreMessagesIfLastVisible = () => {
+        if (loadingMessages) return Promise.resolve();
+        if (!messageListEl || !chatWindow) return Promise.resolve();
+
+        const oldestMessage = chatWindow.getOldestMessage();
+        if (!oldestMessage) return Promise.resolve();
+        if (oldestMessage.uid === startAfter) return Promise.resolve();
+
+        const oldestMessageEl = document.getElementById(oldestMessage.uid);
+        if (!oldestMessageEl) return Promise.resolve();
+
+        const visible =
+            messageListEl.scrollTop <=
+            oldestMessageEl.offsetHeight + oldestMessageEl.offsetTop;
+        if (!visible) return Promise.resolve();
+
+        setLoadingMessages(true);
+        setStartAfter(oldestMessage.uid);
+
+        return chatWindow
+            .loadMoreMessages()
+            .finally(() => setLoadingMessages(false));
     };
 
     const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,8 +85,12 @@ function ChatMessages() {
             .catch((err: Error) => alert.error(err.message));
     };
 
+    const handleMessageListScroll = () => {
+        loadMoreMessagesIfLastVisible();
+    };
+
     useEffect(() => {
-        scrollToBottom();
+        loadMoreMessagesIfLastVisible();
     }, [messageListEl]);
 
     useInterval(
@@ -79,37 +113,38 @@ function ChatMessages() {
     );
 
     const chatMessages = useMemo(() => {
-        let prevSender: User | undefined = undefined;
-
-        return (chatWindow?.messages || []).reduce(
+        return [...(chatWindow?.messages || [])].reduce(
             (messages, message) => {
-                const messageDate = message.createdAt.toDateString();
                 const sender = chatWindow?.members.find(
                     (member) => member.uid === message.sentBy
                 );
-                let showSender = true;
-
                 if (!sender) return messages;
 
+                const messageDate = message.createdAt.toDateString();
+
                 if (!messages[messageDate]) {
-                    showSender = true;
-                    messages[messageDate] = [];
-                } else {
-                    showSender = prevSender?.uid !== sender.uid;
+                    messages[messageDate] = {};
                 }
 
-                messages[messageDate].push([message, sender, showSender]);
+                const dateMessages = messages[messageDate];
 
-                prevSender = sender;
+                if (!dateMessages[sender.uid]) {
+                    dateMessages[sender.uid] = { sender, messages: [] };
+                }
+
+                const senderMessages = dateMessages[sender.uid];
+
+                senderMessages.messages.push(message);
 
                 return messages;
             },
             {} as {
-                [time: string]: [
-                    message: Message,
-                    sender: User,
-                    showSender: boolean
-                ][];
+                [time: string]: {
+                    [senderUid: string]: {
+                        sender: User;
+                        messages: Message[];
+                    };
+                };
             }
         );
     }, [chatWindow]);
@@ -126,37 +161,42 @@ function ChatMessages() {
 
     return (
         <ChatBackground cover={chatWindow?.cover}>
-            <MessageList ref={(el) => setMessageListEl(el)}>
-                {Object.entries(chatMessages).map(
-                    ([timeAgo, messagesAndSenders]) => (
-                        <Fragment key={timeAgo}>
-                            <Columns
-                                align="center"
-                                justify="center"
-                                width="100%"
-                            >
-                                <Paragraph variant="secondary">
-                                    {timeAgo}
-                                </Paragraph>
-                            </Columns>
-                            {messagesAndSenders.map(
-                                ([message, sender, showSender]) => (
-                                    <MessageCard
-                                        key={message.uid}
-                                        message={message}
-                                        sender={sender}
-                                        showSender={showSender}
-                                    />
-                                )
-                            )}
-                        </Fragment>
-                    )
-                )}
+            <MessageList
+                ref={(el) => setMessageListEl(el)}
+                onScroll={handleMessageListScroll}
+            >
                 {usersTyping.map((user) => (
                     <UserIsTyping
                         key={user.uid}
                         user={user}
                     />
+                ))}
+                {Object.entries(chatMessages).map(([timeAgo, senders]) => (
+                    <Fragment key={timeAgo}>
+                        {Object.entries(senders).map(
+                            ([senderUid, { sender, messages }]) => (
+                                <Fragment key={senderUid}>
+                                    {messages.map((message, i) => (
+                                        <MessageCard
+                                            key={message.uid}
+                                            message={message}
+                                            sender={sender}
+                                            showSender={
+                                                i === messages.length - 1
+                                            }
+                                        />
+                                    ))}
+                                </Fragment>
+                            )
+                        )}
+                        <Columns
+                            align="center"
+                            justify="center"
+                            width="100%"
+                        >
+                            <Paragraph variant="secondary">{timeAgo}</Paragraph>
+                        </Columns>
+                    </Fragment>
                 ))}
             </MessageList>
             <NewMessageContainer>

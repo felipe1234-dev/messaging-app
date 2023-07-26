@@ -44,8 +44,9 @@ export interface WrapperChat
     admins: User[];
     createdBy: User;
     messages: Message[];
-
-    getLastMessage(): Message;
+    getNewestMessage(): Message;
+    getOldestMessage(): Message;
+    loadMoreMessages(): Promise<void>;
 }
 
 export interface ResponseError {
