@@ -6,8 +6,10 @@ class DBAccess<T = { [key: string]: any }> {
     protected _index: number;
     protected _collection: CollectionReference;
     protected _uid?: string;
-    protected _wheres: Array<[field: keyof T, operator: Operator, value: T[keyof T]]>[];
-    protected _startAfter?: string;
+    protected _wheres: Array<
+        [field: keyof T, operator: Operator, value: T[keyof T]]
+    >[];
+    protected _startAfter: string[];
     protected _limit?: number;
     protected _orders: Array<[field: keyof T, direction: "asc" | "desc"]>;
 
@@ -16,7 +18,7 @@ class DBAccess<T = { [key: string]: any }> {
         this._collection = firestore.collection(dbName);
         this._uid = undefined;
         this._wheres = [];
-        this._startAfter = undefined;
+        this._startAfter = [];
         this._limit = undefined;
         this._orders = [];
     }
@@ -25,7 +27,7 @@ class DBAccess<T = { [key: string]: any }> {
         this._index = 0;
         this._uid = undefined;
         this._wheres = [];
-        this._startAfter = undefined;
+        this._startAfter = [];
         this._limit = undefined;
     }
 
@@ -49,7 +51,7 @@ class DBAccess<T = { [key: string]: any }> {
 
     public where(field: keyof T, operator: Operator, value: T[keyof T]) {
         if (!this._wheres[this._index]) this._wheres[this._index] = [];
-        
+
         this._wheres[this._index].push([field, operator, value]);
 
         return this;
@@ -65,7 +67,7 @@ class DBAccess<T = { [key: string]: any }> {
     }
 
     public startAfter(uid: string) {
-        this._startAfter = uid;
+        this._startAfter.push(uid);
         return this;
     }
 
@@ -120,37 +122,40 @@ class DBAccess<T = { [key: string]: any }> {
             this.restartAllStates();
             return [(await this._collection.doc(uid).get()).data() as T];
         }
-        
+
         const results = [];
-        
-        for (const whereSet of this._wheres) {
+
+        for (let i = 0; i < this._wheres.length; i++) {
+            const whereSet = this._wheres[i];
+            const startAfter = this._startAfter[i];
+
             let lastDoc = undefined;
-            if (this._startAfter) {
-                lastDoc = await this._collection.doc(this._startAfter).get();
+            if (startAfter) {
+                lastDoc = await this._collection.doc(startAfter).get();
             }
 
             do {
                 let query: Query = this._collection;
-    
+
                 for (const where of whereSet) {
                     const [field, operator, value] = where;
                     query = query.where(field as string, operator, value);
                 }
-    
+
                 for (const order of this._orders) {
                     const [field, direction] = order;
                     query = query.orderBy(field as string, direction);
                 }
-    
+
                 if (lastDoc) {
                     query = query.startAfter(lastDoc);
                     lastDoc = undefined;
                 }
-    
+
                 query = query.limit(1000);
-    
+
                 const { docs } = await query.get();
-    
+
                 for (const doc of docs) {
                     if (
                         this._limit !== undefined &&
