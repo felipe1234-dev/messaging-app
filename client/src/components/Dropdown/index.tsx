@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Container, Icon } from "@styles/layout";
 import { Button, ButtonProps } from "@components";
+import { Variant } from "@types";
 
 import { ArrowIosForward } from "@styled-icons/evaicons-solid";
 import {
@@ -11,13 +12,11 @@ import {
     DropdownContent,
 } from "./styles";
 
-interface DropdownProps extends Omit<ButtonProps, "onClick"> {
+interface DropdownProps {
     label: string;
+    iconVariant?: Variant;
     children: React.ReactNode;
     defaultOpen?: boolean;
-    width?: string;
-    height?: string;
-    gap?: number;
     arrow?: React.ReactNode;
     secondaryActions?: React.ReactNode;
 }
@@ -26,12 +25,7 @@ function Dropdown(props: DropdownProps) {
     const {
         label,
         iconVariant = "primary",
-        transparent = true,
-        fullWidth = false,
         defaultOpen = false,
-        width = "100%",
-        height = "fit-content",
-        gap = 0,
         arrow = <ArrowIosForward />,
         secondaryActions = <></>,
         children,
@@ -46,11 +40,13 @@ function Dropdown(props: DropdownProps) {
         <DropdownContainer>
             <ButtonContainer>
                 <Button
-                    fullWidth
+                    fullWidth={false}
                     transparent
+                    hoverDisabled
                     onClick={toggleDropdown}
                     direction="row"
                     justify="space-between"
+                    px={0}
                 >
                     <span>{label}</span>
                     <ArrowButton

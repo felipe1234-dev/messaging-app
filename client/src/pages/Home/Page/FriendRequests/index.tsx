@@ -44,6 +44,7 @@ function FriendRequests() {
                 thickness={0.5}
             />
             <Container
+                variant="secondary"
                 direction="column"
                 align="start"
                 justify="start"

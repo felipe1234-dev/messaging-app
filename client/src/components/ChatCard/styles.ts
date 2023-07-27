@@ -50,17 +50,19 @@ const CardBody = styled.div`
     justify-content: center;
     gap: 5px;
     background-color: transparent;
+    width: 100%;
 `;
 
 const CardInfo = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: space-between;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
     gap: 5px;
+    width: 100%;
 `;
 
-const CardText = styled.p`
+const CardText = styled.span`
     ${({ theme }) => css`
         display: block;
         white-space: nowrap;
@@ -77,6 +79,7 @@ const CardSender = styled.p`
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        gap: 8px;
         color: ${shade(theme.background.secondary, 1)};
     `}
 `;

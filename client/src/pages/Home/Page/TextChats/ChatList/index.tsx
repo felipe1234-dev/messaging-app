@@ -27,28 +27,26 @@ const DropdownList = ({ label, action, list }: DropdownListProps) => (
         direction="row"
         justify="space-between"
         align="baseline"
+        width="100%"
     >
         <Dropdown
             defaultOpen
-            hoverDisabled
             label={label}
             iconVariant="primary"
-            px={0}
-            width="fit-content"
-            gap={5}
+            secondaryActions={
+                <Button
+                    round
+                    iconed
+                    transparent
+                    onClick={action.onClick}
+                    p={8}
+                >
+                    <Icon icon={action.icon} />
+                </Button>
+            }
         >
             {list}
         </Dropdown>
-
-        <Button
-            round
-            iconed
-            transparent
-            onClick={action.onClick}
-            p={8}
-        >
-            <Icon icon={action.icon} />
-        </Button>
     </Container>
 );
 

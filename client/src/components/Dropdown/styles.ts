@@ -7,6 +7,7 @@ const DropdownContainer = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    width: 100%;
 `;
 
 const ButtonContainer = styled.div`
@@ -14,6 +15,7 @@ const ButtonContainer = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 `;
 
 interface ArrowButtonProps {
@@ -57,6 +59,7 @@ interface DropdownContentProps {
 
 const DropdownContent = styled.div<DropdownContentProps>`
     transition: all 0.5s ease-in;
+    width: 100%;
 
     ${({ open }) =>
         open
