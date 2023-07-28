@@ -73,8 +73,6 @@ function ChatsProvider(props: { children: React.ReactNode }) {
                 orderBy: ["createdAt", "desc"],
             });
 
-            console.log("messageList on init", messageList);
-
             Api.messages.onMessageSentToChat(chat.uid, onMessageSent);
 
             setMessages((prev) => {

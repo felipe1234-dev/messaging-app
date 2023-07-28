@@ -17,6 +17,11 @@ import {
     Unsubscribe,
     WrapperUser,
     WrapperChat,
+    QueryListener,
+    DocumentListener,
+    QuerySnapshot,
+    DocumentSnapshot,
+    DocumentData,
 } from "@types";
 import {
     auth,
@@ -53,17 +58,38 @@ httpEndpoint.interceptors.response.use(
     }
 );
 
-const createRealtimeListener = (runOnInit: boolean) => {
+function createSnapshotListener<T>(
+    runOnInit: boolean,
+    callback: (snapshot: T) => void
+) {
     let initialLoad = true;
-    return (callback: () => void) => {
+
+    return (snapshot: T) => {
         if (initialLoad) {
             initialLoad = false;
             if (!runOnInit) return;
         }
 
-        callback();
+        callback(snapshot);
     };
-};
+}
+
+function createQueryListener(runOnInit: boolean, callback: QueryListener) {
+    return createSnapshotListener<QuerySnapshot<DocumentData>>(
+        runOnInit,
+        callback
+    );
+}
+
+function createDocumentListener(
+    runOnInit: boolean,
+    callback: DocumentListener
+) {
+    return createSnapshotListener<DocumentSnapshot<DocumentData>>(
+        runOnInit,
+        callback
+    );
+}
 
 const Api = {
     httpEndpoint,
@@ -145,8 +171,8 @@ const Api = {
         ): Unsubscribe => {
             return userCollection
                 .where("friends", "array-contains", userUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
+                .onSnapshot(
+                    createQueryListener(runOnInit, (snapshot) => {
                         for (const change of snapshot.docChanges()) {
                             const type = change.type;
                             if (type !== "modified") continue;
@@ -158,8 +184,8 @@ const Api = {
                             const friend = secureUserData(new User(doc.data()));
                             callback(friend);
                         }
-                    });
-                });
+                    })
+                );
         },
     },
     friendRequests: {
@@ -197,8 +223,8 @@ const Api = {
         ): Unsubscribe => {
             return friendRequestCollection
                 .where("to", "==", userUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
+                .onSnapshot(
+                    createQueryListener(runOnInit, (snapshot) => {
                         for (const change of snapshot.docChanges()) {
                             const type = change.type;
                             if (type !== "added") continue;
@@ -210,8 +236,8 @@ const Api = {
                             const friendRequest = new FriendRequest(doc.data());
                             callback(friendRequest);
                         }
-                    });
-                });
+                    })
+                );
         },
 
         onFriendRequestSent: (
@@ -221,8 +247,8 @@ const Api = {
         ): Unsubscribe => {
             return friendRequestCollection
                 .where("from", "==", userUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
+                .onSnapshot(
+                    createQueryListener(runOnInit, (snapshot) => {
                         for (const change of snapshot.docChanges()) {
                             const type = change.type;
                             if (type !== "added") continue;
@@ -234,8 +260,8 @@ const Api = {
                             const friendRequest = new FriendRequest(doc.data());
                             callback(friendRequest);
                         }
-                    });
-                });
+                    })
+                );
         },
 
         onFriendRequestUpdated: (
@@ -245,8 +271,8 @@ const Api = {
         ): Unsubscribe => {
             return friendRequestCollection
                 .where("users", "array-contains", userUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
+                .onSnapshot(
+                    createQueryListener(runOnInit, (snapshot) => {
                         for (const change of snapshot.docChanges()) {
                             const type = change.type;
                             if (type !== "modified") continue;
@@ -258,8 +284,8 @@ const Api = {
                             const friendRequest = new FriendRequest(doc.data());
                             callback(friendRequest);
                         }
-                    });
-                });
+                    })
+                );
         },
     },
     chats: {
@@ -309,8 +335,8 @@ const Api = {
         ): Unsubscribe => {
             return chatCollection
                 .where("members", "array-contains", userUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
+                .onSnapshot(
+                    createQueryListener(runOnInit, (snapshot) => {
                         for (const change of snapshot.docChanges()) {
                             const type = change.type;
                             if (type !== "modified") continue;
@@ -321,8 +347,8 @@ const Api = {
                             const chat = new Chat(doc.data());
                             callback(chat);
                         }
-                    });
-                });
+                    })
+                );
         },
 
         connect: (user: WrapperUser, chat: WrapperChat) => {
@@ -378,113 +404,103 @@ const Api = {
             callback: (message: Message) => void,
             runOnInit = false
         ): Unsubscribe => {
-            return messageCollection
-                .where("chat", "==", chatUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
-                        for (const change of snapshot.docChanges()) {
-                            const type = change.type;
-                            if (type !== "added") continue;
+            return messageCollection.where("chat", "==", chatUid).onSnapshot(
+                createQueryListener(runOnInit, (snapshot) => {
+                    console.log("callback run");
 
-                            const doc = change.doc;
-                            if (!doc.exists)
-                                throw new Error("Message not found");
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "added") continue;
 
-                            const data = doc.data();
-                            let msg: Message;
+                        const doc = change.doc;
+                        if (!doc.exists) throw new Error("Message not found");
 
-                            if (TextMessage.isTextMessage(data)) {
-                                msg = new TextMessage(data);
-                            } else if (AudioMessage.isAudioMessage(data)) {
-                                msg = new AudioMessage(data);
-                            } else if (VideoMessage.isVideoMessage(data)) {
-                                msg = new VideoMessage(data);
-                            } else {
-                                msg = new Message(data);
-                            }
+                        const data = doc.data();
+                        let msg: Message;
 
-                            callback(msg);
+                        if (TextMessage.isTextMessage(data)) {
+                            msg = new TextMessage(data);
+                        } else if (AudioMessage.isAudioMessage(data)) {
+                            msg = new AudioMessage(data);
+                        } else if (VideoMessage.isVideoMessage(data)) {
+                            msg = new VideoMessage(data);
+                        } else {
+                            msg = new Message(data);
                         }
-                    });
-                });
+
+                        callback(msg);
+                    }
+                })
+            );
         },
         onTextMessageSentToChat: (
             chatUid: string,
             callback: (message: TextMessage) => void,
             runOnInit = false
         ) => {
-            return messageCollection
-                .where("chat", "==", chatUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
-                        for (const change of snapshot.docChanges()) {
-                            const type = change.type;
-                            if (type !== "added") continue;
+            return messageCollection.where("chat", "==", chatUid).onSnapshot(
+                createQueryListener(runOnInit, (snapshot) => {
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "added") continue;
 
-                            const doc = change.doc;
-                            if (!doc.exists)
-                                throw new Error("Message not found");
+                        const doc = change.doc;
+                        if (!doc.exists) throw new Error("Message not found");
 
-                            const data = doc.data();
-                            if (!TextMessage.isTextMessage(data)) continue;
+                        const data = doc.data();
+                        if (!TextMessage.isTextMessage(data)) continue;
 
-                            const msg = new TextMessage(data);
-                            callback(msg);
-                        }
-                    });
-                });
+                        const msg = new TextMessage(data);
+                        callback(msg);
+                    }
+                })
+            );
         },
         onVideoMessageSentToChat: (
             chatUid: string,
             callback: (message: VideoMessage) => void,
             runOnInit = false
         ) => {
-            return messageCollection
-                .where("chat", "==", chatUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
-                        for (const change of snapshot.docChanges()) {
-                            const type = change.type;
-                            if (type !== "added") continue;
+            return messageCollection.where("chat", "==", chatUid).onSnapshot(
+                createQueryListener(runOnInit, (snapshot) => {
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "added") continue;
 
-                            const doc = change.doc;
-                            if (!doc.exists)
-                                throw new Error("Message not found");
+                        const doc = change.doc;
+                        if (!doc.exists) throw new Error("Message not found");
 
-                            const data = doc.data();
-                            if (!VideoMessage.isVideoMessage(data)) continue;
+                        const data = doc.data();
+                        if (!VideoMessage.isVideoMessage(data)) continue;
 
-                            const msg = new VideoMessage(data);
-                            callback(msg);
-                        }
-                    });
-                });
+                        const msg = new VideoMessage(data);
+                        callback(msg);
+                    }
+                })
+            );
         },
         onAudioMessageSentToChat: (
             chatUid: string,
             callback: (message: AudioMessage) => void,
             runOnInit = false
         ) => {
-            return messageCollection
-                .where("chat", "==", chatUid)
-                .onSnapshot((snapshot) => {
-                    createRealtimeListener(runOnInit)(() => {
-                        for (const change of snapshot.docChanges()) {
-                            const type = change.type;
-                            if (type !== "added") continue;
+            return messageCollection.where("chat", "==", chatUid).onSnapshot(
+                createQueryListener(runOnInit, (snapshot) => {
+                    for (const change of snapshot.docChanges()) {
+                        const type = change.type;
+                        if (type !== "added") continue;
 
-                            const doc = change.doc;
-                            if (!doc.exists)
-                                throw new Error("Message not found");
+                        const doc = change.doc;
+                        if (!doc.exists) throw new Error("Message not found");
 
-                            const data = doc.data();
-                            if (!AudioMessage.isAudioMessage(data)) continue;
+                        const data = doc.data();
+                        if (!AudioMessage.isAudioMessage(data)) continue;
 
-                            const msg = new AudioMessage(data);
-                            callback(msg);
-                        }
-                    });
-                });
+                        const msg = new AudioMessage(data);
+                        callback(msg);
+                    }
+                })
+            );
         },
     },
     users: {
@@ -512,14 +528,14 @@ const Api = {
             callback: (user: User) => void,
             runOnInit = false
         ): Unsubscribe => {
-            return userCollection.doc(userUid).onSnapshot((snapshot) => {
-                createRealtimeListener(runOnInit)(() => {
+            return userCollection.doc(userUid).onSnapshot(
+                createDocumentListener(runOnInit, (snapshot) => {
                     if (!snapshot.exists) throw new Error("User not found");
 
                     const user = secureUserData(new User(snapshot.data()));
                     callback(user);
-                });
-            });
+                })
+            );
         },
     },
     media: {
