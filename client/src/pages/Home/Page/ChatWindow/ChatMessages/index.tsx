@@ -201,6 +201,7 @@ function ChatMessages() {
             </MessageList>
             <NewMessageContainer>
                 <Input
+                    autoResize
                     variant="secondary"
                     leftIcon={
                         <Avatar

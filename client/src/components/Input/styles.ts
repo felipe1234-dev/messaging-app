@@ -80,11 +80,15 @@ interface StyledInputProps {
 const StyledInput = styled.input<StyledInputProps>`
     ${({ textVariant, leftIcon, rightIcon, theme }) => css`
         width: 100%;
-        height: 100%;
+        height: 1em;
         background-color: transparent;
         border: none;
         color: ${theme.text[textVariant]};
         font-size: 1em;
+        resize: none;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+            "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+            "Helvetica Neue", sans-serif;
 
         ${leftIcon &&
         css`
