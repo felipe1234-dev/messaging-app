@@ -18,6 +18,14 @@ import {
 } from "@routes";
 import { expireTokens } from "@schedules";
 
+const api = functions.runWith({
+    timeoutSeconds: 540,
+    memory: "8GB",
+});
+
+const https = api.https;
+const scheduler = api.pubsub;
+
 const app = express();
 
 // Global route middlewares
@@ -38,6 +46,8 @@ friendRequestsRouter(app);
 mediaRouter(app);
 
 // Schedules
-expireTokens();
+export const expireTokensJob = scheduler
+    .schedule("every 1 hour")
+    .onRun(expireTokens);
 
-export default functions.https.onRequest(app);
+export default https.onRequest(app);

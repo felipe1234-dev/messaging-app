@@ -1,8 +1,6 @@
 import { UsersDB } from "@databases";
 import { Token } from "@services";
 
-const timeInterval = 1 * 60 * 1000;
-
 async function expireTokens() {
     const usersDB = new UsersDB();
 
@@ -33,8 +31,6 @@ async function expireTokens() {
 
     await Promise.all(promises);
     promises.length = 0;
-
-    setTimeout(expireTokens, timeInterval);
 }
 
 export default expireTokens;
