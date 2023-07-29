@@ -8,6 +8,7 @@ class Message {
     public type: MessageType;
     public chat: string;
     public sentBy: string;
+    public repliedTo?: string;
     public deleted: boolean;
     public deletedAt?: Date;
     public deletedBy?: string;
@@ -23,6 +24,7 @@ class Message {
             type = "text",
             chat = "",
             sentBy = "",
+            repliedTo,
             deleted = false,
             deletedAt,
             deletedBy,
@@ -34,6 +36,8 @@ class Message {
         this.type = type;
         this.chat = chat;
         this.sentBy = sentBy;
+
+        if (repliedTo) this.repliedTo = repliedTo;
 
         this.deleted = deleted;
         if (deletedAt) this.deletedAt = toDate(deletedAt);
@@ -55,6 +59,8 @@ class Message {
                 messageTypes.includes(obj.type) &&
                 typeof obj.chat === "string" &&
                 typeof obj.sentBy === "string" &&
+                (obj.repliedTo === undefined ||
+                    typeof obj.repliedTo === "string") &&
                 typeof obj.deleted === "boolean" &&
                 (obj.deletedAt === undefined ||
                     toDate(obj.deletedAt) instanceof Date) &&
