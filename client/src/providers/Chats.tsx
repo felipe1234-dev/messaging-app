@@ -128,7 +128,7 @@ function ChatsProvider(props: { children: React.ReactNode }) {
 
     const loadMoreMessages = (chat: Chat) => async () => {
         const oldestMessage = getOldestMessage(chat)();
-        if (!oldestMessage) return;
+        if (!oldestMessage) return [];
 
         const messageList = await Api.chats.getChatMessages(chat.uid, {
             limit: 10,
@@ -143,6 +143,8 @@ function ChatsProvider(props: { children: React.ReactNode }) {
             );
             return messagesHashMap;
         });
+
+        return messageList;
     };
 
     const wrapperChats = Object.values(chats)

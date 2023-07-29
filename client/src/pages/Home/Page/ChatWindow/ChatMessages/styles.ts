@@ -41,6 +41,7 @@ const MessageList = styled.div`
     justify-content: flex-start;
     gap: 15px;
     width: calc(100% - ${2 * paddingX}px);
+    min-height: 75%;
     padding: ${paddingY}px ${paddingX}px;
     overflow-y: auto;
     overflow-x: hidden;

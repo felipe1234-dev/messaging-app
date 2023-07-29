@@ -22,6 +22,7 @@ function ChatMessages() {
         null
     );
     const [text, setText] = useState("");
+    const [replyTo, setReplyTo] = useState("");
     const [startedTypingAt, setStartedTypingAt] = useState<Date>();
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [startAfter, setStartAfter] = useState("");
@@ -87,6 +88,10 @@ function ChatMessages() {
         loadMoreMessagesIfLastVisible();
     };
 
+    const handleOnReplyMessage = (message: Message) => {
+        setReplyTo(message.uid);
+    };
+
     useEffect(() => {
         loadMoreMessagesIfLastVisible();
     }, [messageListEl]);
@@ -122,7 +127,7 @@ function ChatMessages() {
 
         if (!isChatAdmin && !user.admin && !isSender && message.deleted)
             return false;
-            
+
         return true;
     };
 
@@ -198,6 +203,7 @@ function ChatMessages() {
                                             showSender={
                                                 i === messages.length - 1
                                             }
+                                            onReply={handleOnReplyMessage}
                                         />
                                     ))}
                                 </Fragment>

@@ -47,7 +47,7 @@ export interface WrapperChat
     messages: Message[];
     getNewestMessage(): Message;
     getOldestMessage(): Message;
-    loadMoreMessages(): Promise<void>;
+    loadMoreMessages(): Promise<Message[]>;
 }
 
 export interface ResponseError {

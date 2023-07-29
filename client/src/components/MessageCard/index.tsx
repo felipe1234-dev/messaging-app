@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { useAuth, useChats, useAlert } from "@providers";
 import { timeAgo, wrapperChatToChat } from "@functions";
 import { useInterval, useForceUpdate } from "@hooks";
@@ -19,6 +21,7 @@ import Overlay from "../Overlay";
 import Button from "../Button";
 
 import { Delete } from "@styled-icons/fluentui-system-regular";
+import { Reply } from "@styled-icons/bootstrap";
 
 const width = "44px";
 
@@ -26,10 +29,20 @@ interface MessageCardProps {
     message: Message;
     sender: User;
     showSender?: boolean;
+    wasReplied?: boolean;
+    onReply?: (message: Message) => void | Promise<void>;
+    onEdit?: (message: Message) => void | Promise<void>;
 }
 
 function MessageCard(props: MessageCardProps) {
-    const { sender, message, showSender = true } = props;
+    const {
+        sender,
+        message,
+        showSender = true,
+        wasReplied = false,
+        onReply,
+        onEdit,
+    } = props;
 
     const { user } = useAuth();
     const { chats } = useChats();
@@ -42,7 +55,18 @@ function MessageCard(props: MessageCardProps) {
     const isChatAdmin =
         user && chat?.admins.map((user) => user.uid).includes(user.uid);
 
+    const repliedMessage = chat?.messages.find(
+        (msg) => msg.uid === message.repliedTo
+    );
+
+    const repliedMessageSender = chat?.members.find(
+        (member) => member.uid === repliedMessage?.sentBy
+    );
+
+    const isReply = !!repliedMessage && !!repliedMessageSender;
+
     const canDeleteMessage = isSender || user?.admin || isChatAdmin;
+    const canReplyMessage = !isSender && !message.deleted;
 
     const SenderPhoto = () => (
         <Avatar
@@ -53,6 +77,14 @@ function MessageCard(props: MessageCardProps) {
 
     useInterval(() => forceUpdate(), 1000);
 
+    useEffect(() => {
+        if (!chat) return;
+        if (!message.repliedTo) return;
+        if (repliedMessage) return;
+
+        chat.loadMoreMessages();
+    }, [message.repliedTo, repliedMessage, chat?.messages]);
+
     if (!user || !chat) return <></>;
 
     const handleDeleteMessage = () => {
@@ -62,11 +94,24 @@ function MessageCard(props: MessageCardProps) {
             .then(() => alert.success("Message deleted successfully"));
     };
 
+    const handleReplyMessage = () => {
+        if (onReply) onReply(message);
+    };
+
     const baseProps = {
-        isSender, 
-        showSender, 
-        color, 
-        deleted: message.deleted 
+        isSender,
+        showSender,
+        color,
+        wasReplied,
+        isReply,
+        deleted: message.deleted,
+    };
+
+    const baseButtonProps = {
+        round: true,
+        iconed: true,
+        transparent: true,
+        p: 6,
     };
 
     return (
@@ -82,6 +127,14 @@ function MessageCard(props: MessageCardProps) {
                 />
             )}
             <MessageContainer {...baseProps}>
+                {isReply && (
+                    <MessageCard
+                        message={repliedMessage}
+                        sender={repliedMessageSender}
+                        showSender={false}
+                        wasReplied
+                    />
+                )}
                 {showSender && (
                     <ShowItem>
                         <Columns
@@ -105,13 +158,21 @@ function MessageCard(props: MessageCardProps) {
                             {canDeleteMessage && (
                                 <ShowItem>
                                     <Button
-                                        round
-                                        iconed
-                                        transparent
+                                        {...baseButtonProps}
                                         onClick={handleDeleteMessage}
-                                        p={6}
                                     >
                                         <Icon icon={<Delete />} />
+                                    </Button>
+                                </ShowItem>
+                            )}
+
+                            {canReplyMessage && (
+                                <ShowItem>
+                                    <Button
+                                        {...baseButtonProps}
+                                        onClick={handleReplyMessage}
+                                    >
+                                        <Icon icon={<Reply />} />
                                     </Button>
                                 </ShowItem>
                             )}
@@ -119,7 +180,9 @@ function MessageCard(props: MessageCardProps) {
                     }
                 >
                     <MessageBalloon {...baseProps}>
-                        {TextMessage.isTextMessage(message) ? (
+                        {wasReplied && message.deleted ? (
+                            "Message deleted"
+                        ) : TextMessage.isTextMessage(message) ? (
                             message.text
                         ) : (
                             <></>
