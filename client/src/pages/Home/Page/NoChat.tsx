@@ -1,6 +1,6 @@
 import { appName } from "@constants";
-import { Container, Icon, Title, Paragraph } from "@styles/layout";
-import { Rocket } from "@styled-icons/fluentui-system-regular";
+import { Container, Icon, Title } from "@styles/layout";
+import { Code } from "@styled-icons/fluentui-system-regular";
 
 function NoChat() {
     return (
@@ -15,7 +15,7 @@ function NoChat() {
         >
             <Icon
                 variant="secondary"
-                icon={<Rocket />}
+                icon={<Code />}
                 size={8}
             />
             <Title level={3}>{appName}</Title>

@@ -43,6 +43,14 @@ function ChatsProvider(props: { children: React.ReactNode }) {
         });
     };
 
+    const onMessageUpdated = (message: Message) => {
+        setMessages((prev) => {
+            const newMessages = { ...prev };
+            newMessages[message.uid] = message;
+            return newMessages;
+        });
+    };
+
     useAsyncEffect(async () => {
         if (!user) {
             setChats({});
@@ -73,7 +81,13 @@ function ChatsProvider(props: { children: React.ReactNode }) {
                 orderBy: ["createdAt", "desc"],
             });
 
-            Api.messages.onMessageSentToChat(chat.uid, onMessageSent);
+            Api.chats.connect(user, chat).onMessageSent(onMessageSent);
+
+            for (const message of messageList) {
+                Api.chats
+                    .connect(user, chat)
+                    .onMessageUpdated(message.uid, onMessageUpdated);
+            }
 
             setMessages((prev) => {
                 const messagesHashMap = convertToHashMap(

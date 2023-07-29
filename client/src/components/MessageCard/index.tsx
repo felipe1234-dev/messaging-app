@@ -1,14 +1,24 @@
-import { useAuth, useChats } from "@providers";
-import { timeAgo } from "@functions";
+import { useAuth, useChats, useAlert } from "@providers";
+import { timeAgo, wrapperChatToChat } from "@functions";
 import { useInterval, useForceUpdate } from "@hooks";
+import { Api } from "@services";
 
-import { Title, Columns, Paragraph, Container, TextSpan } from "@styles/layout";
+import { Title, Columns, Paragraph, Container, Icon } from "@styles/layout";
 import { ShowItem } from "@styles/animations";
-import { MessageRow, MessageContainer, MessageBalloon } from "./styles";
+import {
+    MessageRow,
+    MessageContainer,
+    MessageBalloon,
+    MessageActions,
+} from "./styles";
 
 import { User, Message, TextMessage } from "messaging-app-globals";
 
 import Avatar from "../Avatar";
+import Overlay from "../Overlay";
+import Button from "../Button";
+
+import { Delete } from "@styled-icons/fluentui-system-regular";
 
 const width = "44px";
 
@@ -20,13 +30,19 @@ interface MessageCardProps {
 
 function MessageCard(props: MessageCardProps) {
     const { sender, message, showSender = true } = props;
+
     const { user } = useAuth();
     const { chats } = useChats();
+    const alert = useAlert();
     const { forceUpdate } = useForceUpdate();
 
     const isSender = user?.uid === sender.uid;
-    const chat = chats.find((chat) => chat.uid === message.chat);
+    const chat = chats.find((c) => c.uid === message.chat);
     const color = chat?.color || "";
+    const isChatAdmin =
+        user && chat?.admins.map((user) => user.uid).includes(user.uid);
+
+    const canDeleteMessage = isSender || user?.admin || isChatAdmin;
 
     const SenderPhoto = () => (
         <Avatar
@@ -35,11 +51,23 @@ function MessageCard(props: MessageCardProps) {
         />
     );
 
-    const baseProps = { isSender, showSender, color };
-
     useInterval(() => forceUpdate(), 1000);
 
-    if (!user) return <></>;
+    if (!user || !chat) return <></>;
+
+    const handleDeleteMessage = () => {
+        Api.chats
+            .connect(user, wrapperChatToChat(chat))
+            .deleteMessage(message.uid)
+            .then(() => alert.success("Message deleted successfully"));
+    };
+
+    const baseProps = {
+        isSender, 
+        showSender, 
+        color, 
+        deleted: message.deleted 
+    };
 
     return (
         <MessageRow
@@ -71,9 +99,33 @@ function MessageCard(props: MessageCardProps) {
                         </Columns>
                     </ShowItem>
                 )}
-                <MessageBalloon {...baseProps}>
-                    {TextMessage.isTextMessage(message) ? message.text : <></>}
-                </MessageBalloon>
+                <Overlay
+                    overlay={
+                        <MessageActions isSender={isSender}>
+                            {canDeleteMessage && (
+                                <ShowItem>
+                                    <Button
+                                        round
+                                        iconed
+                                        transparent
+                                        onClick={handleDeleteMessage}
+                                        p={6}
+                                    >
+                                        <Icon icon={<Delete />} />
+                                    </Button>
+                                </ShowItem>
+                            )}
+                        </MessageActions>
+                    }
+                >
+                    <MessageBalloon {...baseProps}>
+                        {TextMessage.isTextMessage(message) ? (
+                            message.text
+                        ) : (
+                            <></>
+                        )}
+                    </MessageBalloon>
+                </Overlay>
             </MessageContainer>
             {isSender && showSender && <SenderPhoto />}
             {isSender && !showSender && (

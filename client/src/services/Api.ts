@@ -351,15 +351,12 @@ const Api = {
                 );
         },
 
-        connect: (user: WrapperUser, chat: WrapperChat) => {
-            const memberUids = chat.members.map((member) => member.uid);
-            const blockedUids = chat.blocked.map((member) => member.uid);
-
-            if (!memberUids.includes(user.uid) && !user.admin) {
+        connect: (user: User, chat: Chat) => {
+            if (!chat.members.includes(user.uid) && !user.admin) {
                 throw new Error("You don't participate in this chat");
             }
 
-            if (blockedUids.includes(user.uid)) {
+            if (chat.blocked.includes(user.uid)) {
                 throw new Error("You were blocked");
             }
 
@@ -389,118 +386,157 @@ const Api = {
                         .doc(textMessage.uid)
                         .set({ ...textMessage });
                 },
+                deleteMessage: (messageUid: string) => {
+                    return messageCollection.doc(messageUid).update({
+                        deleted: true,
+                        deletedAt: new Date(),
+                        deletedBy: user.uid,
+                    });
+                },
+                onMessageSent: (
+                    callback: (message: Message) => void,
+                    runOnInit = false
+                ): Unsubscribe => {
+                    return messageCollection
+                        .where("chat", "==", chat.uid)
+                        .onSnapshot(
+                            createQueryListener(runOnInit, (snapshot) => {
+                                for (const change of snapshot.docChanges()) {
+                                    const type = change.type;
+                                    if (type !== "added") continue;
+
+                                    const doc = change.doc;
+                                    if (!doc.exists)
+                                        throw new Error("Message not found");
+
+                                    const data = doc.data();
+                                    let msg: Message;
+
+                                    if (TextMessage.isTextMessage(data)) {
+                                        msg = new TextMessage(data);
+                                    } else if (
+                                        AudioMessage.isAudioMessage(data)
+                                    ) {
+                                        msg = new AudioMessage(data);
+                                    } else if (
+                                        VideoMessage.isVideoMessage(data)
+                                    ) {
+                                        msg = new VideoMessage(data);
+                                    } else {
+                                        msg = new Message(data);
+                                    }
+
+                                    callback(msg);
+                                }
+                            })
+                        );
+                },
+                onMessageUpdated: (
+                    messageUid: string,
+                    callback: (message: Message) => void,
+                    runOnInit = false
+                ) => {
+                    return messageCollection.doc(messageUid).onSnapshot(
+                        createDocumentListener(runOnInit, (snapshot) => {
+                            if (!snapshot.exists)
+                                throw new Error("Message not found");
+
+                            const data = snapshot.data();
+                            let msg: Message;
+
+                            if (TextMessage.isTextMessage(data)) {
+                                msg = new TextMessage(data);
+                            } else if (AudioMessage.isAudioMessage(data)) {
+                                msg = new AudioMessage(data);
+                            } else if (VideoMessage.isVideoMessage(data)) {
+                                msg = new VideoMessage(data);
+                            } else {
+                                msg = new Message(data);
+                            }
+
+                            callback(msg);
+                        })
+                    );
+                },
+                onTextMessageSent: (
+                    callback: (message: TextMessage) => void,
+                    runOnInit = false
+                ) => {
+                    return messageCollection
+                        .where("chat", "==", chat.uid)
+                        .onSnapshot(
+                            createQueryListener(runOnInit, (snapshot) => {
+                                for (const change of snapshot.docChanges()) {
+                                    const type = change.type;
+                                    if (type !== "added") continue;
+
+                                    const doc = change.doc;
+                                    if (!doc.exists)
+                                        throw new Error("Message not found");
+
+                                    const data = doc.data();
+                                    if (!TextMessage.isTextMessage(data))
+                                        continue;
+
+                                    const msg = new TextMessage(data);
+                                    callback(msg);
+                                }
+                            })
+                        );
+                },
+                onVideoMessageSent: (
+                    callback: (message: VideoMessage) => void,
+                    runOnInit = false
+                ) => {
+                    return messageCollection
+                        .where("chat", "==", chat.uid)
+                        .onSnapshot(
+                            createQueryListener(runOnInit, (snapshot) => {
+                                for (const change of snapshot.docChanges()) {
+                                    const type = change.type;
+                                    if (type !== "added") continue;
+
+                                    const doc = change.doc;
+                                    if (!doc.exists)
+                                        throw new Error("Message not found");
+
+                                    const data = doc.data();
+                                    if (!VideoMessage.isVideoMessage(data))
+                                        continue;
+
+                                    const msg = new VideoMessage(data);
+                                    callback(msg);
+                                }
+                            })
+                        );
+                },
+                onAudioMessageSent: (
+                    callback: (message: AudioMessage) => void,
+                    runOnInit = false
+                ) => {
+                    return messageCollection
+                        .where("chat", "==", chat.uid)
+                        .onSnapshot(
+                            createQueryListener(runOnInit, (snapshot) => {
+                                for (const change of snapshot.docChanges()) {
+                                    const type = change.type;
+                                    if (type !== "added") continue;
+
+                                    const doc = change.doc;
+                                    if (!doc.exists)
+                                        throw new Error("Message not found");
+
+                                    const data = doc.data();
+                                    if (!AudioMessage.isAudioMessage(data))
+                                        continue;
+
+                                    const msg = new AudioMessage(data);
+                                    callback(msg);
+                                }
+                            })
+                        );
+                },
             };
-        },
-    },
-    messages: {
-        sendTextMessage: async (chatUid: string, text: string) => {
-            await httpEndpoint.put("/send/text/message", {
-                text,
-                chat: chatUid,
-            });
-        },
-        onMessageSentToChat: (
-            chatUid: string,
-            callback: (message: Message) => void,
-            runOnInit = false
-        ): Unsubscribe => {
-            return messageCollection.where("chat", "==", chatUid).onSnapshot(
-                createQueryListener(runOnInit, (snapshot) => {
-                    console.log("callback run");
-
-                    for (const change of snapshot.docChanges()) {
-                        const type = change.type;
-                        if (type !== "added") continue;
-
-                        const doc = change.doc;
-                        if (!doc.exists) throw new Error("Message not found");
-
-                        const data = doc.data();
-                        let msg: Message;
-
-                        if (TextMessage.isTextMessage(data)) {
-                            msg = new TextMessage(data);
-                        } else if (AudioMessage.isAudioMessage(data)) {
-                            msg = new AudioMessage(data);
-                        } else if (VideoMessage.isVideoMessage(data)) {
-                            msg = new VideoMessage(data);
-                        } else {
-                            msg = new Message(data);
-                        }
-
-                        callback(msg);
-                    }
-                })
-            );
-        },
-        onTextMessageSentToChat: (
-            chatUid: string,
-            callback: (message: TextMessage) => void,
-            runOnInit = false
-        ) => {
-            return messageCollection.where("chat", "==", chatUid).onSnapshot(
-                createQueryListener(runOnInit, (snapshot) => {
-                    for (const change of snapshot.docChanges()) {
-                        const type = change.type;
-                        if (type !== "added") continue;
-
-                        const doc = change.doc;
-                        if (!doc.exists) throw new Error("Message not found");
-
-                        const data = doc.data();
-                        if (!TextMessage.isTextMessage(data)) continue;
-
-                        const msg = new TextMessage(data);
-                        callback(msg);
-                    }
-                })
-            );
-        },
-        onVideoMessageSentToChat: (
-            chatUid: string,
-            callback: (message: VideoMessage) => void,
-            runOnInit = false
-        ) => {
-            return messageCollection.where("chat", "==", chatUid).onSnapshot(
-                createQueryListener(runOnInit, (snapshot) => {
-                    for (const change of snapshot.docChanges()) {
-                        const type = change.type;
-                        if (type !== "added") continue;
-
-                        const doc = change.doc;
-                        if (!doc.exists) throw new Error("Message not found");
-
-                        const data = doc.data();
-                        if (!VideoMessage.isVideoMessage(data)) continue;
-
-                        const msg = new VideoMessage(data);
-                        callback(msg);
-                    }
-                })
-            );
-        },
-        onAudioMessageSentToChat: (
-            chatUid: string,
-            callback: (message: AudioMessage) => void,
-            runOnInit = false
-        ) => {
-            return messageCollection.where("chat", "==", chatUid).onSnapshot(
-                createQueryListener(runOnInit, (snapshot) => {
-                    for (const change of snapshot.docChanges()) {
-                        const type = change.type;
-                        if (type !== "added") continue;
-
-                        const doc = change.doc;
-                        if (!doc.exists) throw new Error("Message not found");
-
-                        const data = doc.data();
-                        if (!AudioMessage.isAudioMessage(data)) continue;
-
-                        const msg = new AudioMessage(data);
-                        callback(msg);
-                    }
-                })
-            );
         },
     },
     users: {

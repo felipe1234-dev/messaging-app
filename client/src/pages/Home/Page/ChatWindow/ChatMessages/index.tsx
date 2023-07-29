@@ -5,17 +5,13 @@ import { Icon, Columns, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
 import { Api } from "@services";
+import { wrapperChatToChat } from "@functions";
 import { useInterval } from "@hooks";
 import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
 
 import { SendPlane } from "@styled-icons/remix-fill";
-import {
-    ChatBackground,
-    MessageList,
-    NewMessageContainer,
-    TimeGroupedMessages,
-} from "./styles";
+import { ChatBackground, MessageList, NewMessageContainer } from "./styles";
 
 function ChatMessages() {
     const { user } = useAuth();
@@ -39,7 +35,7 @@ function ChatMessages() {
         });
     };
 
-    const loadMoreMessagesIfLastVisible = () => {
+    const loadMoreMessagesIfLastVisible = async () => {
         if (loadingMessages) return Promise.resolve();
         if (!messageListEl || !chatWindow) return Promise.resolve();
 
@@ -58,9 +54,11 @@ function ChatMessages() {
         setLoadingMessages(true);
         setStartAfter(oldestMessage.uid);
 
-        return chatWindow
-            .loadMoreMessages()
-            .finally(() => setLoadingMessages(false));
+        try {
+            await chatWindow.loadMoreMessages();
+        } finally {
+            setLoadingMessages(false);
+        }
     };
 
     const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,14 +67,14 @@ function ChatMessages() {
         setText(evt.target.value);
 
         setStartedTypingAt(new Date());
-        Api.chats.connect(user, chatWindow).isTyping();
+        Api.chats.connect(user, wrapperChatToChat(chatWindow)).isTyping();
     };
 
     const handleSendMessage = () => {
         if (!user || !chatWindow) return;
 
         Api.chats
-            .connect(user, chatWindow)
+            .connect(user, wrapperChatToChat(chatWindow))
             .sendTextMessage(text)
             .then(() => {
                 setText("");
@@ -104,7 +102,9 @@ function ChatMessages() {
 
             if (intervalSecs >= 1) {
                 setStartedTypingAt(undefined);
-                Api.chats.connect(user, chatWindow).isNotTyping();
+                Api.chats
+                    .connect(user, wrapperChatToChat(chatWindow))
+                    .isNotTyping();
                 clearInterval(timerId);
             }
         },
@@ -112,8 +112,22 @@ function ChatMessages() {
         [startedTypingAt]
     );
 
+    const filterMessages = (message: Message) => {
+        if (!chatWindow || !user) return false;
+
+        const isChatAdmin = chatWindow.admins
+            .map((user) => user.uid)
+            .includes(user.uid);
+        const isSender = message.sentBy === user.uid;
+
+        if (!isChatAdmin && !user.admin && !isSender && message.deleted)
+            return false;
+            
+        return true;
+    };
+
     const chatMessages = useMemo(() => {
-        return [...(chatWindow?.messages || [])].reduce(
+        return [...(chatWindow?.messages || [])].filter(filterMessages).reduce(
             (messages, message) => {
                 const sender = chatWindow?.members.find(
                     (member) => member.uid === message.sentBy
