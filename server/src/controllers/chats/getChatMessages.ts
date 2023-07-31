@@ -42,6 +42,8 @@ const getChatMessagesController: RouteController = async (
         const isBlocked = chat.blocked.includes(currentUser.uid);
         if (isBlocked) throw new Unauthorized("You are blocked in this chat");
 
+        const canSeeDeletedMessages =
+            currentUser.admin || chat.admins.includes(currentUser.uid);
         const {
             limit = Infinity,
             startAfter,
@@ -53,6 +55,7 @@ const getChatMessagesController: RouteController = async (
 
         query.where("chat", "==", chatUid);
 
+        if (!canSeeDeletedMessages) query.where("deleted", "==", false);
         if (startAfter) query.startAfter(startAfter);
         if (limit) query.limit(limit);
 
@@ -63,8 +66,6 @@ const getChatMessagesController: RouteController = async (
 
         let messages = await query.get();
 
-        const canSeeDeletedMessages =
-            currentUser.admin || chat.admins.includes(currentUser.uid);
         if (!canSeeDeletedMessages) {
             messages = messages.filter((msg) => !msg.deleted);
         }

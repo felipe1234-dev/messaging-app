@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { shade } from "@functions";
+import { showItemAnimation } from "@styles/animations";
 
 interface MessageRowProps {
     isSender: boolean;
@@ -35,9 +36,15 @@ const MessageContainer = styled.div<MessageContainerProps>`
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        align-items: ${isSender ? "flex-end" : "flex-start"};
+        align-items: ${wasReplied
+            ? isSender
+                ? "flex-start"
+                : "flex-end"
+            : isSender
+            ? "flex-end"
+            : "flex-start"};
         gap: 10px;
-        width: fit-content;
+        width: ${wasReplied ? "100%" : "fit-content"};
         max-width: ${wasReplied ? "100%" : "50%"};
 
         ${deleted &&
@@ -67,6 +74,8 @@ const MessageBalloon = styled.p<MessageBalloonProps>`
         color: ${theme.text.primary};
         padding: 10px;
         border-radius: 18px;
+        animation-name: ${showItemAnimation};
+        animation-duration: 1s;
         ${wasReplied &&
         css`border-bottom-${!isSender ? "right" : "left"}-radius: 0;`}
         ${isReply && css`border-top-${isSender ? "right" : "left"}-radius: 0;`}

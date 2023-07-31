@@ -1,8 +1,8 @@
-import React, { Fragment, useMemo, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 
-import { MessageCard, Input, Avatar, UserIsTyping } from "@components";
-import { Icon, Columns, Paragraph } from "@styles/layout";
-import { Message, User } from "messaging-app-globals";
+import { MessageCard, Input, Avatar, UserIsTyping, Button } from "@components";
+import { Icon, Columns, Paragraph, TextSpan } from "@styles/layout";
+import { Message, TextMessage, User } from "messaging-app-globals";
 
 import { Api } from "@services";
 import { wrapperChatToChat } from "@functions";
@@ -11,7 +11,13 @@ import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
 
 import { SendPlane } from "@styled-icons/remix-fill";
-import { ChatBackground, MessageList, NewMessageContainer } from "./styles";
+import { CloseOutline } from "@styled-icons/evaicons-outline";
+import {
+    ChatBackground,
+    MessageList,
+    NewMessageContainer,
+    ReplyingMessage,
+} from "./styles";
 
 function ChatMessages() {
     const { user } = useAuth();
@@ -40,7 +46,7 @@ function ChatMessages() {
         if (loadingMessages) return Promise.resolve();
         if (!messageListEl || !chatWindow) return Promise.resolve();
 
-        const oldestMessage = chatWindow.getOldestMessage();
+        const oldestMessage = chatWindow?.getOldestMessage();
         if (!oldestMessage) return Promise.resolve();
         if (oldestMessage.uid === startAfter) return Promise.resolve();
 
@@ -56,7 +62,7 @@ function ChatMessages() {
         setStartAfter(oldestMessage.uid);
 
         try {
-            await chatWindow.loadMoreMessages();
+            await chatWindow?.loadMoreMessages();
         } finally {
             setLoadingMessages(false);
         }
@@ -73,12 +79,14 @@ function ChatMessages() {
 
     const handleSendMessage = () => {
         if (!user || !chatWindow) return;
+        if (!text) return;
 
         Api.chats
             .connect(user, wrapperChatToChat(chatWindow))
-            .sendTextMessage(text)
+            .sendTextMessage(text, replyTo)
             .then(() => {
                 setText("");
+                setReplyTo("");
                 scrollToBottom();
             })
             .catch((err: Error) => alert.error(err.message));
@@ -90,6 +98,10 @@ function ChatMessages() {
 
     const handleOnReplyMessage = (message: Message) => {
         setReplyTo(message.uid);
+    };
+
+    const handleCancelReply = () => {
+        setReplyTo("");
     };
 
     useEffect(() => {
@@ -117,24 +129,21 @@ function ChatMessages() {
         [startedTypingAt]
     );
 
-    const filterMessages = (message: Message) => {
-        if (!chatWindow || !user) return false;
+    if (!user || !chatWindow) return <></>;
 
-        const isChatAdmin = chatWindow.admins
-            .map((user) => user.uid)
-            .includes(user.uid);
-        const isSender = message.sentBy === user.uid;
+    const chatMessages = chatWindow.messages
+        .filter((message) => {
+            const isChatAdmin = chatWindow?.admins
+                .map((user) => user?.uid)
+                .includes(user?.uid);
 
-        if (!isChatAdmin && !user.admin && !isSender && message.deleted)
-            return false;
+            if (!isChatAdmin && !user?.admin && message.deleted) return false;
 
-        return true;
-    };
-
-    const chatMessages = useMemo(() => {
-        return [...(chatWindow?.messages || [])].filter(filterMessages).reduce(
+            return true;
+        })
+        .reduce(
             (messages, message) => {
-                const sender = chatWindow?.members.find(
+                const sender = chatWindow.members.find(
                     (member) => member.uid === message.sentBy
                 );
                 if (!sender) return messages;
@@ -166,17 +175,18 @@ function ChatMessages() {
                 };
             }
         );
-    }, [chatWindow]);
 
-    const usersTyping = useMemo(() => {
-        return (chatWindow?.members || []).filter(
-            (member) =>
-                member.uid !== user?.uid &&
-                chatWindow?.typing.includes(member.uid)
-        );
-    }, [chatWindow?.members, chatWindow?.typing, user?.uid]);
+    const usersTyping = chatWindow.members.filter(
+        (member) =>
+            member.uid !== user.uid && chatWindow.typing.includes(member.uid)
+    );
 
-    if (!user || !chatWindow) return <></>;
+    const replyingMessage = chatWindow.messages.find(
+        (msg) => msg.uid === replyTo
+    );
+    const replyingMessageSender = chatWindow.members.find(
+        (member) => member.uid === replyingMessage?.sentBy
+    );
 
     return (
         <ChatBackground cover={chatWindow?.cover}>
@@ -186,7 +196,7 @@ function ChatMessages() {
             >
                 {usersTyping.map((user) => (
                     <UserIsTyping
-                        key={user.uid}
+                        key={user?.uid}
                         user={user}
                     />
                 ))}
@@ -220,13 +230,44 @@ function ChatMessages() {
                 ))}
             </MessageList>
             <NewMessageContainer>
+                {replyingMessage && replyingMessageSender && (
+                    <ReplyingMessage>
+                        <Paragraph variant="secondary">
+                            Replying to{" "}
+                            <TextSpan variant="highlight">
+                                {replyingMessageSender.name}
+                            </TextSpan>{" "}
+                            <Button
+                                round
+                                iconed
+                                transparent
+                                variant="highlight"
+                                onClick={handleCancelReply}
+                                p={4}
+                            >
+                                <Icon icon={<CloseOutline />} />
+                            </Button>
+                        </Paragraph>
+                        <Paragraph
+                            variant="primary"
+                            fontStyle="italic"
+                            fontWeight={300}
+                        >
+                            {TextMessage.isTextMessage(replyingMessage) ? (
+                                replyingMessage.text
+                            ) : (
+                                <></>
+                            )}
+                        </Paragraph>
+                    </ReplyingMessage>
+                )}
                 <Input
                     autoResize
                     variant="secondary"
                     leftIcon={
                         <Avatar
-                            src={user.photo}
-                            alt={user.name}
+                            src={user?.photo}
+                            alt={user?.name}
                         />
                     }
                     rightIcon={

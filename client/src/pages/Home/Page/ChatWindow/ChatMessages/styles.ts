@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { showItemAnimation } from "@styles/animations";
 
 const paddingX = 50;
 const paddingY = 25;
@@ -40,8 +41,8 @@ const MessageList = styled.div`
     align-items: center;
     justify-content: flex-start;
     gap: 15px;
+    flex: 100%;
     width: calc(100% - ${2 * paddingX}px);
-    min-height: 75%;
     padding: ${paddingY}px ${paddingX}px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -68,8 +69,36 @@ const NewMessageContainer = styled.div`
     align-items: center;
     justify-content: flex-start;
     flex: 1 1;
+    gap: 8px;
     width: calc(100% - ${2 * paddingX}px);
     padding: ${paddingY / 2}px ${paddingX}px ${paddingY}px ${paddingX}px;
+`;
+
+const ReplyingMessage = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    animation-name: ${showItemAnimation};
+    animation-duration: 1s;
+    animation-timing-function: ease;
+
+    p {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        @supports (-webkit-line-clamp: 6) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: initial;
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+        }
+    }
 `;
 
 export {
@@ -77,4 +106,5 @@ export {
     MessageList,
     TimeGroupedMessages,
     NewMessageContainer,
+    ReplyingMessage,
 };

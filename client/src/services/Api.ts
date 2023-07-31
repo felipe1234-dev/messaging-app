@@ -375,9 +375,10 @@ const Api = {
                         ),
                     });
                 },
-                sendTextMessage: (text: string) => {
+                sendTextMessage: (text: string, replyTo?: string) => {
                     const textMessage = new TextMessage({
                         text,
+                        repliedTo: replyTo,
                         chat: chat.uid,
                         sentBy: user.uid,
                     });
@@ -432,31 +433,42 @@ const Api = {
                         );
                 },
                 onMessageUpdated: (
-                    messageUid: string,
                     callback: (message: Message) => void,
                     runOnInit = false
                 ) => {
-                    return messageCollection.doc(messageUid).onSnapshot(
-                        createDocumentListener(runOnInit, (snapshot) => {
-                            if (!snapshot.exists)
-                                throw new Error("Message not found");
+                    return messageCollection
+                        .where("chat", "==", chat.uid)
+                        .onSnapshot(
+                            createQueryListener(runOnInit, (snapshot) => {
+                                for (const change of snapshot.docChanges()) {
+                                    const type = change.type;
+                                    if (type !== "modified") continue;
 
-                            const data = snapshot.data();
-                            let msg: Message;
+                                    const doc = change.doc;
+                                    if (!doc.exists)
+                                        throw new Error("Message not found");
 
-                            if (TextMessage.isTextMessage(data)) {
-                                msg = new TextMessage(data);
-                            } else if (AudioMessage.isAudioMessage(data)) {
-                                msg = new AudioMessage(data);
-                            } else if (VideoMessage.isVideoMessage(data)) {
-                                msg = new VideoMessage(data);
-                            } else {
-                                msg = new Message(data);
-                            }
+                                    const data = doc.data();
+                                    let msg: Message;
 
-                            callback(msg);
-                        })
-                    );
+                                    if (TextMessage.isTextMessage(data)) {
+                                        msg = new TextMessage(data);
+                                    } else if (
+                                        AudioMessage.isAudioMessage(data)
+                                    ) {
+                                        msg = new AudioMessage(data);
+                                    } else if (
+                                        VideoMessage.isVideoMessage(data)
+                                    ) {
+                                        msg = new VideoMessage(data);
+                                    } else {
+                                        msg = new Message(data);
+                                    }
+
+                                    callback(msg);
+                                }
+                            })
+                        );
                 },
                 onTextMessageSent: (
                     callback: (message: TextMessage) => void,

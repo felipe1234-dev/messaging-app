@@ -5,7 +5,14 @@ import { timeAgo, wrapperChatToChat } from "@functions";
 import { useInterval, useForceUpdate } from "@hooks";
 import { Api } from "@services";
 
-import { Title, Columns, Paragraph, Container, Icon } from "@styles/layout";
+import {
+    Title,
+    Columns,
+    Paragraph,
+    Container,
+    Icon,
+    TextSpan,
+} from "@styles/layout";
 import { ShowItem } from "@styles/animations";
 import {
     MessageRow,
@@ -68,13 +75,6 @@ function MessageCard(props: MessageCardProps) {
     const canDeleteMessage = isSender || user?.admin || isChatAdmin;
     const canReplyMessage = !isSender && !message.deleted;
 
-    const SenderPhoto = () => (
-        <Avatar
-            src={sender.photo}
-            alt={sender.name}
-        />
-    );
-
     useInterval(() => forceUpdate(), 1000);
 
     useEffect(() => {
@@ -85,7 +85,7 @@ function MessageCard(props: MessageCardProps) {
         chat.loadMoreMessages();
     }, [message.repliedTo, repliedMessage, chat?.messages]);
 
-    if (!user || !chat) return <></>;
+    if (!user || !chat || !sender) return <></>;
 
     const handleDeleteMessage = () => {
         Api.chats
@@ -114,6 +114,13 @@ function MessageCard(props: MessageCardProps) {
         p: 6,
     };
 
+    const SenderPhoto = () => (
+        <Avatar
+            src={sender.photo}
+            alt={sender.name}
+        />
+    );
+
     return (
         <MessageRow
             id={`${message.uid}`}
@@ -127,15 +134,27 @@ function MessageCard(props: MessageCardProps) {
                 />
             )}
             <MessageContainer {...baseProps}>
-                {isReply && (
-                    <MessageCard
-                        message={repliedMessage}
-                        sender={repliedMessageSender}
-                        showSender={false}
-                        wasReplied
-                    />
+                {showSender && !isReply && (
+                    <ShowItem>
+                        <Columns
+                            justify="center"
+                            align="center"
+                            width="fit-content"
+                            gap={5}
+                        >
+                            <Title
+                                level={6}
+                                variant="highlight"
+                            >
+                                {isSender ? "You" : sender.name}
+                            </Title>
+                            <Paragraph variant="secondary">
+                                {timeAgo(message.createdAt)}
+                            </Paragraph>
+                        </Columns>
+                    </ShowItem>
                 )}
-                {showSender && (
+                {isReply && (
                     <ShowItem>
                         <Columns
                             justify="center"
@@ -144,13 +163,27 @@ function MessageCard(props: MessageCardProps) {
                             gap={5}
                         >
                             <Title level={6}>
-                                {isSender ? "You" : sender.name}
+                                <TextSpan variant="highlight">
+                                    {isSender ? "You" : sender.name}
+                                </TextSpan>{" "}
+                                replied to{" "}
+                                <TextSpan variant="highlight">
+                                    {repliedMessageSender.name}
+                                </TextSpan>
                             </Title>
                             <Paragraph variant="secondary">
                                 {timeAgo(message.createdAt)}
                             </Paragraph>
                         </Columns>
                     </ShowItem>
+                )}
+                {isReply && (
+                    <MessageCard
+                        message={repliedMessage}
+                        sender={repliedMessageSender}
+                        showSender={false}
+                        wasReplied
+                    />
                 )}
                 <Overlay
                     overlay={
