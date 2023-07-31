@@ -97,7 +97,11 @@ function ChatCard(props: ChatCardProps) {
                             {isSender ? "You: " : senderName}
                             <CardText>{cardText}</CardText>
                         </CardSender>
-                        <CardDate>{timeAgo(lastMessage.createdAt)}</CardDate>
+                        {lastMessage && (
+                            <CardDate>
+                                {timeAgo(lastMessage.createdAt)}
+                            </CardDate>
+                        )}
                     </CardInfo>
                 </CardBody>
             </InnerContainer>

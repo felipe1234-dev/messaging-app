@@ -45,8 +45,8 @@ export interface WrapperChat
     admins: User[];
     createdBy: User;
     messages: Message[];
-    getNewestMessage(): Message;
-    getOldestMessage(): Message;
+    getNewestMessage(): Message | undefined;
+    getOldestMessage(): Message | undefined;
     loadMoreMessages(): Promise<Message[]>;
 }
 

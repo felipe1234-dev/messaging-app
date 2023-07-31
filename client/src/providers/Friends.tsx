@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { User as Friend, FriendRequest } from "messaging-app-globals";
 import { useAuth } from "./Auth";
 import { Api } from "@services";
+import { useAlert } from "./Alert";
 
 interface FriendsValue {
     friends: Friend[];
@@ -19,30 +20,49 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
     const [friends, setFriends] = useState<Friend[]>([]);
     const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
     const { user } = useAuth();
+    const alert = useAlert();
 
     const fetchFriends = async () => {
-        setFriends(
-            (await Api.friends.list()).sort((a, b) => {
-                if (a.online && !b.online) return -1;
-                if (b.online && !a.online) return 1;
+        try {
+            setFriends(
+                (await Api.friends.list()).sort((a, b) => {
+                    if (a.online && !b.online) return -1;
+                    if (b.online && !a.online) return 1;
 
-                if (a.online && b.online && a.sessionStart && b.sessionStart) {
-                    if (a.sessionStart > b.sessionStart) return -1;
-                    if (a.sessionStart < b.sessionStart) return 1;
-                }
+                    if (
+                        a.online &&
+                        b.online &&
+                        a.sessionStart &&
+                        b.sessionStart
+                    ) {
+                        if (a.sessionStart > b.sessionStart) return -1;
+                        if (a.sessionStart < b.sessionStart) return 1;
+                    }
 
-                if (!a.online && !b.online && a.sessionEnd && b.sessionEnd) {
-                    if (a.sessionEnd > b.sessionEnd) return -1;
-                    if (a.sessionEnd < b.sessionEnd) return 1;
-                }
+                    if (
+                        !a.online &&
+                        !b.online &&
+                        a.sessionEnd &&
+                        b.sessionEnd
+                    ) {
+                        if (a.sessionEnd > b.sessionEnd) return -1;
+                        if (a.sessionEnd < b.sessionEnd) return 1;
+                    }
 
-                return 0;
-            })
-        );
+                    return 0;
+                })
+            );
+        } catch (err) {
+            alert.error((err as Error).message);
+        }
     };
 
     const fetchFriendRequests = async () => {
-        setFriendRequests(await Api.friendRequests.list());
+        try {
+            setFriendRequests(await Api.friendRequests.list());
+        } catch (err) {
+            alert.error((err as Error).message);
+        }
     };
 
     const onFriendUpdated = (updatedFriend: Friend) => {
@@ -81,10 +101,19 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
     };
 
     useEffect(() => {
+        if (!user?.uid) return setFriendRequests([]);
+        fetchFriendRequests();
+    }, [user?.uid]);
+
+    useEffect(() => {
         if (!user?.uid) return;
+        if (user.friends.length === 0) return;
 
         fetchFriends();
-        fetchFriendRequests();
+    }, [user?.uid, user?.friends.length]);
+
+    useEffect(() => {
+        if (!user?.uid) return;
 
         Api.friends.onFriendListUpdated(user.uid, onFriendUpdated);
         Api.friendRequests.onFriendRequestReceived(
@@ -99,7 +128,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
             user.uid,
             onUpdateFriendRequests
         );
-    }, [user?.uid, user?.friends]);
+    }, [user?.uid]);
 
     const unasweredFriendRequests = friendRequests.filter(
         (req) =>
@@ -113,9 +142,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
         <FriendsContext.Provider
             value={{
                 friends,
-                friendRequests: friendRequests.filter(
-                    (friendRequest) => !friendRequest.deleted
-                ),
+                friendRequests: friendRequests.filter((fr) => !fr.deleted),
                 unasweredFriendRequests,
             }}
         >
