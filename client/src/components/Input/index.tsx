@@ -79,6 +79,7 @@ function Input(props: InputProps) {
         const shiftKey = event.shiftKey;
 
         if ((code === "Enter" || code === 13) && !shiftKey && onEnterPress) {
+            event.preventDefault();
             onEnterPress(event);
         }
     };
