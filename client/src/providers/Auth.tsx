@@ -44,7 +44,9 @@ function AuthProvider(props: { children: React.ReactNode }) {
 
     useEffect(() => {
         Api.httpEndpoint.interceptors.response.use(
-            (response) => response,
+            (response) => {
+                return response;
+            },
             async (error) => {
                 if (error.code === codes.UNAUTHENTICATED) await logout();
                 return Promise.reject(error);
