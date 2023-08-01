@@ -154,7 +154,7 @@ function MessageCard(props: MessageCardProps) {
                         </Columns>
                     </ShowItem>
                 )}
-                {isReply && (
+                {isReply && !wasReplied && (
                     <ShowItem>
                         <Columns
                             justify="center"
@@ -177,7 +177,7 @@ function MessageCard(props: MessageCardProps) {
                         </Columns>
                     </ShowItem>
                 )}
-                {isReply && (
+                {isReply && !wasReplied && (
                     <MessageCard
                         message={repliedMessage}
                         sender={repliedMessageSender}

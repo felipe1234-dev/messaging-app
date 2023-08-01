@@ -73,14 +73,24 @@ const MessageBalloon = styled.p<MessageBalloonProps>`
         )};
         color: ${theme.text.primary};
         padding: 10px;
-        border-radius: 18px;
         animation-name: ${showItemAnimation};
         animation-duration: 1s;
-        ${wasReplied &&
-        css`border-bottom-${!isSender ? "right" : "left"}-radius: 0;`}
-        ${isReply && css`border-top-${isSender ? "right" : "left"}-radius: 0;`}
-        ${showSender &&
-        css`border-top-${isSender ? "right" : "left"}-radius: 0;`}
+
+        border-radius: 18px;
+        ${wasReplied
+            ? css`
+            border-bottom-${!isSender ? "right" : "left"}-radius: 0;
+        `
+            : isReply
+            ? css`
+            border-top-${!isSender ? "left" : "right"}-radius: 0;
+            `
+            : showSender
+            ? css`
+            border-top-${isSender ? "right" : "left"}-radius: 0;
+            `
+            : ""}
+
         ${wasReplied &&
         css`
             white-space: nowrap;
