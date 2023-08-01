@@ -3,6 +3,9 @@ import { generateUid, toDate } from "../functions";
 const messageTypes = ["text", "audio", "video", "link"] as const;
 type MessageType = (typeof messageTypes)[number];
 
+const historyTypes = ["view", "edit"] as const;
+type HistoryType = (typeof historyTypes)[number];
+
 class Message {
     public uid: string;
     public type: MessageType;
@@ -13,9 +16,13 @@ class Message {
     public deletedAt?: Date;
     public deletedBy?: string;
     public createdAt: Date;
-    public views: {
-        viewedBy: string;
-        viewedAt: Date;
+    public history: {
+        type: HistoryType;
+        user: string;
+        extra: {
+            [key: string]: any;
+        };
+        date: Date;
     }[];
 
     constructor(data: Partial<Message> = {}) {
@@ -29,7 +36,7 @@ class Message {
             deletedAt,
             deletedBy,
             createdAt = new Date(),
-            views = [],
+            history = [],
         } = data;
 
         this.uid = uid;
@@ -44,9 +51,9 @@ class Message {
         if (deletedBy) this.deletedBy = deletedBy;
 
         this.createdAt = toDate(createdAt);
-        this.views = views.map((view) => ({
-            ...view,
-            viewedAt: toDate(view.viewedAt),
+        this.history = history.map((item) => ({
+            ...item,
+            date: toDate(item.date),
         }));
     }
 
@@ -67,12 +74,16 @@ class Message {
                 (obj.deletedBy === undefined ||
                     typeof obj.deletedBy === "string") &&
                 toDate(obj.createdAt) instanceof Date &&
-                obj.views instanceof Array &&
-                obj.views.every(
-                    (view: any) =>
-                        view instanceof Object &&
-                        typeof view.viewedBy === "string" &&
-                        toDate(view.viewedAt) instanceof Date
+                obj.history instanceof Array &&
+                obj.history.every(
+                    (item: any) =>
+                        item instanceof Object &&
+                        typeof item.type === "string" &&
+                        historyTypes.includes(item.type) &&
+                        typeof item.user === "string" &&
+                        item.extra instanceof Date &&
+                        typeof item.user === "string" &&
+                        toDate(item.date) instanceof Date
                 ))
         );
     }
@@ -164,3 +175,4 @@ class VideoMessage extends Message {
 export default Message;
 
 export { TextMessage, AudioMessage, VideoMessage };
+  
