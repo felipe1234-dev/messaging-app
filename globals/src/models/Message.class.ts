@@ -1,10 +1,13 @@
 import { generateUid, toDate } from "../functions";
 
 const messageTypes = ["text", "audio", "video", "link"] as const;
-type MessageType = (typeof messageTypes)[number];
+export type MessageType = (typeof messageTypes)[number];
 
 const historyTypes = ["view", "edit"] as const;
-type HistoryType = (typeof historyTypes)[number];
+export type HistoryType = (typeof historyTypes)[number];
+
+const durationUnits = ["ms", "s", "m", "h"] as const;
+export type DurationUnit = (typeof durationUnits)[number];
 
 class Message {
     public uid: string;
@@ -74,17 +77,18 @@ class Message {
                 (obj.deletedBy === undefined ||
                     typeof obj.deletedBy === "string") &&
                 toDate(obj.createdAt) instanceof Date &&
-                obj.history instanceof Array &&
-                obj.history.every(
-                    (item: any) =>
-                        item instanceof Object &&
-                        typeof item.type === "string" &&
-                        historyTypes.includes(item.type) &&
-                        typeof item.user === "string" &&
-                        item.extra instanceof Date &&
-                        typeof item.user === "string" &&
-                        toDate(item.date) instanceof Date
-                ))
+                (obj.history === undefined ||
+                    (obj.history instanceof Array &&
+                        obj.history.every(
+                            (item: any) =>
+                                item instanceof Object &&
+                                typeof item.type === "string" &&
+                                historyTypes.includes(item.type) &&
+                                typeof item.user === "string" &&
+                                item.extra instanceof Date &&
+                                typeof item.user === "string" &&
+                                toDate(item.date) instanceof Date
+                        ))))
         );
     }
 }
@@ -114,19 +118,25 @@ class TextMessage extends Message {
 
 class AudioMessage extends Message {
     public type: "audio";
-    public audioURL: string;
-    public audioDuration: number;
-    public audioDurationUnit: "ms";
+    public audio: {
+        url: string;
+        duration: number;
+        unit: DurationUnit;
+    };
 
     constructor(data: Partial<AudioMessage> = {}) {
-        const { audioURL = "", audioDuration = 0 } = data;
+        const {
+            audio = {
+                url: "",
+                duration: 0,
+                unit: "ms",
+            },
+        } = data;
 
         super(data);
 
         this.type = "audio";
-        this.audioURL = audioURL;
-        this.audioDuration = audioDuration;
-        this.audioDurationUnit = "ms";
+        this.audio = audio;
     }
 
     public static isAudioMessage(obj: any): obj is AudioMessage {
@@ -134,9 +144,10 @@ class AudioMessage extends Message {
             obj instanceof AudioMessage ||
             (obj instanceof Object &&
                 obj.type === "audio" &&
-                typeof obj.audioURL === "string" &&
-                typeof obj.audioDuration === "number" &&
-                obj.audioDurationUnit === "ms" &&
+                obj.audio instanceof Object &&
+                typeof obj.audio.url === "string" &&
+                typeof obj.audio.duration === "string" &&
+                durationUnits.includes(obj.audio.unit) &&
                 Message.isMessage(obj))
         );
     }
@@ -144,19 +155,25 @@ class AudioMessage extends Message {
 
 class VideoMessage extends Message {
     public type: "video";
-    public videoURL: string;
-    public videoDuration: number;
-    public videoDurationUnit: "ms";
+    public video: {
+        url: string;
+        duration: number;
+        unit: DurationUnit;
+    };
 
     constructor(data: Partial<VideoMessage> = {}) {
-        const { videoURL = "", videoDuration = 0 } = data;
+        const {
+            video = {
+                url: "",
+                duration: 0,
+                unit: "ms",
+            },
+        } = data;
 
         super(data);
 
         this.type = "video";
-        this.videoURL = videoURL;
-        this.videoDuration = videoDuration;
-        this.videoDurationUnit = "ms";
+        this.video = video;
     }
 
     public static isVideoMessage(obj: any): obj is VideoMessage {
@@ -164,9 +181,10 @@ class VideoMessage extends Message {
             obj instanceof VideoMessage ||
             (obj instanceof Object &&
                 obj.type === "video" &&
-                typeof obj.videoURL === "string" &&
-                typeof obj.videoDuration === "number" &&
-                obj.videoDurationUnit === "ms" &&
+                obj.video instanceof Object &&
+                typeof obj.video.url === "string" &&
+                typeof obj.video.duration === "string" &&
+                durationUnits.includes(obj.video.unit) &&
                 Message.isMessage(obj))
         );
     }
@@ -175,4 +193,3 @@ class VideoMessage extends Message {
 export default Message;
 
 export { TextMessage, AudioMessage, VideoMessage };
-  
