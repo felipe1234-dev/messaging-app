@@ -92,10 +92,6 @@ function ChatMessages() {
             .catch((err: Error) => alert.error(err.message));
     };
 
-    const handleMessageListScroll = () => {
-        loadMoreMessagesIfLastVisible();
-    };
-
     const handleOnReplyMessage = (message: Message) => {
         setReplyTo(message.uid);
     };
@@ -128,6 +124,10 @@ function ChatMessages() {
         1000,
         [startedTypingAt]
     );
+
+    useInterval(() => {
+        loadMoreMessagesIfLastVisible();
+    }, 500);
 
     if (!user || !chatWindow) return <></>;
 
@@ -190,10 +190,7 @@ function ChatMessages() {
 
     return (
         <ChatBackground cover={chatWindow?.cover}>
-            <MessageList
-                ref={(el) => setMessageListEl(el)}
-                onScroll={handleMessageListScroll}
-            >
+            <MessageList ref={(el) => setMessageListEl(el)}>
                 {usersTyping.map((user) => (
                     <UserIsTyping
                         key={user?.uid}
