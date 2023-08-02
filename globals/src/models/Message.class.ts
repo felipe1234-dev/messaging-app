@@ -60,6 +60,10 @@ class Message {
         }));
     }
 
+    public wasViewedBy(userUid: string) {
+        return !!this.history.find(item => item.user === userUid);
+    }
+
     public static isMessage(obj: any): obj is Message {
         return (
             obj instanceof Message ||
