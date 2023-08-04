@@ -1,5 +1,10 @@
 import axios, { AxiosError } from "axios";
-import { JSONToURLQuery, isLocal } from "@functions";
+import {
+    JSONToURLQuery,
+    isLocal,
+    dataToMessageModel,
+    wrapperChatToChat,
+} from "@functions";
 import {
     FilterParams,
     User,
@@ -15,13 +20,13 @@ import {
     ResponseError,
     isResponseError,
     Unsubscribe,
-    WrapperUser,
     WrapperChat,
     QueryListener,
     DocumentListener,
     QuerySnapshot,
     DocumentSnapshot,
     DocumentData,
+    isWrapperChat,
 } from "@types";
 import {
     auth,
@@ -311,17 +316,7 @@ const Api = {
                 `/chats/${chatUid}/messages/?${JSONToURLQuery(filters)}`
             );
 
-            return (data.messages as any[]).map((message) => {
-                if (TextMessage.isTextMessage(message)) {
-                    return new TextMessage(message);
-                } else if (AudioMessage.isAudioMessage(message)) {
-                    return new AudioMessage(message);
-                } else if (VideoMessage.isVideoMessage(message)) {
-                    return new VideoMessage(message);
-                } else {
-                    return new Message(message);
-                }
-            });
+            return (data.messages as any[]).map(dataToMessageModel);
         },
 
         update: async (chatUid: string, updates: Partial<Chat>) => {
@@ -351,7 +346,11 @@ const Api = {
                 );
         },
 
-        connect: (user: User, chat: Chat) => {
+        connect: (user: User, chat: Chat | WrapperChat) => {
+            if (isWrapperChat(chat)) {
+                chat = wrapperChatToChat(chat);
+            }
+
             if (!chat.members.includes(user.uid) && !user.admin) {
                 throw new Error("You don't participate in this chat");
             }
@@ -394,6 +393,33 @@ const Api = {
                         deletedBy: user.uid,
                     });
                 },
+                getMessage: async (messageUid: string) => {
+                    const snapshot = await messageCollection
+                        .doc(messageUid)
+                        .get();
+
+                    if (!snapshot.exists) throw new Error("Message not found");
+
+                    const data = snapshot.data();
+                    return dataToMessageModel(data);
+                },
+                viewMessage: (message: Message) => {
+                    const alreadyViewed = !!message.history.find(
+                        (item) => item.type === "view" && item.user === user.uid
+                    );
+                    if (alreadyViewed) return;
+
+                    message.history.push({
+                        type: "view",
+                        extra: {},
+                        user: user.uid,
+                        date: new Date(),
+                    });
+
+                    return messageCollection.doc(message.uid).update({
+                        history: message.history,
+                    });
+                },
                 onMessageSent: (
                     callback: (message: Message) => void,
                     runOnInit = false
@@ -411,21 +437,7 @@ const Api = {
                                         throw new Error("Message not found");
 
                                     const data = doc.data();
-                                    let msg: Message;
-
-                                    if (TextMessage.isTextMessage(data)) {
-                                        msg = new TextMessage(data);
-                                    } else if (
-                                        AudioMessage.isAudioMessage(data)
-                                    ) {
-                                        msg = new AudioMessage(data);
-                                    } else if (
-                                        VideoMessage.isVideoMessage(data)
-                                    ) {
-                                        msg = new VideoMessage(data);
-                                    } else {
-                                        msg = new Message(data);
-                                    }
+                                    const msg = dataToMessageModel(data);
 
                                     callback(msg);
                                 }
@@ -449,21 +461,7 @@ const Api = {
                                         throw new Error("Message not found");
 
                                     const data = doc.data();
-                                    let msg: Message;
-
-                                    if (TextMessage.isTextMessage(data)) {
-                                        msg = new TextMessage(data);
-                                    } else if (
-                                        AudioMessage.isAudioMessage(data)
-                                    ) {
-                                        msg = new AudioMessage(data);
-                                    } else if (
-                                        VideoMessage.isVideoMessage(data)
-                                    ) {
-                                        msg = new VideoMessage(data);
-                                    } else {
-                                        msg = new Message(data);
-                                    }
+                                    const msg = dataToMessageModel(data);
 
                                     callback(msg);
                                 }

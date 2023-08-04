@@ -69,7 +69,7 @@ const NewMessageContainer = styled.div`
     align-items: center;
     justify-content: flex-start;
     flex: 1 1;
-    gap: 8px;
+    gap: 25px;
     width: calc(100% - ${2 * paddingX}px);
     padding: ${paddingY / 2}px ${paddingX}px ${paddingY}px ${paddingX}px;
 `;

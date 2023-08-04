@@ -5,7 +5,6 @@ import { Icon, Columns, Paragraph, TextSpan } from "@styles/layout";
 import { Message, TextMessage, User } from "messaging-app-globals";
 
 import { Api } from "@services";
-import { wrapperChatToChat } from "@functions";
 import { useInterval } from "@hooks";
 import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
@@ -74,7 +73,7 @@ function ChatMessages() {
         setText(evt.target.value);
 
         setStartedTypingAt(new Date());
-        Api.chats.connect(user, wrapperChatToChat(chatWindow)).isTyping();
+        Api.chats.connect(user, chatWindow).isTyping();
     };
 
     const handleSendMessage = () => {
@@ -82,7 +81,7 @@ function ChatMessages() {
         if (!text) return;
 
         Api.chats
-            .connect(user, wrapperChatToChat(chatWindow))
+            .connect(user, chatWindow)
             .sendTextMessage(text, replyTo)
             .then(() => {
                 setText("");
@@ -115,9 +114,7 @@ function ChatMessages() {
 
             if (intervalSecs >= 1) {
                 setStartedTypingAt(undefined);
-                Api.chats
-                    .connect(user, wrapperChatToChat(chatWindow))
-                    .isNotTyping();
+                Api.chats.connect(user, chatWindow).isNotTyping();
                 clearInterval(timerId);
             }
         },
@@ -129,16 +126,19 @@ function ChatMessages() {
         loadMoreMessagesIfLastVisible();
     }, 500);
 
+    useInterval(() => {
+        if (!user || !chatWindow) return;
+
+        for (const message of chatWindow.messages) {
+            Api.chats.connect(user, chatWindow).viewMessage(message);
+        }
+    }, 500);
+
     if (!user || !chatWindow) return <></>;
 
     const chatMessages = chatWindow.messages
         .filter((message) => {
-            const isChatAdmin = chatWindow?.admins
-                .map((user) => user?.uid)
-                .includes(user?.uid);
-
-            if (!isChatAdmin && !user?.admin && message.deleted) return false;
-
+            if (!user?.admin && message.deleted) return false;
             return true;
         })
         .reduce(
@@ -273,10 +273,10 @@ function ChatMessages() {
                             size={2}
                         />
                     }
+                    placeholder="Your message..."
                     rightIconVariant="highlight"
                     onRightIconClick={handleSendMessage}
                     onEnterPress={handleSendMessage}
-                    placeholder="Your message..."
                     onChange={handleTextChange}
                     value={text}
                     light={0.05}
