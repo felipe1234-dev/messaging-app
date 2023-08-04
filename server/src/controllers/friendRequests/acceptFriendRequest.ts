@@ -54,6 +54,7 @@ const acceptFriendRequestController: RouteController = async (
         if (!directAlreadyExists) {
             const newChat = new Chat({
                 members: [user.uid, friendUid],
+                admins: [user.uid, friendUid],
                 createdBy: user.uid,
             });
 
