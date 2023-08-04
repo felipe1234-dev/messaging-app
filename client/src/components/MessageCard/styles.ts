@@ -65,7 +65,7 @@ interface MessageBalloonProps {
 
 const lineAmount = 6;
 
-const MessageBalloon = styled.p<MessageBalloonProps>`
+const MessageBalloon = styled.pre<MessageBalloonProps>`
     ${({ isSender, showSender, color, wasReplied, isReply, theme }) => css`
         background-color: ${shade(
             color || theme.background[isSender ? "highlight" : "secondary"],
@@ -134,4 +134,20 @@ const MessageActions = styled.div<MessageActionsProps>`
     `}
 `;
 
-export { MessageRow, MessageContainer, MessageBalloon, MessageActions };
+const NotViewedMark = styled.div`
+    ${({ theme }) => css`
+        background-color: ${theme.background.highlight};
+        border-radius: 50%;
+        padding: 5px;
+        animation-name: ${showItemAnimation};
+        animation-duration: 1s;
+    `}
+`;
+
+export {
+    MessageRow,
+    MessageContainer,
+    MessageBalloon,
+    MessageActions,
+    NotViewedMark,
+};

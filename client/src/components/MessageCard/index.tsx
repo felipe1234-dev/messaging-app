@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useAuth, useChats, useAlert } from "@providers";
-import { timeAgo, wrapperChatToChat } from "@functions";
+import { timeAgo } from "@functions";
 import { useInterval, useForceUpdate } from "@hooks";
 import { Api } from "@services";
 
@@ -13,13 +13,14 @@ import {
     Icon,
     TextSpan,
 } from "@styles/layout";
-import { ShowItem } from "@styles/animations";
 import {
     MessageRow,
     MessageContainer,
     MessageBalloon,
     MessageActions,
+    NotViewedMark,
 } from "./styles";
+import { ShowItem } from "@styles/animations";
 
 import { User, Message, TextMessage } from "messaging-app-globals";
 
@@ -56,40 +57,46 @@ function MessageCard(props: MessageCardProps) {
     const alert = useAlert();
     const { forceUpdate } = useForceUpdate();
 
+    const [repliedMessage, setRepliedMessage] = useState<Message>();
+
     const isSender = user?.uid === sender.uid;
     const chat = chats.find((c) => c.uid === message.chat);
     const color = chat?.color || "";
     const isChatAdmin =
         user && chat?.admins.map((user) => user.uid).includes(user.uid);
 
-    const repliedMessage = chat?.messages.find(
-        (msg) => msg.uid === message.repliedTo
-    );
-
     const repliedMessageSender = chat?.members.find(
         (member) => member.uid === repliedMessage?.sentBy
     );
 
     const isReply = !!repliedMessage && !!repliedMessageSender;
-
     const canDeleteMessage = isSender || user?.admin || isChatAdmin;
     const canReplyMessage = !isSender && !message.deleted;
+    const wasViewed = !!user?.uid && message.wasViewedBy(user.uid);
 
     useInterval(() => forceUpdate(), 1000);
 
     useEffect(() => {
+        if (!user) return;
         if (!chat) return;
         if (!message.repliedTo) return;
-        if (repliedMessage) return;
 
-        chat.loadMoreMessages();
-    }, [message.repliedTo, repliedMessage, chat?.messages]);
+        const foundMsg = chat?.messages.find(
+            (msg) => msg.uid === message.repliedTo
+        );
+        if (foundMsg) return setRepliedMessage(foundMsg);
+
+        Api.chats
+            .connect(user, chat)
+            .getMessage(message.repliedTo)
+            .then(setRepliedMessage);
+    }, [user?.uid, message.repliedTo, chat?.messages]);
 
     if (!user || !chat || !sender) return <></>;
 
     const handleDeleteMessage = () => {
         Api.chats
-            .connect(user, wrapperChatToChat(chat))
+            .connect(user, chat)
             .deleteMessage(message.uid)
             .then(() => alert.success("Message deleted successfully"));
     };
@@ -212,15 +219,26 @@ function MessageCard(props: MessageCardProps) {
                         </MessageActions>
                     }
                 >
-                    <MessageBalloon {...baseProps}>
-                        {wasReplied && message.deleted ? (
-                            "Message deleted"
-                        ) : TextMessage.isTextMessage(message) ? (
-                            message.text
-                        ) : (
-                            <></>
+                    <Container
+                        transparent
+                        direction="row"
+                    >
+                        {!wasReplied && isSender && !wasViewed && (
+                            <NotViewedMark />
                         )}
-                    </MessageBalloon>
+                        <MessageBalloon {...baseProps}>
+                            {wasReplied && message.deleted ? (
+                                "Message deleted"
+                            ) : TextMessage.isTextMessage(message) ? (
+                                message.text
+                            ) : (
+                                <></>
+                            )}
+                        </MessageBalloon>
+                        {!wasReplied && !isSender && !wasViewed && (
+                            <NotViewedMark />
+                        )}
+                    </Container>
                 </Overlay>
             </MessageContainer>
             {isSender && showSender && <SenderPhoto />}
