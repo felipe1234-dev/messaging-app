@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { shade } from "@functions";
+import { showItemAnimation } from "@styles/animations";
 
 const px = 10;
 const py = 10;
@@ -10,6 +11,7 @@ interface OuterContainerProps {
 
 const OuterContainer = styled.div<OuterContainerProps>`
     ${({ selected }) => css`
+        position: relative;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -19,6 +21,8 @@ const OuterContainer = styled.div<OuterContainerProps>`
         transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         cursor: pointer;
         border-radius: 8px;
+        animation-name: ${showItemAnimation};
+        animation-duration: 1s;
 
         &:hover {
             background-color: rgba(255, 255, 255, 0.05);
@@ -68,7 +72,7 @@ const CardText = styled.span`
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 100px;
+        width: 200px;
         color: ${shade(theme.background.secondary, 0.5)};
     `}
 `;
@@ -90,7 +94,32 @@ const CardDate = styled.p`
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        color: ${shade(theme.background.secondary, 1)};
+        color: ${theme.text.highlight};
+        font-style: italic;
+    `}
+`;
+
+interface UnseenMessagesCounterProps {
+    color?: string;
+}
+
+const UnseenMessagesCounter = styled.p<UnseenMessagesCounterProps>`
+    ${({ color, theme }) => css`
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        border-radius: 40%;
+        background-color: ${color || theme.background.highlight};
+        color: ${theme.text.primary};
+        padding: 0 8px;
+        width: auto;
+        height: 1.5em;
+        position: absolute;
+        top: 0;
+        right: 0;
+        animation-name: ${showItemAnimation};
+        animation-duration: 1s;
     `}
 `;
 
@@ -102,4 +131,5 @@ export {
     CardText,
     CardDate,
     CardSender,
+    UnseenMessagesCounter,
 };

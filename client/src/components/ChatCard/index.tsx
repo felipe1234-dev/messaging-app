@@ -21,6 +21,7 @@ import {
     CardDate,
     CardInfo,
     CardText,
+    UnseenMessagesCounter,
 } from "./styles";
 
 import Avatar from "../Avatar";
@@ -70,6 +71,12 @@ function ChatCard(props: ChatCardProps) {
             <></>
         );
 
+    const unseenCount = chat.messages.reduce((sum, msg) => {
+        if (msg.sentBy !== user.uid && !msg.wasViewedBy(user.uid))
+            return sum + 1;
+        return sum;
+    }, 0);
+
     const Profile = () => (
         <Avatar
             src={firstMember.photo}
@@ -101,6 +108,11 @@ function ChatCard(props: ChatCardProps) {
                             <CardDate>
                                 {timeAgo(lastMessage.createdAt)}
                             </CardDate>
+                        )}
+                        {unseenCount > 0 && (
+                            <UnseenMessagesCounter color={chat.color}>
+                                {unseenCount > 9 ? "9+" : unseenCount}
+                            </UnseenMessagesCounter>
                         )}
                     </CardInfo>
                 </CardBody>
