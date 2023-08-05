@@ -55,6 +55,16 @@ const MessageContainer = styled.div<MessageContainerProps>`
     `}
 `;
 
+const NotViewedMark = styled.div`
+    ${({ theme }) => css`
+        background-color: ${theme.background.highlight};
+        border-radius: 50%;
+        padding: 5px;
+        animation-name: ${showItemAnimation};
+        animation-duration: 1s;
+    `}
+`;
+
 interface MessageBalloonProps {
     isSender: boolean;
     showSender: boolean;
@@ -109,39 +119,28 @@ const MessageBalloon = styled.pre<MessageBalloonProps>`
     `}
 `;
 
-interface MessageActionsProps {
-    isSender: boolean;
-}
-
-const leftOffset = 30;
-
-const MessageActions = styled.div<MessageActionsProps>`
-    ${({ isSender }) => css`
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        height: 100%;
-        position: absolute;
-        ${isSender
-            ? css`
-                  left: -${leftOffset}px;
-              `
-            : css`
-                  right: -${leftOffset}px;
-              `}
-    `}
+const MessageActions = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 0.5s ease-in;
+    opacity: 0;
 `;
 
-const NotViewedMark = styled.div`
-    ${({ theme }) => css`
-        background-color: ${theme.background.highlight};
-        border-radius: 50%;
-        padding: 5px;
-        animation-name: ${showItemAnimation};
-        animation-duration: 1s;
-    `}
+const BalloonOverlay = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+
+    &:hover ${MessageActions} {
+        opacity: 1;
+    }
 `;
 
 export {
@@ -150,4 +149,5 @@ export {
     MessageBalloon,
     MessageActions,
     NotViewedMark,
+    BalloonOverlay,
 };

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 
 import { useAuth, useChats, useAlert } from "@providers";
-import { timeAgo } from "@functions";
 import { useInterval, useForceUpdate } from "@hooks";
+import { timeAgo } from "@functions";
 import { Api } from "@services";
+
+import { User, Message, TextMessage } from "messaging-app-globals";
 
 import {
     Title,
@@ -19,17 +21,16 @@ import {
     MessageBalloon,
     MessageActions,
     NotViewedMark,
+    BalloonOverlay,
 } from "./styles";
 import { ShowItem } from "@styles/animations";
 
-import { User, Message, TextMessage } from "messaging-app-globals";
-
 import Avatar from "../Avatar";
-import Overlay from "../Overlay";
 import Button from "../Button";
 
 import { Delete } from "@styled-icons/fluentui-system-regular";
 import { Reply } from "@styled-icons/bootstrap";
+import { EditAlt } from "@styled-icons/boxicons-regular";
 
 const width = "44px";
 
@@ -72,6 +73,7 @@ function MessageCard(props: MessageCardProps) {
     const isReply = !!repliedMessage && !!repliedMessageSender;
     const canDeleteMessage = isSender || user?.admin || isChatAdmin;
     const canReplyMessage = !isSender && !message.deleted;
+    const canEditMessage = isSender && !message.deleted;
     const wasViewed = !!user?.uid && message.wasViewedBy(user.uid);
 
     useInterval(() => forceUpdate(), 1000);
@@ -105,6 +107,10 @@ function MessageCard(props: MessageCardProps) {
         if (onReply) onReply(message);
     };
 
+    const handleEditMessage = () => {
+        if (onEdit) onEdit(message);
+    };
+
     const baseProps = {
         isSender,
         showSender,
@@ -126,6 +132,37 @@ function MessageCard(props: MessageCardProps) {
             src={sender.photo}
             alt={sender.name}
         />
+    );
+
+    const Actions = () => (
+        <MessageActions>
+            {canDeleteMessage && (
+                <Button
+                    {...baseButtonProps}
+                    onClick={handleDeleteMessage}
+                >
+                    <Icon icon={<Delete />} />
+                </Button>
+            )}
+
+            {canReplyMessage && (
+                <Button
+                    {...baseButtonProps}
+                    onClick={handleReplyMessage}
+                >
+                    <Icon icon={<Reply />} />
+                </Button>
+            )}
+
+            {canEditMessage && (
+                <Button
+                    {...baseButtonProps}
+                    onClick={handleEditMessage}
+                >
+                    <Icon icon={<EditAlt />} />
+                </Button>
+            )}
+        </MessageActions>
     );
 
     return (
@@ -192,40 +229,14 @@ function MessageCard(props: MessageCardProps) {
                         wasReplied
                     />
                 )}
-                <Overlay
-                    overlay={
-                        <MessageActions isSender={isSender}>
-                            {canDeleteMessage && (
-                                <ShowItem>
-                                    <Button
-                                        {...baseButtonProps}
-                                        onClick={handleDeleteMessage}
-                                    >
-                                        <Icon icon={<Delete />} />
-                                    </Button>
-                                </ShowItem>
-                            )}
-
-                            {canReplyMessage && (
-                                <ShowItem>
-                                    <Button
-                                        {...baseButtonProps}
-                                        onClick={handleReplyMessage}
-                                    >
-                                        <Icon icon={<Reply />} />
-                                    </Button>
-                                </ShowItem>
-                            )}
-                        </MessageActions>
-                    }
+                <Container
+                    transparent
+                    direction="row"
+                    width="fit-content"
                 >
-                    <Container
-                        transparent
-                        direction="row"
-                    >
-                        {!wasReplied && isSender && !wasViewed && (
-                            <NotViewedMark />
-                        )}
+                    {!wasReplied && isSender && !wasViewed && <NotViewedMark />}
+                    <BalloonOverlay>
+                        {isSender && !wasReplied && <Actions />}
                         <MessageBalloon {...baseProps}>
                             {wasReplied && message.deleted ? (
                                 "Message deleted"
@@ -235,11 +246,12 @@ function MessageCard(props: MessageCardProps) {
                                 <></>
                             )}
                         </MessageBalloon>
-                        {!wasReplied && !isSender && !wasViewed && (
-                            <NotViewedMark />
-                        )}
-                    </Container>
-                </Overlay>
+                        {!isSender && !wasReplied && <Actions />}
+                    </BalloonOverlay>
+                    {!wasReplied && !isSender && !wasViewed && (
+                        <NotViewedMark />
+                    )}
+                </Container>
             </MessageContainer>
             {isSender && showSender && <SenderPhoto />}
             {isSender && !showSender && (
