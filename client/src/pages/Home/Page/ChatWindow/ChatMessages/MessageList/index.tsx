@@ -15,10 +15,16 @@ interface MessageListProps {
     messageListEl: HTMLDivElement | null;
     setMessageListEl: (el: HTMLDivElement | null) => void;
     setMessageToReply: (message: Message) => void;
+    setMessageToEdit: (message: Message) => void;
 }
 
 function MessageList(props: MessageListProps) {
-    const { messageListEl, setMessageListEl, setMessageToReply } = props;
+    const {
+        messageListEl,
+        setMessageListEl,
+        setMessageToReply,
+        setMessageToEdit,
+    } = props;
 
     const { user } = useAuth();
     const { chatWindow } = useChatWindow();
@@ -54,6 +60,10 @@ function MessageList(props: MessageListProps) {
 
     const handleOnReplyMessage = (message: Message) => {
         setMessageToReply(message);
+    };
+
+    const handleOnEditMessage = (message: Message) => {
+        setMessageToEdit(message);
     };
 
     useEffect(() => {
@@ -139,6 +149,7 @@ function MessageList(props: MessageListProps) {
                                         sender={sender}
                                         showSender={i === messages.length - 1}
                                         onReply={handleOnReplyMessage}
+                                        onEdit={handleOnEditMessage}
                                     />
                                 ))}
                             </Fragment>

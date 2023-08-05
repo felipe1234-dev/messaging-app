@@ -13,7 +13,8 @@ function ChatMessages() {
     const [messageListEl, setMessageListEl] = useState<HTMLDivElement | null>(
         null
     );
-    const [replyTo, setReplyTo] = useState("");
+    const [messageToReply, setMessageToReply] = useState<Message>();
+    const [messageToEdit, setMessageToEdit] = useState<Message>();
 
     const scrollToBottom = () => {
         if (!messageListEl) return;
@@ -24,20 +25,20 @@ function ChatMessages() {
         });
     };
 
-    const setMessageToReply = (message: Message) => {
-        setReplyTo(message.uid);
-    };
-
     return (
         <ChatBackground cover={chatWindow?.cover}>
             <MessageList
                 messageListEl={messageListEl}
                 setMessageListEl={setMessageListEl}
                 setMessageToReply={setMessageToReply}
+                setMessageToEdit={setMessageToEdit}
             />
             <NewMessage
                 scrollToBottom={scrollToBottom}
-                defaultReplyTo={replyTo}
+                messageToReply={messageToReply}
+                setMessageToReply={setMessageToReply}
+                messageToEdit={messageToEdit}
+                setMessageToEdit={setMessageToEdit}
             />
         </ChatBackground>
     );

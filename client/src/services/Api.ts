@@ -4,6 +4,7 @@ import {
     isLocal,
     dataToMessageModel,
     wrapperChatToChat,
+    getChanges,
 } from "@functions";
 import {
     FilterParams,
@@ -411,14 +412,30 @@ const Api = {
 
                     message.history.push({
                         type: "view",
-                        extra: {},
-                        user: user.uid,
                         date: new Date(),
+                        user: user.uid,
+                        extra: {},
                     });
 
                     return messageCollection.doc(message.uid).update({
                         history: message.history,
                     });
+                },
+                editMessage: (newMessage: Message, oldMessage: Message) => {
+                    const historyItem = {
+                        type: "edit" as "edit",
+                        date: new Date(),
+                        user: user.uid,
+                        extra: {
+                            changes: getChanges(newMessage, oldMessage),
+                        },
+                    };
+
+                    newMessage.history.push(historyItem);
+
+                    return messageCollection
+                        .doc(newMessage.uid)
+                        .update({ ...newMessage });
                 },
                 onMessageSent: (
                     callback: (message: Message) => void,
