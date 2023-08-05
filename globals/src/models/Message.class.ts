@@ -61,7 +61,11 @@ class Message {
     }
 
     public wasViewedBy(userUid: string) {
-        return !!this.history.find(item => item.user === userUid);
+        return !!this.history.find((item) => item.user === userUid);
+    }
+
+    public clone() {
+        return new Message({ ...this });
     }
 
     public static isMessage(obj: any): obj is Message {
@@ -109,6 +113,10 @@ class TextMessage extends Message {
         this.text = text;
     }
 
+    public override clone() {
+        return new TextMessage({ ...this });
+    }
+
     public static isTextMessage(obj: any): obj is TextMessage {
         return (
             obj instanceof TextMessage ||
@@ -141,6 +149,10 @@ class AudioMessage extends Message {
 
         this.type = "audio";
         this.audio = audio;
+    }
+
+    public override clone() {
+        return new AudioMessage({ ...this });
     }
 
     public static isAudioMessage(obj: any): obj is AudioMessage {
@@ -178,6 +190,10 @@ class VideoMessage extends Message {
 
         this.type = "video";
         this.video = video;
+    }
+
+    public override clone() {
+        return new VideoMessage({ ...this });
     }
 
     public static isVideoMessage(obj: any): obj is VideoMessage {
