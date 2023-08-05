@@ -2,6 +2,41 @@ import { useState, useEffect } from "react";
 import { StyledInput, InputContainer, IconButton } from "./styles";
 import { Variant } from "@types";
 
+type OnIconClick = (
+    event: React.MouseEvent<HTMLButtonElement>
+) => Promise<void> | void;
+
+interface IconWrapperProps {
+    iconVariant: Variant;
+    side: "left" | "right";
+    title: string;
+    icon: React.ReactNode;
+    onClick?: OnIconClick;
+}
+
+const IconWrapper = ({
+    iconVariant,
+    icon,
+    side,
+    title,
+    onClick,
+}: IconWrapperProps) => (
+    <>
+        {onClick ? (
+            <IconButton
+                iconVariant={iconVariant}
+                type="button"
+                title={title || `${side}-icon`}
+                onClick={onClick}
+            >
+                {icon}
+            </IconButton>
+        ) : (
+            icon
+        )}
+    </>
+);
+
 interface InputProps {
     label?: string;
     type?: string;
@@ -18,14 +53,12 @@ interface InputProps {
     required?: boolean;
     fullWidth?: boolean;
     autoResize?: boolean;
-    leftIcon?: React.ReactNode;
-    onLeftIconClick?: (
-        event: React.MouseEvent<HTMLButtonElement>
-    ) => Promise<void> | void;
-    rightIcon?: React.ReactNode;
-    onRightIconClick?: (
-        event: React.MouseEvent<HTMLButtonElement>
-    ) => Promise<void> | void;
+    leftIcon?: React.ReactNode | React.ReactNode[];
+    onLeftIconClick?: OnIconClick | OnIconClick[];
+    rightIcon?: React.ReactNode | React.ReactNode[];
+    onRightIconClick?: OnIconClick | OnIconClick[];
+    rightIconTitles?: string[];
+    leftIconTitles?: string[];
     onChange: (
         evt: React.ChangeEvent<HTMLInputElement>
     ) => Promise<void> | void;
@@ -56,8 +89,10 @@ function Input(props: InputProps) {
         onLeftIconClick,
         rightIcon,
         onRightIconClick,
-        onEnterPress,
+        rightIconTitles = [],
+        leftIconTitles = [],
         onChange,
+        onEnterPress,
         value,
     } = props;
 
@@ -93,6 +128,16 @@ function Input(props: InputProps) {
             Math.min(textAreaEl.scrollHeight, limit) + "px";
     }, [autoResize, value, textAreaEl]);
 
+    const leftIcons = Array.isArray(leftIcon) ? [...leftIcon] : [leftIcon];
+    const onLeftIconClicks = Array.isArray(onLeftIconClick)
+        ? [...onLeftIconClick]
+        : [onLeftIconClick];
+
+    const rightIcons = Array.isArray(rightIcon) ? [...rightIcon] : [rightIcon];
+    const onRightIconClicks = Array.isArray(onRightIconClick)
+        ? [...onRightIconClick]
+        : [onRightIconClick];
+
     return (
         <InputContainer
             variant={variant}
@@ -101,17 +146,19 @@ function Input(props: InputProps) {
             disableHover={disableHover}
             light={light}
         >
-            {leftIcon && onLeftIconClick && (
-                <IconButton
-                    iconVariant={leftIconVariant || iconVariant}
-                    type="button"
-                    title="left-icon"
-                    onClick={onLeftIconClick}
-                >
-                    {leftIcon}
-                </IconButton>
-            )}
-            {leftIcon && !onLeftIconClick && leftIcon}
+            {leftIcons.length > 0 &&
+                leftIcons
+                    .filter((icon) => !!icon)
+                    .map((icon, i) => (
+                        <IconWrapper
+                            key={`left-icon-${i}`}
+                            iconVariant={leftIconVariant || iconVariant}
+                            side="left"
+                            title={leftIconTitles[i]}
+                            onClick={onLeftIconClicks[i]}
+                            icon={icon}
+                        />
+                    ))}
             <StyledInput
                 as={inputTag}
                 // @ts-ignore
@@ -132,17 +179,19 @@ function Input(props: InputProps) {
                 onKeyDown={handleKeyDown}
                 value={value}
             />
-            {rightIcon && onRightIconClick && (
-                <IconButton
-                    iconVariant={rightIconVariant || iconVariant}
-                    type="button"
-                    title="right-icon"
-                    onClick={onRightIconClick}
-                >
-                    {rightIcon}
-                </IconButton>
-            )}
-            {rightIcon && !onRightIconClick && rightIcon}
+            {rightIcons.length > 0 &&
+                rightIcons
+                    .filter((icon) => !!icon)
+                    .map((icon, i) => (
+                        <IconWrapper
+                            key={`right-icon-${i}`}
+                            iconVariant={rightIconVariant || iconVariant}
+                            side="right"
+                            title={rightIconTitles[i]}
+                            onClick={onRightIconClicks[i]}
+                            icon={icon}
+                        />
+                    ))}
         </InputContainer>
     );
 }
