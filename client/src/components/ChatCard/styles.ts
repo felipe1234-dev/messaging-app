@@ -72,7 +72,7 @@ const CardText = styled.span`
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 200px;
+        max-width: 140px;
         color: ${shade(theme.background.secondary, 0.5)};
     `}
 `;
