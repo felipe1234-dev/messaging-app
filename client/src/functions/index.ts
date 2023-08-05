@@ -9,3 +9,4 @@ export { default as timeAgo } from "./timeAgo";
 export { default as JSONToURLQuery } from "./JSONToURLQuery";
 export { default as wrapperChatToChat } from "./wrapperChatToChat";
 export { default as dataToMessageModel } from "./dataToMessageModel";
+export { default as getChanges } from "./getChanges";
