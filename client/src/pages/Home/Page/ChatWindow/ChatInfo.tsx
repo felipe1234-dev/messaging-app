@@ -88,7 +88,7 @@ function ChatInfo() {
                                         />
                                     }
                                     mb={-1}
-                                    mr={83}
+                                    mr={90}
                                 >
                                     <Paragraph
                                         variant="secondary"
