@@ -162,7 +162,7 @@ class AudioMessage extends Message {
                 obj.type === "audio" &&
                 obj.audio instanceof Object &&
                 typeof obj.audio.url === "string" &&
-                typeof obj.audio.duration === "string" &&
+                typeof obj.audio.duration === "number" &&
                 durationUnits.includes(obj.audio.unit) &&
                 Message.isMessage(obj))
         );
@@ -203,7 +203,7 @@ class VideoMessage extends Message {
                 obj.type === "video" &&
                 obj.video instanceof Object &&
                 typeof obj.video.url === "string" &&
-                typeof obj.video.duration === "string" &&
+                typeof obj.video.duration === "number" &&
                 durationUnits.includes(obj.video.unit) &&
                 Message.isMessage(obj))
         );
