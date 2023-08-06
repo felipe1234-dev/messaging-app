@@ -48,7 +48,7 @@ function EditChat(props: EditChatProps) {
 
             setLoadingBgImage(true);
             Api.media
-                .uploadImage(file, `chats/${chat.uid}/${file.name}`)
+                .upload(file, `chats/${chat.uid}/cover/${file.name}`)
                 .then((url) => updateChat({ cover: url }))
                 .catch((err) => alert.error((err as Error).message))
                 .finally(() => setLoadingBgImage(false));

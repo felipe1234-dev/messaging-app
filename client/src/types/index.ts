@@ -36,6 +36,13 @@ export type Position =
 export type FontStyle = "normal" | "italic" | "oblique";
 export type Unsubscribe = () => void;
 
+export interface AudioInfo {
+    startTime: Date;
+    endTime: Date;
+    duration: number;
+    unit: "ms";
+}
+
 export interface WrapperUser extends User {}
 
 export interface WrapperChat

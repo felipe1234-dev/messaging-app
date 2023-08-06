@@ -387,6 +387,26 @@ const Api = {
                         .doc(textMessage.uid)
                         .set({ ...textMessage });
                 },
+                sendAudioMessage: (
+                    url: string,
+                    duration: number,
+                    replyTo?: string
+                ) => {
+                    const audioMessage = new AudioMessage({
+                        audio: {
+                            url,
+                            duration,
+                            unit: "ms",
+                        },
+                        repliedTo: replyTo,
+                        chat: chat.uid,
+                        sentBy: user.uid,
+                    });
+
+                    return messageCollection
+                        .doc(audioMessage.uid)
+                        .set({ ...audioMessage });
+                },
                 deleteMessage: (messageUid: string) => {
                     return messageCollection.doc(messageUid).update({
                         deleted: true,
@@ -602,7 +622,7 @@ const Api = {
         },
     },
     media: {
-        uploadImage: async (
+        upload: async (
             file: File,
             path: string,
             metadata?: {
@@ -612,7 +632,7 @@ const Api = {
             const arrayBuffer = new Uint8Array(await file.arrayBuffer());
             const bufferAsNums = Array.from(arrayBuffer);
 
-            const { data } = await httpEndpoint.post("/media/images/", {
+            const { data } = await httpEndpoint.post("/media/", {
                 filename: file.name,
                 size: file.size,
                 mimetype: file.type,

@@ -71,3 +71,6 @@ export type { ColorPickerProps } from "./ColorPicker";
 
 export { default as UserIsTyping } from "./UserIsTyping";
 export type { UserIsTypingProps } from "./UserIsTyping";
+
+export { default as AudioRecorder } from "./AudioRecorder";
+export type { AudioRecorderProps } from "./AudioRecorder";

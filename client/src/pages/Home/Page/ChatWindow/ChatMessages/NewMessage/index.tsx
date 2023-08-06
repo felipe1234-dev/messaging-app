@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
 
-import { useAuth, useAlert } from "@providers";
-import { useChatWindow } from "@pages/Home/providers";
-
-import { Input, Avatar, Button } from "@components";
-import { useInterval } from "@hooks";
-import { Api } from "@services";
-
-import { Icon, Paragraph, TextSpan } from "@styles/layout";
 import {
     AudioMessage,
     Message,
     TextMessage,
     VideoMessage,
 } from "messaging-app-globals";
+
+import { useAuth, useAlert } from "@providers";
+import { useChatWindow } from "@pages/Home/providers";
+
+import { Input, Avatar, Button, AudioRecorder } from "@components";
+import { useInterval } from "@hooks";
+import { Api } from "@services";
+import { AudioInfo } from "@types";
+
+import { Icon, Paragraph, TextSpan } from "@styles/layout";
 
 import { SendPlane } from "@styled-icons/remix-fill";
 import { CloseOutline } from "@styled-icons/evaicons-outline";
@@ -120,6 +122,12 @@ function NewMessage(props: NewMessageProps) {
                     newMessage.text,
                     messageToReply?.uid
                 );
+            } else if (isAudioMessage) {
+                promise = connection.sendAudioMessage(
+                    newMessage.audio.url,
+                    newMessage.audio.duration,
+                    messageToReply?.uid
+                );
             } else {
                 promise = Promise.resolve();
             }
@@ -135,6 +143,30 @@ function NewMessage(props: NewMessageProps) {
                 scrollToBottom();
             })
             .catch((err: Error) => alert.error(err.message));
+    };
+
+    const handleRecordAudio = () => {
+        setNewMessage(new AudioMessage());
+    };
+
+    const handleSaveAudio = (result: Blob, audioInfo: AudioInfo) => {
+        if (!user || !chatWindow || !isAudioMessage) return;
+
+        const file = new File(
+            [result],
+            `${new Date()}-${user.name}'s-audio.mp4`
+        );
+        const path = `chats/${chatWindow.uid}/audios/${file.name}`;
+
+        Api.media
+            .upload(file, path, { ...audioInfo })
+            .then((url) => {
+                newMessage.audio.url = url;
+                newMessage.audio.duration = audioInfo.duration;
+                newMessage.audio.unit = "ms";
+                handleSendMessage();
+            })
+            .catch((err) => alert.error((err as Error).message));
     };
 
     const handleCancelReply = () => {
@@ -220,16 +252,19 @@ function NewMessage(props: NewMessageProps) {
                         />,
                     ]}
                     rightIconTitles={["Audio", "Send"]}
-                    onRightIconClick={[
-                        () => console.log("test"),
-                        handleSendMessage,
-                    ]}
+                    onRightIconClick={[handleRecordAudio, handleSendMessage]}
                     rightIconVariant="highlight"
                     placeholder="Your message..."
                     onEnterPress={handleSendMessage}
                     onChange={handleTextChange}
                     value={newMessage.text}
                     light={0.05}
+                />
+            ) : isAudioMessage ? (
+                <AudioRecorder
+                    autoStart
+                    color={chatWindow.color || ""}
+                    onSave={handleSaveAudio}
                 />
             ) : (
                 <></>
