@@ -10,7 +10,7 @@ import {
     Unauthenticated,
 } from "@errors";
 
-const uploadImageController: RouteController = async (
+const uploadFileController: RouteController = async (
     req: {
         body: {
             filename?: string;
@@ -76,4 +76,4 @@ const uploadImageController: RouteController = async (
     }
 };
 
-export default uploadImageController;
+export default uploadFileController;

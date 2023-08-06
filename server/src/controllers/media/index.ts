@@ -1,1 +1,1 @@
-export { default as uploadImageController } from "./uploadImage";
+export { default as uploadFileController } from "./uploadFile";
