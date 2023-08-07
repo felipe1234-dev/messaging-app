@@ -27,6 +27,7 @@ import { ShowItem } from "@styles/animations";
 
 import Avatar from "../Avatar";
 import Button from "../Button";
+import MessageView from "../MessageView";
 
 import { Delete } from "@styled-icons/fluentui-system-regular";
 import { Reply } from "@styled-icons/bootstrap";
@@ -238,13 +239,10 @@ function MessageCard(props: MessageCardProps) {
                     <BalloonOverlay>
                         {isSender && !wasReplied && <Actions />}
                         <MessageBalloon {...baseProps}>
-                            {wasReplied && message.deleted ? (
-                                "Message deleted"
-                            ) : TextMessage.isTextMessage(message) ? (
-                                message.text
-                            ) : (
-                                <></>
-                            )}
+                            <MessageView
+                                message={message}
+                                wasReplied={wasReplied}
+                            />
                         </MessageBalloon>
                         {!isSender && !wasReplied && <Actions />}
                     </BalloonOverlay>
