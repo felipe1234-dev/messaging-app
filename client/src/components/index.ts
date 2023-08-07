@@ -74,3 +74,12 @@ export type { UserIsTypingProps } from "./UserIsTyping";
 
 export { default as AudioRecorder } from "./AudioRecorder";
 export type { AudioRecorderProps } from "./AudioRecorder";
+
+export { default as MessageView } from "./MessageView";
+export type { MessageViewProps } from "./MessageView";
+
+export { default as AudioPlayer } from "./AudioPlayer";
+export type { AudioPlayerProps } from "./AudioPlayer";
+
+export { default as Slider } from "./Slider";
+export type { SliderProps } from "./Slider";

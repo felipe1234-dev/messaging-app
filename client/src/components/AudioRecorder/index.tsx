@@ -3,17 +3,20 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useAlert } from "@providers";
 import { Audio } from "@services";
 import { useInterval } from "@hooks";
-import { Button } from "@components";
 import { AudioInfo } from "@types";
 
 import { Icon } from "@styles/layout";
 import { AudioRecorderContainer, AudioDuration } from "./styles";
+
+import Button from "../Button";
+import AudioPlayer from "../AudioPlayer";
 
 import { ControllerRecord } from "@styled-icons/entypo";
 import { RecordStop } from "@styled-icons/fluentui-system-regular";
 import { Play, Pause } from "@styled-icons/fa-solid";
 import { DeleteDismiss } from "@styled-icons/fluentui-system-filled";
 import { Check2 } from "@styled-icons/bootstrap";
+import { getTimeCodeFromMs } from "@functions";
 
 interface AudioRecorderProps {
     autoStart?: boolean;
@@ -47,7 +50,6 @@ function AudioRecorder(props: AudioRecorderProps) {
 
     const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
     const [startTime, setStartTime] = useState(new Date());
-    const [endTime, setEndTime] = useState(new Date());
     const [lastTime, setLastTime] = useState(0);
     const [timeElapsed, setTimeElapsed] = useState(0);
     const [audioBlob, setAudioBlob] = useState<Blob>();
@@ -120,14 +122,7 @@ function AudioRecorder(props: AudioRecorderProps) {
     }, [canvasCtx, canvasEl]);
 
     const audioDuration = useMemo(() => {
-        const s = Math.round(timeElapsed / 1000);
-        const m = Math.floor(s / 60);
-        const h = Math.floor(m / 60);
-
-        const twoDigits = (n: number) => String(n).padStart(2, "0");
-
-        if (h < 1) return `${m}:${twoDigits(s)}`;
-        return `${h}:${twoDigits(m)}:${twoDigits(s)}`;
+        return getTimeCodeFromMs(timeElapsed);
     }, [timeElapsed]);
 
     const audioURL = useMemo(() => {
@@ -143,17 +138,16 @@ function AudioRecorder(props: AudioRecorderProps) {
     };
 
     const handleStop = () => {
-        const now = new Date();
+        const endTime = new Date();
 
         const info: AudioInfo = {
             startTime: new Date(startTime.getTime()),
-            endTime: new Date(now.getTime()),
+            endTime,
             duration: timeElapsed,
             unit: "ms",
         };
 
         setAudioInfo(info);
-        setEndTime(now);
 
         audioRecorder.stop();
     };
@@ -178,7 +172,6 @@ function AudioRecorder(props: AudioRecorderProps) {
         setAudioInfo(undefined);
         setAudioBlob(undefined);
         setStartTime(new Date());
-        setEndTime(new Date());
         setLastTime(0);
         setTimeElapsed(0);
     };
@@ -245,10 +238,13 @@ function AudioRecorder(props: AudioRecorderProps) {
                     height={100}
                 />
             ) : (
-                <audio
-                    controls
-                    src={audioURL}
-                />
+                audioURL &&
+                audioInfo && (
+                    <AudioPlayer
+                        src={audioURL}
+                        duration={audioInfo.duration}
+                    />
+                )
             )}
 
             {!audioBlob ? (
