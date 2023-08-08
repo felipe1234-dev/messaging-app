@@ -26,6 +26,32 @@ function Slider(props: SliderProps) {
         percentage,
     };
 
+    const calculatePercentage = (posX: number) => {
+        if (!sliderbarEl) return 0;
+
+        const rect = sliderbarEl.getBoundingClientRect();
+        const minX = rect.left;
+        const maxX = minX + sliderbarEl.offsetWidth;
+
+        const newPercentage = Math.max(
+            0,
+            Math.min(((posX - minX) / (maxX - minX)) * 100, 100)
+        );
+
+        return newPercentage;
+    };
+
+    const handleSliderbarClick = (evt: React.MouseEvent<HTMLDivElement>) => {
+        if (!sliderbarEl) return;
+
+        evt.preventDefault();
+
+        const newPercentage = calculatePercentage(evt.clientX);
+        const newValue = (newPercentage / 100) * max;
+
+        onChange(newValue);
+    };
+
     const handleGrapThumb = (evt: React.MouseEvent<HTMLDivElement>) => {
         if (!sliderbarEl) return;
 
@@ -36,15 +62,10 @@ function Slider(props: SliderProps) {
         document.onmousemove = (evt) => {
             evt.preventDefault();
 
-            const minX = sliderbarEl.offsetLeft;
-            const maxX = minX + sliderbarEl.offsetWidth;
-            posX = posX - evt.clientX;
+            posX = evt.clientX;
 
-            const newPercentage = Math.max(
-                0,
-                Math.min(((posX - minX) / (maxX - minX)) * 100, 100)
-            );
-            const newValue = newPercentage * max;
+            const newPercentage = calculatePercentage(posX);
+            const newValue = (newPercentage / 100) * max;
 
             onChange(newValue);
         };
@@ -60,6 +81,7 @@ function Slider(props: SliderProps) {
         <SliderContainer>
             <Sliderbar
                 ref={(el) => setSliderbarEl(el)}
+                onMouseDown={handleSliderbarClick}
                 {...baseProps}
             />
             <Progressbar {...baseProps} />

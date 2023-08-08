@@ -5,6 +5,7 @@ import { shade } from "@functions";
 const height = "0.5em";
 const borderRadius = "5px";
 const boxShadow = "0px 0px 10px";
+const time = "0.5s";
 
 interface BaseStyledSliderProps {
     variant: Variant;
@@ -29,8 +30,8 @@ const Thumb = styled.div<ThumbProps>`
 
         return css`
             position: absolute;
-            left: ${Math.min(Math.max(0, percentage - 1.3), 100)}%;
-            transition: 0.5s left ease-in;
+            left: ${percentage}%;
+            transition: ${time} left ease-in;
             border-radius: 50%;
             background-color: ${rangeColor};
             box-shadow: ${boxShadow} ${rangeColor};
@@ -51,7 +52,7 @@ const Progressbar = styled.div<ProgressbarProps>`
             position: absolute;
             left: 0;
             width: ${percentage}%;
-            transition: 0.5s width ease-in;
+            transition: ${time} width ease-in;
             height: ${height};
             border-radius: ${borderRadius};
             background-color: ${rangeColor};
