@@ -56,7 +56,7 @@ function AudioPlayer(props: AudioPlayerProps) {
     };
 
     const handleChangeCurrentTime = (value: number) => {
-        audio.currentTime = value;
+        audio.currentTime = value / 1000;
     };
 
     return (
