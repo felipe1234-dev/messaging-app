@@ -26,6 +26,7 @@ import {
 
 import Avatar from "../Avatar";
 import OnlineNow from "../OnlineNow";
+import MessageView from "../MessageView";
 
 interface ChatCardProps {
     chat: WrapperChat;
@@ -61,15 +62,16 @@ function ChatCard(props: ChatCardProps) {
     );
 
     const cardText =
-        usersTyping.length === 1 ? (
-            `${usersTyping[0].name} is typing...`
-        ) : usersTyping.length > 1 ? (
-            `${usersTyping.map((user) => user.name).join(", ")} are typing...`
-        ) : TextMessage.isTextMessage(lastMessage) ? (
-            lastMessage.text
-        ) : (
-            <></>
-        );
+        usersTyping.length === 1
+            ? `${usersTyping[0].name} is typing...`
+            : usersTyping.length > 1
+            ? `${usersTyping.map((user) => user.name).join(", ")} are typing...`
+            : lastMessage && (
+                  <MessageView
+                      shortened
+                      message={lastMessage}
+                  />
+              );
 
     const unseenCount = chat.messages.reduce((sum, msg) => {
         if (msg.sentBy !== user.uid && !msg.wasViewedBy(user.uid))
