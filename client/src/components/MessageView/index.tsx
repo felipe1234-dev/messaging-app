@@ -6,6 +6,8 @@ import { Message, TextMessage, AudioMessage } from "messaging-app-globals";
 
 import { Microphone } from "@styled-icons/boxicons-regular";
 
+import AudioPlayer from "../AudioPlayer";
+
 interface MessageViewProps {
     message: Message;
     wasReplied?: boolean;
@@ -32,22 +34,28 @@ function MessageView(props: MessageViewProps) {
             ) : isTextMessage ? (
                 message.text
             ) : isAudioMessage ? (
-                <Container
-                    transparent
-                    direction="row"
-                    justify="start"
-                    align="center"
-                    gap={8}
-                >
-                    <Icon icon={<Microphone />} />
-                    {shortened ? (
+                shortened ? (
+                    <Container
+                        transparent
+                        direction="row"
+                        justify="start"
+                        align="center"
+                        gap={8}
+                    >
+                        <Icon
+                            variant="highlight"
+                            icon={<Microphone />}
+                        />
                         <Paragraph variant="secondary">
                             {audioDuration}
                         </Paragraph>
-                    ) : (
-                        <></>
-                    )}
-                </Container>
+                    </Container>
+                ) : (
+                    <AudioPlayer
+                        src={message.audio.url}
+                        duration={message.audio.duration}
+                    />
+                )
             ) : (
                 <></>
             )}
