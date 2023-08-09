@@ -109,9 +109,31 @@ const Button = styled.button<ButtonProps>`
         css`
             text-transform: uppercase;
         `}
-        background-color: ${theme.button[variant]};
 
-        transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+        ${selected
+            ? css`
+                  background-color: ${transparent
+                      ? "rgba(255, 255, 255, 0.05)"
+                      : shade(theme.button[variant], 0.2)};
+              `
+            : transparent
+            ? css`
+                  background-color: transparent;
+              `
+            : css`
+                  background-color: ${theme.button[variant]};
+              `}
+
+        ${!hoverDisabled &&
+        css`
+            &:hover {
+                background-color: ${transparent
+                    ? "rgba(255, 255, 255, 0.05)"
+                    : shade(theme.button[variant], 0.2)};
+            }
+        `}
+
+            transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
             box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
             border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
             color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -119,30 +141,6 @@ const Button = styled.button<ButtonProps>`
         * {
             pointer-events: none;
         }
-
-        ${!loading &&
-        css`
-            ${transparent &&
-            css`
-                background-color: transparent;
-            `}
-
-            ${!hoverDisabled &&
-            css`
-                &:hover {
-                    background-color: ${transparent
-                        ? "rgba(255, 255, 255, 0.05)"
-                        : shade(theme.button[variant], 0.2)};
-                }
-            `}
-
-            ${selected &&
-            css`
-                background-color: ${transparent
-                    ? "rgba(255, 255, 255, 0.05)"
-                    : shade(theme.button[variant], 0.2)};
-            `}
-        `}
 
         &[disabled] {
             cursor: not-allowed;
@@ -160,8 +158,14 @@ const Button = styled.button<ButtonProps>`
             bottom: 0;
             margin: auto;
             border: 4px solid transparent;
-            border-color: ${shade(theme.button[variant], 0.1)};
-            border-top-color: ${shade(theme.button[variant], 0.2)};
+            border-color: ${shade(
+                theme.button[iconed ? iconVariant : variant],
+                0.1
+            )};
+            border-top-color: ${shade(
+                theme.button[iconed ? iconVariant : variant],
+                0.2
+            )};
             border-radius: 50%;
             animation-name: ${spinnerAnimation};
             animation-duration: 1s;

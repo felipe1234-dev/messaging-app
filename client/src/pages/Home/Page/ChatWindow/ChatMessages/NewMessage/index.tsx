@@ -109,7 +109,7 @@ function NewMessage(props: NewMessageProps) {
         Api.chats.connect(user, chatWindow).isTyping();
     };
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if (!user || !chatWindow) return;
 
         const connection = Api.chats.connect(user, chatWindow);
@@ -135,21 +135,22 @@ function NewMessage(props: NewMessageProps) {
             promise = connection.editMessage(newMessage, messageToEdit);
         }
 
-        promise
-            .then(() => {
-                setNewMessage(new TextMessage());
-                setMessageToReply(undefined);
-                setMessageToEdit(undefined);
-                scrollToBottom();
-            })
-            .catch((err: Error) => alert.error(err.message));
+        try {
+            await promise;
+            setNewMessage(new TextMessage());
+            setMessageToReply(undefined);
+            setMessageToEdit(undefined);
+            scrollToBottom();
+        } catch (err) {
+            alert.error((err as Error).message);
+        }
     };
 
     const handleRecordAudio = () => {
         setNewMessage(new AudioMessage());
     };
 
-    const handleSaveAudio = (result: Blob, audioInfo: AudioInfo) => {
+    const handleSaveAudio = async (result: Blob, audioInfo: AudioInfo) => {
         if (!user || !chatWindow || !isAudioMessage) return;
 
         const file = new File(
@@ -158,15 +159,17 @@ function NewMessage(props: NewMessageProps) {
         );
         const path = `chats/${chatWindow.uid}/audios/${file.name}`;
 
-        Api.media
-            .upload(file, path, { ...audioInfo })
-            .then((url) => {
-                newMessage.audio.url = url;
-                newMessage.audio.duration = audioInfo.duration;
-                newMessage.audio.unit = "ms";
-                handleSendMessage();
-            })
-            .catch((err) => alert.error((err as Error).message));
+        try {
+            const url = await Api.media.upload(file, path, { ...audioInfo });
+
+            newMessage.audio.url = url;
+            newMessage.audio.duration = audioInfo.duration;
+            newMessage.audio.unit = "ms";
+
+            await handleSendMessage();
+        } catch (err) {
+            alert.error((err as Error).message);
+        }
     };
 
     const handleCancelReply = () => {

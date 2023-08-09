@@ -28,7 +28,7 @@ interface AudioRecorderProps {
     onResume?: () => void | Promise<void>;
     onStop?: (result: Blob) => void | Promise<void>;
     onCancel?: (result: Blob, info: AudioInfo) => void | Promise<void>;
-    onSave?: (result: Blob, info: AudioInfo) => void | Promise<void>;
+    onSave?: (result: Blob, info: AudioInfo) => Promise<void>;
 }
 
 function AudioRecorder(props: AudioRecorderProps) {
@@ -54,6 +54,7 @@ function AudioRecorder(props: AudioRecorderProps) {
     const [timeElapsed, setTimeElapsed] = useState(0);
     const [audioBlob, setAudioBlob] = useState<Blob>();
     const [audioInfo, setAudioInfo] = useState<AudioInfo>();
+    const [sending, setSending] = useState(true);
 
     const visualizeAudio = (analyser: AnalyserNode) => {
         if (!canvasCtx || !canvasEl) return;
@@ -177,13 +178,17 @@ function AudioRecorder(props: AudioRecorderProps) {
     };
 
     const handleSaveAudio = () => {
-        if (!audioBlob || !audioInfo) return;
+        if (!audioBlob || !audioInfo || !onSave) return;
 
-        console.log("audioInfo", audioInfo);
-
-        if (onSave)
-            onSave(new Blob([audioBlob], { type: audioBlob.type }), {
-                ...audioInfo,
+        setSending(true);
+        onSave(new Blob([audioBlob], { type: audioBlob.type }), {
+            ...audioInfo,
+        })
+            .catch((err) => {
+                alert.error((err as Error).message);
+            })
+            .finally(() => {
+                setSending(false);
             });
     };
 
@@ -242,7 +247,7 @@ function AudioRecorder(props: AudioRecorderProps) {
                 audioInfo && (
                     <AudioPlayer
                         src={audioURL}
-                        duration={audioInfo.duration}
+                        color={color}
                     />
                 )
             )}
@@ -288,6 +293,7 @@ function AudioRecorder(props: AudioRecorderProps) {
                         {...baseButtonProps}
                         variant="cancel"
                         onClick={handleCancelAudio}
+                        disabled={sending}
                     >
                         <Icon icon={<DeleteDismiss />} />
                     </Button>
@@ -295,6 +301,7 @@ function AudioRecorder(props: AudioRecorderProps) {
                         {...baseButtonProps}
                         variant="success"
                         onClick={handleSaveAudio}
+                        loading={sending}
                     >
                         <Icon icon={<Check2 />} />
                     </Button>
