@@ -242,6 +242,7 @@ function MessageCard(props: MessageCardProps) {
                             <MessageView
                                 message={message}
                                 wasReplied={wasReplied}
+                                color={color}
                             />
                         </MessageBalloon>
                         {!isSender && !wasReplied && <Actions />}

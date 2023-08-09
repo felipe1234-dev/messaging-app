@@ -1,86 +1,33 @@
-import { useState, useEffect, useMemo } from "react";
+import React from "react";
+import { StyledAudioPlayer, StyledAudioPlayerProps } from "./styles";
 
-import { getTimeCodeFromMs } from "@functions";
-import { useInterval, useForceUpdate } from "@hooks";
-
-import { Icon } from "@styles/layout";
-import { AudioPlayerContainer, AudioTime } from "./styles";
-
-import { Play, Pause } from "@styled-icons/fa-solid";
-
-import Button from "../Button";
-import Slider from "../Slider";
-
-interface AudioPlayerProps {
+interface AudioPlayerProps
+    extends Omit<React.HTMLProps<HTMLAudioElement>, "ref" | "as">,
+        Partial<StyledAudioPlayerProps> {
     src: string;
-    sliderColor?: string;
-    duration: number;
+    controls?: boolean;
 }
 
 function AudioPlayer(props: AudioPlayerProps) {
-    const { src, sliderColor, duration } = props;
-
-    const [audio, setAudio] = useState<HTMLAudioElement>();
-    const { forceUpdate } = useForceUpdate();
-
-    useEffect(() => {
-        setAudio(new Audio(src));
-    }, [src]);
-
-    useInterval(() => forceUpdate(), 500);
-
-    const currentTime = useMemo(
-        () => (audio?.currentTime || 0) * 1000,
-        [audio?.currentTime]
-    );
-    const paused = useMemo(() => !!audio?.paused, [audio?.paused]);
-
-    const time = useMemo(
-        () =>
-            getTimeCodeFromMs(
-                currentTime !== undefined && currentTime !== 0
-                    ? currentTime
-                    : duration
-            ),
-        [currentTime, duration]
-    );
-
-    if (!audio) return <></>;
-
-    const handlePlayAudio = () => {
-        audio.play();
-    };
-
-    const handlePauseAudio = () => {
-        audio.pause();
-    };
-
-    const handleChangeCurrentTime = (value: number) => {
-        audio.currentTime = value / 1000;
-    };
+    const {
+        src,
+        controls = true,
+        preload = "metadata" as "metadata",
+        variant = "highlight",
+        color,
+        ...rest
+    } = props;
 
     return (
-        <AudioPlayerContainer>
-            <Button
-                round
-                iconed
-                transparent
-                iconVariant="highlight"
-                onClick={paused ? handlePlayAudio : handlePauseAudio}
-                p={8}
-            >
-                <Icon icon={paused ? <Play /> : <Pause />} />
-            </Button>
-            <Slider
-                variant="highlight"
-                color={sliderColor}
-                onChange={handleChangeCurrentTime}
-                value={currentTime}
-                min={0}
-                max={duration}
-            />
-            <AudioTime>{time}</AudioTime>
-        </AudioPlayerContainer>
+        <StyledAudioPlayer
+            src={src}
+            controls={controls}
+            preload={preload}
+            variant={variant}
+            color={color}
+            controlsList="nodownload"
+            {...rest}
+        />
     );
 }
 

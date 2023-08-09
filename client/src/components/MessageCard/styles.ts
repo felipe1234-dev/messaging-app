@@ -78,8 +78,8 @@ const lineAmount = 6;
 const MessageBalloon = styled.pre<MessageBalloonProps>`
     ${({ isSender, showSender, color, wasReplied, isReply, theme }) => css`
         background-color: ${shade(
-            color || theme.background[isSender ? "highlight" : "secondary"],
-            color ? (isSender ? 0 : -0.3) : isSender ? 0 : 0.1
+            color || theme.background.highlight,
+            color ? (isSender ? 0 : -0.3) : 0
         )};
         color: ${theme.text.primary};
         padding: 10px;

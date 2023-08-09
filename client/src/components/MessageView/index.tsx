@@ -10,12 +10,13 @@ import AudioPlayer from "../AudioPlayer";
 
 interface MessageViewProps {
     message: Message;
+    color?: string;
     wasReplied?: boolean;
     shortened?: boolean;
 }
 
 function MessageView(props: MessageViewProps) {
-    const { message, wasReplied = false, shortened = false } = props;
+    const { message, color, wasReplied = false, shortened = false } = props;
 
     const isTextMessage = TextMessage.isTextMessage(message);
     const isAudioMessage = AudioMessage.isAudioMessage(message);
@@ -51,10 +52,19 @@ function MessageView(props: MessageViewProps) {
                         </Paragraph>
                     </Container>
                 ) : (
-                    <AudioPlayer
-                        src={message.audio.url}
-                        duration={message.audio.duration}
-                    />
+                    <Container
+                        transparent
+                        direction="row"
+                        justify="center"
+                        align="center"
+                        gap={8}
+                        width="300px"
+                    >
+                        <AudioPlayer
+                            src={message.audio.url}
+                            color={color}
+                        />
+                    </Container>
                 )
             ) : (
                 <></>
