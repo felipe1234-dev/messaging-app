@@ -11,6 +11,7 @@ class Chat {
     public members: string[];
     public admins: string[];
     public typing: string[];
+    public recordingAudio: string[];
     public deleted: boolean;
     public deletedAt?: Date;
     public deletedBy?: string;
@@ -29,6 +30,7 @@ class Chat {
             members = [],
             admins = [],
             typing = [],
+            recordingAudio = [],
             deleted = false,
             deletedAt,
             deletedBy,
@@ -46,6 +48,7 @@ class Chat {
         this.members = members;
         this.admins = admins;
         this.typing = typing;
+        this.recordingAudio = recordingAudio;
 
         this.deleted = deleted;
         if (deletedAt) this.deletedAt = toDate(deletedAt);
@@ -80,6 +83,8 @@ class Chat {
                 obj.admins.every((item: any) => typeof item === "string") &&
                 obj.typing instanceof Array &&
                 obj.typing.every((item: any) => typeof item === "string") &&
+                obj.recordingAudio instanceof Array &&
+                obj.recordingAudio.every((item: any) => typeof item === "string") &&
                 typeof obj.deleted === "boolean" &&
                 (obj.deletedAt === undefined ||
                     toDate(obj.deletedAt) instanceof Date) &&
