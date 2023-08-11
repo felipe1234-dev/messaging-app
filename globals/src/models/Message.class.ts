@@ -104,13 +104,23 @@ class Message {
 class TextMessage extends Message {
     public type: "text";
     public text: string;
+    public attachments?: {
+        filename: string;
+        extension: string;
+        mimetype: string;
+        size: number;
+        path: string;
+        url: string;
+    }[];
 
     constructor(data: Partial<TextMessage> = {}) {
         super(data);
 
-        const { text = "" } = data;
+        const { text = "", attachments = [] } = data;
+        
         this.type = "text";
         this.text = text;
+        this.attachments = attachments;
     }
 
     public override clone() {
