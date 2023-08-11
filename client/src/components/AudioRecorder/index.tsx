@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { useAlert } from "@providers";
 import { Audio } from "@services";
@@ -54,7 +54,7 @@ function AudioRecorder(props: AudioRecorderProps) {
     const [timeElapsed, setTimeElapsed] = useState(0);
     const [audioBlob, setAudioBlob] = useState<Blob>();
     const [audioInfo, setAudioInfo] = useState<AudioInfo>();
-    const [sending, setSending] = useState(true);
+    const [sending, setSending] = useState(false);
 
     const visualizeAudio = (analyser: AnalyserNode) => {
         if (!canvasCtx || !canvasEl) return;
@@ -110,6 +110,8 @@ function AudioRecorder(props: AudioRecorderProps) {
     }, [canvasEl]);
 
     const audioRecorder = useMemo(() => {
+        if (!canvasCtx && !canvasEl) return undefined;
+
         const audio = new Audio();
 
         audio.onStart = onStart;
@@ -131,6 +133,8 @@ function AudioRecorder(props: AudioRecorderProps) {
     }, [audioBlob]);
 
     const handleStart = () => {
+        if (!audioRecorder) return;
+
         setStartTime(new Date());
         setLastTime(Date.now());
         setTimeElapsed(0);
@@ -139,6 +143,8 @@ function AudioRecorder(props: AudioRecorderProps) {
     };
 
     const handleStop = () => {
+        if (!audioRecorder) return;
+
         const endTime = new Date();
 
         const info: AudioInfo = {
@@ -154,10 +160,12 @@ function AudioRecorder(props: AudioRecorderProps) {
     };
 
     const handlePause = () => {
+        if (!audioRecorder) return;
         audioRecorder.pause();
     };
 
     const handleResume = () => {
+        if (!audioRecorder) return;
         audioRecorder.resume();
     };
 
@@ -198,20 +206,22 @@ function AudioRecorder(props: AudioRecorderProps) {
                 ":( Your browser doesn't support audio recording"
             );
 
+        if (!audioRecorder) return;
+
         audioRecorder.init().then(() => {
             if (autoStart) handleStart();
         });
-    }, [hasSupport, audioRecorder, autoStart]);
+    }, [audioRecorder]);
 
     useInterval(
         () => {
-            if (!audioRecorder.recording || audioBlob) return;
+            if (!audioRecorder?.recording || audioBlob) return;
 
             const then = lastTime;
             const now = Date.now();
             const delta = now - then;
 
-            if (!audioRecorder.paused) {
+            if (!audioRecorder?.paused) {
                 setTimeElapsed((prev) => prev + delta);
             }
 
@@ -254,18 +264,18 @@ function AudioRecorder(props: AudioRecorderProps) {
 
             {!audioBlob ? (
                 <>
-                    {audioRecorder.recording && (
+                    {audioRecorder?.recording && (
                         <Button
                             {...baseButtonProps}
                             onClick={
-                                audioRecorder.paused
+                                audioRecorder?.paused
                                     ? handleResume
                                     : handlePause
                             }
                         >
                             <Icon
                                 icon={
-                                    audioRecorder.paused ? <Play /> : <Pause />
+                                    audioRecorder?.paused ? <Play /> : <Pause />
                                 }
                             />
                         </Button>
@@ -273,12 +283,12 @@ function AudioRecorder(props: AudioRecorderProps) {
                     <Button
                         {...baseButtonProps}
                         onClick={
-                            !audioRecorder.recording ? handleStart : handleStop
+                            !audioRecorder?.recording ? handleStart : handleStop
                         }
                     >
                         <Icon
                             icon={
-                                !audioRecorder.recording ? (
+                                !audioRecorder?.recording ? (
                                     <ControllerRecord />
                                 ) : (
                                     <RecordStop />
