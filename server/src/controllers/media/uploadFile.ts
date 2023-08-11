@@ -70,6 +70,7 @@ const uploadFileController: RouteController = async (
             code: codes.FILE_SAVED,
             message: "File saved successfully",
             url,
+            media: newMedia,
         });
     } catch (err) {
         res.sendResponse(err as ServerError);
