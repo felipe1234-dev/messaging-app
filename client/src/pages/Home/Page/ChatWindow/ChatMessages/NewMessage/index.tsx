@@ -77,6 +77,7 @@ function NewMessage(props: NewMessageProps) {
 
     const [newMessage, setNewMessage] = useState<Message>(new TextMessage());
     const [startedTypingAt, setStartedTypingAt] = useState<Date>();
+    const [startedAudioAt, setStartedAudioAt] = useState<Date>();
 
     const isTextMessage = TextMessage.isTextMessage(newMessage);
     const isAudioMessage = AudioMessage.isAudioMessage(newMessage);
@@ -88,18 +89,6 @@ function NewMessage(props: NewMessageProps) {
         );
     };
 
-    const handleVideoMessageChange = (updates: Partial<VideoMessage>) => {
-        setNewMessage(
-            (prev) => new VideoMessage({ ...prev, ...updates, type: "video" })
-        );
-    };
-
-    const handleAudioMessageChange = (updates: Partial<AudioMessage>) => {
-        setNewMessage(
-            (prev) => new AudioMessage({ ...prev, ...updates, type: "audio" })
-        );
-    };
-
     const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
         if (!user || !chatWindow || !isTextMessage) return;
 
@@ -107,6 +96,13 @@ function NewMessage(props: NewMessageProps) {
 
         setStartedTypingAt(new Date());
         Api.chats.connect(user, chatWindow).isTyping();
+    };
+
+    const handleOnRecordAudio = () => {
+        if (!user || !chatWindow || !isAudioMessage) return;
+
+        setStartedAudioAt(new Date());
+        Api.chats.connect(user, chatWindow).isRecordingAudio();
     };
 
     const handleSendMessage = async () => {
@@ -200,6 +196,25 @@ function NewMessage(props: NewMessageProps) {
         [startedTypingAt]
     );
 
+    useInterval(
+        (timerId) => {
+            if (!startedAudioAt || !user || !chatWindow)
+                return clearInterval(timerId);
+
+            const today = new Date();
+            const intervalSecs =
+                (today.getTime() - startedAudioAt.getTime()) / 1000;
+
+            if (intervalSecs >= 1) {
+                setStartedAudioAt(undefined);
+                Api.chats.connect(user, chatWindow).isNotRecordingAudio();
+                clearInterval(timerId);
+            }
+        },
+        1000,
+        [startedAudioAt]
+    );
+
     useEffect(() => {
         if (!messageToEdit?.uid) return;
         setNewMessage(messageToEdit.clone());
@@ -267,6 +282,7 @@ function NewMessage(props: NewMessageProps) {
                 <AudioRecorder
                     autoStart
                     color={chatWindow.color || ""}
+                    onData={handleOnRecordAudio}
                     onSave={handleSaveAudio}
                 />
             ) : (

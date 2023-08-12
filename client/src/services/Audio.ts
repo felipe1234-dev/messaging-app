@@ -38,8 +38,12 @@ class Audio {
         };
 
         this.media.ondataavailable = (evt) => {
+            if (!this.recording) return;
+            if (this.paused) return;
+
             const chunk = evt.data;
             this.chunks.push(chunk);
+
             if (this.onData) this.onData(chunk);
         };
 
@@ -70,7 +74,7 @@ class Audio {
     public start() {
         if (!this.media) return;
         if (this.recording) return;
-        this.media.start();
+        this.media.start(1000);
     }
 
     public pause() {

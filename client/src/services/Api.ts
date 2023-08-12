@@ -375,6 +375,24 @@ const Api = {
                         ),
                     });
                 },
+                isRecordingAudio: () => {
+                    return chatCollection.doc(chat.uid).update({
+                        recordingAudio: Array.from(
+                            new Set([...chat.recordingAudio, user.uid])
+                        ),
+                    });
+                },
+                isNotRecordingAudio: () => {
+                    return chatCollection.doc(chat.uid).update({
+                        recordingAudio: Array.from(
+                            new Set(
+                                chat.recordingAudio.filter(
+                                    (uid) => uid !== user.uid
+                                )
+                            )
+                        ),
+                    });
+                },
                 sendTextMessage: (text: string, replyTo?: string) => {
                     const textMessage = new TextMessage({
                         text,

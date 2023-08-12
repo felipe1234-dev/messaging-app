@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 
-import { MessageCard, UserIsTyping } from "@components";
+import { MessageCard, UserIsRecordingAudio, UserIsTyping } from "@components";
 import { Columns, Paragraph } from "@styles/layout";
 import { Message, User } from "messaging-app-globals";
 
@@ -129,11 +129,22 @@ function MessageList(props: MessageListProps) {
             member.uid !== user.uid && chatWindow.typing.includes(member.uid)
     );
 
+    const usersRecordingAudio = chatWindow.members.filter(
+        (member) =>
+            member.uid !== user.uid && chatWindow.recordingAudio.includes(member.uid)
+    );
+
     return (
         <MessageListContainer ref={(el) => setMessageListEl(el)}>
             {usersTyping.map((user) => (
                 <UserIsTyping
                     key={user?.uid}
+                    user={user}
+                />
+            ))}
+            {usersRecordingAudio.map((user) => (
+                <UserIsRecordingAudio 
+                    key={user.uid}
                     user={user}
                 />
             ))}
