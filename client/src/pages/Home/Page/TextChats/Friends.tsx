@@ -67,7 +67,7 @@ function Friends() {
                 direction="row"
                 justify="start"
                 align="center"
-                width="320px"
+                width={`calc(100% - ${2 * padding}px)`}
                 height="fit-content"
                 gap={10}
                 py={padding / 2}
