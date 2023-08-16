@@ -94,7 +94,6 @@ class Message {
                                 historyTypes.includes(item.type) &&
                                 typeof item.user === "string" &&
                                 item.extra instanceof Object &&
-                                typeof item.user === "string" &&
                                 toDate(item.date) instanceof Date
                         ))))
         );
