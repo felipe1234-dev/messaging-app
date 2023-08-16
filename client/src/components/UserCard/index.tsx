@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Avatar } from "@components";
-import { Paragraph } from "@styles/layout";
 import { User } from "messaging-app-globals";
-import { Button } from "@components";
-import { useAuth, useAlert, useFriends } from "@providers";
+
 import { Api } from "@services";
+import { Avatar, Button } from "@components";
+import { useAuth, useAlert, useFriends } from "@providers";
+
+import { Paragraph } from "@styles/layout";
 import { Actions, Main, Card, Info } from "./styles";
 
 interface UserCardProps {
@@ -193,14 +194,16 @@ function UserCard(props: UserCardProps) {
                         Unfriend
                     </Button>
                 ) : (
-                    <Button
-                        variant="success"
-                        onClick={handleSendFriendRequest}
-                        width="215px"
-                        {...baseButtonProps(actions.SEND_FRIEND_REQUEST)}
-                    >
-                        Send a friend request
-                    </Button>
+                    !isYou && (
+                        <Button
+                            variant="success"
+                            onClick={handleSendFriendRequest}
+                            width="215px"
+                            {...baseButtonProps(actions.SEND_FRIEND_REQUEST)}
+                        >
+                            Send a friend request
+                        </Button>
+                    )
                 )}
             </Actions>
         </Card>
