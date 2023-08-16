@@ -1,65 +1,23 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 
-import {
-    AudioMessage,
-    Message,
-    TextMessage,
-    VideoMessage,
-} from "messaging-app-globals";
+import { Message, TextMessage, AudioMessage } from "messaging-app-globals";
 
-import { useAuth, useAlert } from "@providers";
+import { useAuth } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
 
-import { Input, Avatar, Button, AudioRecorder } from "@components";
-import { useInterval } from "@hooks";
-import { Api } from "@services";
-import { AudioInfo } from "@types";
+import { TextSpan } from "@styles/layout";
+import { NewMessageContainer } from "./styles";
 
-import { Icon, Paragraph, TextSpan } from "@styles/layout";
-
-import { SendPlane } from "@styled-icons/remix-fill";
-import { CloseOutline } from "@styled-icons/evaicons-outline";
-import { Microphone } from "@styled-icons/boxicons-regular";
-
-import { NewMessageContainer, MessagePreviewContainer } from "./styles";
-
-interface MessagePreviewProps {
-    header: React.ReactNode;
-    message: Message;
-    onCancel: () => void;
-}
-
-const MessagePreview = ({ header, message, onCancel }: MessagePreviewProps) => (
-    <MessagePreviewContainer>
-        <Paragraph variant="secondary">
-            {header}
-            <Button
-                round
-                iconed
-                transparent
-                variant="highlight"
-                onClick={onCancel}
-                p={4}
-            >
-                <Icon icon={<CloseOutline />} />
-            </Button>
-        </Paragraph>
-        <Paragraph
-            variant="primary"
-            fontStyle="italic"
-            fontWeight={300}
-        >
-            {TextMessage.isTextMessage(message) ? message.text : <></>}
-        </Paragraph>
-    </MessagePreviewContainer>
-);
+import MessagePreview from "./MessagePreview";
+import NewTextMessage from "./NewTextMessage";
+import NewAudioMessage from "./NewAudioMessage";
 
 interface NewMessageProps {
     scrollToBottom: () => void;
     messageToReply?: Message | undefined;
-    setMessageToReply: (message: Message | undefined) => void;
+    setMessageToReply: Dispatch<SetStateAction<Message | undefined>>;
     messageToEdit?: Message | undefined;
-    setMessageToEdit: (message: Message | undefined) => void;
+    setMessageToEdit: Dispatch<SetStateAction<Message | undefined>>;
 }
 
 function NewMessage(props: NewMessageProps) {
@@ -73,99 +31,14 @@ function NewMessage(props: NewMessageProps) {
 
     const { user } = useAuth();
     const { chatWindow } = useChatWindow();
-    const alert = useAlert();
 
     const [newMessage, setNewMessage] = useState<Message>(new TextMessage());
-    const [startedTypingAt, setStartedTypingAt] = useState<Date>();
-    const [startedAudioAt, setStartedAudioAt] = useState<Date>();
 
     const isTextMessage = TextMessage.isTextMessage(newMessage);
     const isAudioMessage = AudioMessage.isAudioMessage(newMessage);
-    const isVideoMessage = VideoMessage.isVideoMessage(newMessage);
-
-    const handleTextMessageChange = (updates: Partial<TextMessage>) => {
-        setNewMessage(
-            (prev) => new TextMessage({ ...prev, ...updates, type: "text" })
-        );
-    };
-
-    const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        if (!user || !chatWindow || !isTextMessage) return;
-
-        handleTextMessageChange({ text: evt.target.value });
-
-        setStartedTypingAt(new Date());
-        Api.chats.connect(user, chatWindow).isTyping();
-    };
-
-    const handleOnRecordAudio = () => {
-        if (!user || !chatWindow || !isAudioMessage) return;
-
-        setStartedAudioAt(new Date());
-        Api.chats.connect(user, chatWindow).isRecordingAudio();
-    };
-
-    const handleSendMessage = async () => {
-        if (!user || !chatWindow) return;
-
-        const connection = Api.chats.connect(user, chatWindow);
-        const isEditting = !!messageToEdit?.uid;
-        let promise: Promise<void>;
-
-        if (!isEditting) {
-            if (isTextMessage) {
-                promise = connection.sendTextMessage(
-                    newMessage.text,
-                    messageToReply?.uid
-                );
-            } else if (isAudioMessage) {
-                promise = connection.sendAudioMessage(
-                    newMessage.audio.url,
-                    newMessage.audio.duration,
-                    messageToReply?.uid
-                );
-            } else {
-                promise = Promise.resolve();
-            }
-        } else {
-            promise = connection.editMessage(newMessage, messageToEdit);
-        }
-
-        try {
-            await promise;
-            setNewMessage(new TextMessage());
-            setMessageToReply(undefined);
-            setMessageToEdit(undefined);
-            scrollToBottom();
-        } catch (err) {
-            alert.error((err as Error).message);
-        }
-    };
 
     const handleRecordAudio = () => {
         setNewMessage(new AudioMessage());
-    };
-
-    const handleSaveAudio = async (result: Blob, audioInfo: AudioInfo) => {
-        if (!user || !chatWindow || !isAudioMessage) return;
-
-        const file = new File(
-            [result],
-            `${new Date()}-${user.name}'s-audio.mp4`
-        );
-        const path = `chats/${chatWindow.uid}/audios/${file.name}`;
-
-        try {
-            const url = await Api.media.upload(file, path, { ...audioInfo });
-
-            newMessage.audio.url = url;
-            newMessage.audio.duration = audioInfo.duration;
-            newMessage.audio.unit = "ms";
-
-            await handleSendMessage();
-        } catch (err) {
-            alert.error((err as Error).message);
-        }
     };
 
     const handleCancelReply = () => {
@@ -177,43 +50,11 @@ function NewMessage(props: NewMessageProps) {
         setNewMessage(new TextMessage());
     };
 
-    useInterval(
-        (timerId) => {
-            if (!startedTypingAt || !user || !chatWindow)
-                return clearInterval(timerId);
-
-            const today = new Date();
-            const intervalSecs =
-                (today.getTime() - startedTypingAt.getTime()) / 1000;
-
-            if (intervalSecs >= 1) {
-                setStartedTypingAt(undefined);
-                Api.chats.connect(user, chatWindow).isNotTyping();
-                clearInterval(timerId);
-            }
-        },
-        1000,
-        [startedTypingAt]
-    );
-
-    useInterval(
-        (timerId) => {
-            if (!startedAudioAt || !user || !chatWindow)
-                return clearInterval(timerId);
-
-            const today = new Date();
-            const intervalSecs =
-                (today.getTime() - startedAudioAt.getTime()) / 1000;
-
-            if (intervalSecs >= 1) {
-                setStartedAudioAt(undefined);
-                Api.chats.connect(user, chatWindow).isNotRecordingAudio();
-                clearInterval(timerId);
-            }
-        },
-        1000,
-        [startedAudioAt]
-    );
+    const handleResetMessage = () => {
+        setNewMessage(new TextMessage());
+        setMessageToReply(undefined);
+        setMessageToEdit(undefined);
+    };
 
     useEffect(() => {
         if (!messageToEdit?.uid) return;
@@ -225,6 +66,16 @@ function NewMessage(props: NewMessageProps) {
     const messageToReplySender = chatWindow.members.find(
         (member) => member.uid === messageToReply?.sentBy
     );
+
+    const baseProps = {
+        scrollToBottom,
+        recordAudio: handleRecordAudio,
+        resetMessage: handleResetMessage,
+        messageToEdit,
+        setMessageToEdit,
+        messageToReply,
+        setMessageToReply,
+    };
 
     return (
         <NewMessageContainer>
@@ -250,40 +101,16 @@ function NewMessage(props: NewMessageProps) {
                 />
             )}
             {isTextMessage ? (
-                <Input
-                    autoResize
-                    variant="secondary"
-                    leftIcon={
-                        <Avatar
-                            src={user?.photo}
-                            alt={user?.name}
-                        />
-                    }
-                    rightIcon={[
-                        <Icon
-                            icon={<Microphone />}
-                            size={2}
-                        />,
-                        <Icon
-                            icon={<SendPlane />}
-                            size={2}
-                        />,
-                    ]}
-                    rightIconTitles={["Audio", "Send"]}
-                    onRightIconClick={[handleRecordAudio, handleSendMessage]}
-                    rightIconVariant="highlight"
-                    placeholder="Your message..."
-                    onEnterPress={handleSendMessage}
-                    onChange={handleTextChange}
-                    value={newMessage.text}
-                    light={0.05}
+                <NewTextMessage
+                    textMessage={newMessage}
+                    setTextMessage={setNewMessage}
+                    {...baseProps}
                 />
             ) : isAudioMessage ? (
-                <AudioRecorder
-                    autoStart
-                    color={chatWindow.color || ""}
-                    onData={handleOnRecordAudio}
-                    onSave={handleSaveAudio}
+                <NewAudioMessage
+                    audioMessage={newMessage}
+                    setAudioMessage={setNewMessage}
+                    {...baseProps}
                 />
             ) : (
                 <></>

@@ -1,17 +1,11 @@
-import { Title, Paragraph } from "@styles/layout";
+import { useMemo } from "react";
+
+import { Title } from "@styles/layout";
 
 import { WrapperChat } from "@types";
 import { timeAgo } from "@functions";
 import { useAuth } from "@providers";
 import { useForceUpdate, useInterval } from "@hooks";
-
-import {
-    Message,
-    TextMessage,
-    VideoMessage,
-    AudioMessage,
-    User,
-} from "messaging-app-globals";
 
 import {
     OuterContainer,
@@ -41,40 +35,56 @@ function ChatCard(props: ChatCardProps) {
     const { forceUpdate } = useForceUpdate();
     useInterval(() => forceUpdate(), 1000);
 
-    if (!user) return <></>;
-
     const otherMembers = chat.members.filter(
-        (member) => member.uid !== user.uid
+        (member) => member.uid !== user?.uid
     );
     const firstMember = otherMembers[0];
-    if (!firstMember) return <></>;
-
     const lastMessage = chat.getNewestMessage();
     const senderUid = lastMessage?.sentBy;
     const sender = chat.members.find((member) => member.uid === senderUid);
-    const senderName = sender?.uid === user.uid ? "You" : sender?.name;
+    const senderName = sender?.uid === user?.uid ? "You" : sender?.name;
     const isSender = user?.uid === sender?.uid;
     const chatTitle =
         chat.title || otherMembers.map((member) => member.name).join(", ");
 
-    const usersTyping = otherMembers.filter((member) =>
-        chat.typing.includes(member.uid)
-    );
+    const usersTyping = useMemo(() => {
+        const users = otherMembers.filter((member) =>
+            chat.typing.includes(member.uid)
+        );
+
+        return users.length === 1
+            ? `${users[0].name} is typing...`
+            : users.length > 1
+            ? `${users.map((user) => user.name).join(", ")} are typing...`
+            : "";
+    }, [chat.typing, otherMembers]);
+
+    const usersRecordingAudio = useMemo(() => {
+        const users = otherMembers.filter((member) =>
+            chat.recordingAudio.includes(member.uid)
+        );
+
+        return users.length === 1
+            ? `${users[0].name} is recording an audio...`
+            : users.length > 1
+            ? `${users
+                  .map((user) => user.name)
+                  .join(", ")} are recording audio...`
+            : "";
+    }, [chat.recordingAudio, otherMembers]);
 
     const cardText =
-        usersTyping.length === 1
-            ? `${usersTyping[0].name} is typing...`
-            : usersTyping.length > 1
-            ? `${usersTyping.map((user) => user.name).join(", ")} are typing...`
-            : lastMessage && (
-                  <MessageView
-                      shortened
-                      message={lastMessage}
-                  />
-              );
+        usersTyping ||
+        usersRecordingAudio ||
+        (lastMessage && (
+            <MessageView
+                shortened
+                message={lastMessage}
+            />
+        ));
 
     const unseenCount = chat.messages.reduce((sum, msg) => {
-        if (msg.sentBy !== user.uid && !msg.wasViewedBy(user.uid))
+        if (user && msg.sentBy !== user.uid && !msg.wasViewedBy(user.uid))
             return sum + 1;
         return sum;
     }, 0);
@@ -85,6 +95,8 @@ function ChatCard(props: ChatCardProps) {
             alt={firstMember.name}
         />
     );
+
+    if (!user) return <></>;
 
     return (
         <OuterContainer
