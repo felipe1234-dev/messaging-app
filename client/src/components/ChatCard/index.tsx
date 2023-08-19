@@ -1,6 +1,7 @@
 import { useMemo } from "react";
+import { TextMessage } from "messaging-app-globals";
 
-import { Title } from "@styles/layout";
+import { Title, TextSpan, Icon } from "@styles/layout";
 
 import { WrapperChat } from "@types";
 import { timeAgo } from "@functions";
@@ -22,6 +23,8 @@ import Avatar from "../Avatar";
 import OnlineNow from "../OnlineNow";
 import MessageView from "../MessageView";
 
+import { Attachment } from "@styled-icons/icomoon";
+
 interface ChatCardProps {
     chat: WrapperChat;
     onClick?: () => Promise<void> | void;
@@ -40,6 +43,7 @@ function ChatCard(props: ChatCardProps) {
     );
     const firstMember = otherMembers[0];
     const lastMessage = chat.getNewestMessage();
+    const isTextMessage = TextMessage.isTextMessage(lastMessage);
     const senderUid = lastMessage?.sentBy;
     const sender = chat.members.find((member) => member.uid === senderUid);
     const senderName = sender?.uid === user?.uid ? "You" : sender?.name;
@@ -117,6 +121,16 @@ function ChatCard(props: ChatCardProps) {
                         <CardSender>
                             {isSender ? "You: " : senderName}
                             <CardText>{cardText}</CardText>
+                            {isTextMessage &&
+                                lastMessage.attachments &&
+                                lastMessage.attachments.length > 0 && (
+                                    <TextSpan ml={8}>
+                                        <Icon icon={<Attachment />} />
+                                        <TextSpan ml={8}>
+                                            {lastMessage.attachments.length}
+                                        </TextSpan>
+                                    </TextSpan>
+                                )}
                         </CardSender>
                         {lastMessage && (
                             <CardDate>

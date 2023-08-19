@@ -69,13 +69,15 @@ function MediaViewer(props: MediaViewerProps) {
                 >
                     <Icon icon={<EyeFill />} />
                 </Button>
-                <Button
-                    {...baseButtonProps}
-                    variant="remove"
-                    onClick={handleRemoveMedia}
-                >
-                    <Icon icon={<Trash />} />
-                </Button>
+                {onRemove && (
+                    <Button
+                        {...baseButtonProps}
+                        variant="remove"
+                        onClick={handleRemoveMedia}
+                    >
+                        <Icon icon={<Trash />} />
+                    </Button>
+                )}
             </MediaViewerrActions>
         </MediaViewerContainer>
     );

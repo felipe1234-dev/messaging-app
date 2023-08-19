@@ -60,6 +60,7 @@ function MessagePreview(props: MessagePreviewProps) {
                 <MessageView
                     message={message}
                     color={chatWindow?.color}
+                    hideAttachments
                 />
             </MessageViewWrapper>
         </MessagePreviewContainer>

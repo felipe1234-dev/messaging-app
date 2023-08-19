@@ -1,6 +1,8 @@
 import styled, { css } from "styled-components";
 import { showItemAnimation } from "@styles/animations";
 
+const size = "250px";
+
 const MediaViewerContainer = styled.div`
     ${({ theme }) => css`
         position: relative;
@@ -8,16 +10,15 @@ const MediaViewerContainer = styled.div`
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-width: 100px;
-        max-width: 100px;
-        min-height: 100px;
-        max-height: 100px;
+        min-width: ${size};
+        max-width: ${size};
+        min-height: ${size};
+        max-height: ${size};
         background-color: ${theme.background.secondary};
         border-radius: 10px;
         animation-name: ${showItemAnimation};
         animation-duration: 1s;
         margin: 10px 0;
-        padding: 8px;
 
         svg {
             width: 2.5em;
@@ -25,8 +26,9 @@ const MediaViewerContainer = styled.div`
         }
 
         img {
-            width: 100px;
-            height: 100px;
+            width: ${size};
+            height: ${size};
+            border-radius: 10px;
         }
     `}
 `;

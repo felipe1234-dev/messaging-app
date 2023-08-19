@@ -32,6 +32,7 @@ import MessageView from "../MessageView";
 import { Delete } from "@styled-icons/fluentui-system-regular";
 import { Reply } from "@styled-icons/bootstrap";
 import { EditAlt } from "@styled-icons/boxicons-regular";
+import { Attachment } from "@styled-icons/icomoon";
 
 const width = "44px";
 
