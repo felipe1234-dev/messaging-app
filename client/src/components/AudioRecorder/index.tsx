@@ -4,19 +4,20 @@ import { useAlert } from "@providers";
 import { Audio } from "@services";
 import { useInterval } from "@hooks";
 import { AudioInfo } from "@types";
-
-import { Icon } from "@styles/layout";
-import { AudioRecorderContainer, AudioDuration } from "./styles";
+import { getTimeCodeFromMs } from "@functions";
 
 import Button from "../Button";
 import AudioPlayer from "../AudioPlayer";
+
+import { Icon } from "@styles/layout";
+import { AudioRecorderContainer, AudioDuration } from "./styles";
 
 import { ControllerRecord } from "@styled-icons/entypo";
 import { RecordStop } from "@styled-icons/fluentui-system-regular";
 import { Play, Pause } from "@styled-icons/fa-solid";
 import { DeleteDismiss } from "@styled-icons/fluentui-system-filled";
 import { Check2 } from "@styled-icons/bootstrap";
-import { getTimeCodeFromMs } from "@functions";
+import { CloseOutline } from "@styled-icons/evaicons-outline";
 
 interface AudioRecorderProps {
     autoStart?: boolean;
@@ -28,6 +29,7 @@ interface AudioRecorderProps {
     onResume?: () => void | Promise<void>;
     onStop?: (result: Blob) => void | Promise<void>;
     onCancel?: (result: Blob, info: AudioInfo) => void | Promise<void>;
+    onClose?: () => void;
     onSave?: (result: Blob, info: AudioInfo) => Promise<void>;
 }
 
@@ -42,6 +44,7 @@ function AudioRecorder(props: AudioRecorderProps) {
         onResume,
         onStop,
         onCancel,
+        onClose,
         onSave,
     } = props;
 
@@ -296,6 +299,14 @@ function AudioRecorder(props: AudioRecorderProps) {
                             }
                         />
                     </Button>
+                    {onClose && (
+                        <Button
+                            {...baseButtonProps}
+                            onClick={onClose}
+                        >
+                            <Icon icon={<CloseOutline />} />
+                        </Button>
+                    )}
                 </>
             ) : (
                 <>

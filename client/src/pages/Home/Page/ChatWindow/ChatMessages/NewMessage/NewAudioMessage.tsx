@@ -1,6 +1,5 @@
 import { useState, Dispatch, SetStateAction } from "react";
-
-import { Message, TextMessage, AudioMessage } from "messaging-app-globals";
+import { Message, AudioMessage } from "messaging-app-globals";
 
 import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
@@ -52,15 +51,11 @@ function NewAudioMessage(props: NewAudioMessageProps) {
         let promise: Promise<void>;
 
         if (!isEditting) {
-            if (isAudioMessage) {
-                promise = connection.sendAudioMessage(
-                    audioMessage.audio.url,
-                    audioMessage.audio.duration,
-                    messageToReply?.uid
-                );
-            } else {
-                promise = Promise.resolve();
-            }
+            promise = connection.sendAudioMessage(
+                audioMessage.audio.url,
+                audioMessage.audio.duration,
+                messageToReply?.uid
+            );
         } else {
             promise = connection.editMessage(audioMessage, messageToEdit);
         }
@@ -84,7 +79,9 @@ function NewAudioMessage(props: NewAudioMessageProps) {
         const path = `chats/${chatWindow.uid}/audios/${file.name}`;
 
         try {
-            const url = await Api.media.upload(file, path, { ...audioInfo });
+            const { url } = await Api.media.upload(file, path, {
+                ...audioInfo,
+            });
 
             audioMessage.audio.url = url;
             audioMessage.audio.duration = audioInfo.duration;
@@ -123,6 +120,7 @@ function NewAudioMessage(props: NewAudioMessageProps) {
             color={chatWindow.color || ""}
             onData={handleOnRecordAudio}
             onSave={handleSaveAudio}
+            onClose={resetMessage}
         />
     );
 }
