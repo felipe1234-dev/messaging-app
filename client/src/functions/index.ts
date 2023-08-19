@@ -11,3 +11,4 @@ export { default as wrapperChatToChat } from "./wrapperChatToChat";
 export { default as dataToMessageModel } from "./dataToMessageModel";
 export { default as getChanges } from "./getChanges";
 export { default as getTimeCodeFromMs } from "./getTimeCodeFromMs";
+export { default as openLink } from "./openLink";

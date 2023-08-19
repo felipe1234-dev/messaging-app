@@ -1,7 +1,7 @@
 import { OverlayContainer, OverlayContent } from "./styles";
 
 interface OverlayProps {
-    overlay: React.ReactNode;
+    overlay?: React.ReactNode;
     lockOverlay?: boolean;
     children: React.ReactNode;
 }
@@ -11,7 +11,7 @@ function Overlay(props: OverlayProps) {
     return (
         <OverlayContainer lockOverlay={lockOverlay}>
             {children}
-            <OverlayContent>{overlay}</OverlayContent>
+            {overlay && <OverlayContent>{overlay}</OverlayContent>}
         </OverlayContainer>
     );
 }

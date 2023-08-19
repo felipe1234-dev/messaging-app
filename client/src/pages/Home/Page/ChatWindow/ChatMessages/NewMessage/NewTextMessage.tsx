@@ -1,19 +1,23 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 
-import { Message, TextMessage } from "messaging-app-globals";
+import { Message, TextMessage, Media } from "messaging-app-globals";
 
 import { useAuth, useAlert } from "@providers";
 import { useChatWindow } from "@pages/Home/providers";
 
-import { Input, Avatar } from "@components";
+import { Input, Avatar, Carousel, MediaViewer, Spinner } from "@components";
 import { useInterval } from "@hooks";
 import { Api } from "@services";
 
-import { Icon } from "@styles/layout";
+import { Icon, Container } from "@styles/layout";
 
 import { SendPlane } from "@styled-icons/remix-fill";
 import { Attachment } from "@styled-icons/entypo/Attachment";
 import { Microphone } from "@styled-icons/boxicons-regular";
+
+import { paddingX } from "../styles";
+
+type AttachmentList = Required<TextMessage>["attachments"];
 
 interface NewTextMessageProps {
     textMessage: TextMessage;
@@ -35,9 +39,7 @@ function NewTextMessage(props: NewTextMessageProps) {
         resetMessage,
         recordAudio,
         messageToEdit,
-        setMessageToEdit,
         messageToReply,
-        setMessageToReply,
     } = props;
 
     const { user } = useAuth();
@@ -45,7 +47,8 @@ function NewTextMessage(props: NewTextMessageProps) {
     const alert = useAlert();
 
     const [startedTypingAt, setStartedTypingAt] = useState<Date>();
-    const isTextMessage = TextMessage.isTextMessage(textMessage);
+    const [loadingAttachments, setLoadingAttachments] = useState(false);
+    const [attachmentList, setAttachmentList] = useState<AttachmentList>([]);
 
     const handleTextMessageChange = (updates: Partial<TextMessage>) => {
         setTextMessage(
@@ -54,7 +57,7 @@ function NewTextMessage(props: NewTextMessageProps) {
     };
 
     const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        if (!user || !chatWindow || !isTextMessage) return;
+        if (!user || !chatWindow) return;
 
         handleTextMessageChange({ text: evt.target.value });
 
@@ -70,14 +73,10 @@ function NewTextMessage(props: NewTextMessageProps) {
         let promise: Promise<void>;
 
         if (!isEditting) {
-            if (isTextMessage) {
-                promise = connection.sendTextMessage(
-                    textMessage.text,
-                    messageToReply?.uid
-                );
-            } else {
-                promise = Promise.resolve();
-            }
+            promise = connection.sendTextMessage(textMessage.text, {
+                repliedTo: messageToReply?.uid,
+                attachments: attachmentList,
+            });
         } else {
             promise = connection.editMessage(textMessage, messageToEdit);
         }
@@ -92,21 +91,72 @@ function NewTextMessage(props: NewTextMessageProps) {
     };
 
     const handleAttachFiles = async () => {
+        if (!chatWindow || loadingAttachments) return;
+
         const input = document.createElement("input");
 
         input.setAttribute("type", "file");
-        input.onchange = () => {
+        input.setAttribute("multiple", "multiple");
+        input.onchange = async () => {
             if (!input.files) return;
 
-            for (let i = 0; i < input.files.length; i++) {
-                const file = input.files.item(i);
-            }
-        };
+            const files = Array.from(input.files);
 
-        input.addEventListener("change", (evt) => {});
+            const promises: Promise<AttachmentList[number]>[] = files.map(
+                (file) =>
+                    new Promise(async (resolve) => {
+                        try {
+                            const path = `chats/${
+                                chatWindow.uid
+                            }/attachments/${new Date()}-${file.name}`;
+                            const { filename, extension, mimetype, size, url } =
+                                await Api.media.upload(file, path);
+
+                            resolve({
+                                filename,
+                                extension,
+                                mimetype,
+                                size,
+                                path,
+                                url,
+                            });
+                        } catch {}
+                    })
+            );
+
+            setLoadingAttachments(true);
+
+            const attachments = await Promise.all(promises);
+            setAttachmentList((prev) => [...prev, ...attachments]);
+
+            setLoadingAttachments(false);
+        };
 
         input.click();
     };
+
+    const handleUnattachFile = (i: number) => () => {
+        setAttachmentList((prev) => {
+            const newList = [];
+
+            for (let j = 0; j < prev.length; j++) {
+                if (j === i) continue;
+                newList.push(prev[i]);
+            }
+
+            return newList;
+        });
+    };
+
+    useEffect(() => {
+        if (!TextMessage.isTextMessage(messageToEdit)) return;
+        if (!messageToEdit.attachments) return;
+        setAttachmentList(messageToEdit.attachments);
+    }, [messageToEdit]);
+
+    useEffect(() => {
+        handleTextMessageChange({ attachments: attachmentList });
+    }, [attachmentList]);
 
     useInterval(
         (timerId) => {
@@ -127,45 +177,79 @@ function NewTextMessage(props: NewTextMessageProps) {
         [startedTypingAt]
     );
 
+    console.log("attachmentList", attachmentList);
+
     if (!user || !chatWindow) return <></>;
 
     return (
-        <Input
-            autoResize
-            variant="secondary"
-            leftIcon={
-                <Avatar
-                    src={user?.photo}
-                    alt={user?.name}
-                />
-            }
-            rightIcon={[
-                <Icon
-                    icon={<Microphone />}
-                    size={2}
-                />,
-                <Icon
-                    icon={<Attachment />}
-                    size={2}
-                />,
-                <Icon
-                    icon={<SendPlane />}
-                    size={2}
-                />,
-            ]}
-            rightIconTitles={["Audio", "Send"]}
-            onRightIconClick={[
-                recordAudio,
-                handleAttachFiles,
-                handleSendMessage,
-            ]}
-            rightIconVariant="highlight"
-            placeholder="Your message..."
-            onEnterPress={handleSendMessage}
-            onChange={handleTextChange}
-            value={textMessage.text}
-            light={0.05}
-        />
+        <>
+            {attachmentList.length > 0 && (
+                <Container
+                    transparent
+                    width="600px"
+                    height="fit-content"
+                >
+                    <Carousel
+                        hideScrollbar
+                        scrollWithWheel
+                        direction="row"
+                        justify="start"
+                        align="center"
+                        width={`calc(100% - ${2 * paddingX}px)`}
+                        height="fit-content"
+                        gap={10}
+                    >
+                        {attachmentList.map((attachment, i) => (
+                            <MediaViewer
+                                key={attachment.url}
+                                media={new Media({ ...attachment })}
+                                onRemove={handleUnattachFile(i)}
+                            />
+                        ))}
+                    </Carousel>
+                </Container>
+            )}
+            <Input
+                autoResize
+                variant="secondary"
+                leftIcon={
+                    <Avatar
+                        src={user?.photo}
+                        alt={user?.name}
+                    />
+                }
+                rightIcon={[
+                    <Icon
+                        icon={<Microphone />}
+                        size={2}
+                    />,
+                    !loadingAttachments ? (
+                        <Icon
+                            icon={<Attachment />}
+                            size={2}
+                        />
+                    ) : (
+                        <Spinner size={2} />
+                    ),
+                    <Icon
+                        icon={<SendPlane />}
+                        size={2}
+                    />,
+                ]}
+                rightIconTitles={["Audio", "Attachments", "Send"]}
+                onRightIconClick={[
+                    recordAudio,
+                    handleAttachFiles,
+                    handleSendMessage,
+                ]}
+                rightIconVariant="highlight"
+                placeholder="Your message..."
+                onEnterPress={handleSendMessage}
+                onChange={handleTextChange}
+                value={textMessage.text}
+                light={0.05}
+            />
+        </>
     );
 }
 

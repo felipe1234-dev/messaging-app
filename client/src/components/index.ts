@@ -86,3 +86,6 @@ export type { AudioPlayerProps } from "./AudioPlayer";
 
 export { default as Slider } from "./Slider";
 export type { SliderProps } from "./Slider";
+
+export { default as MediaViewer } from "./MediaViewer";
+export type { MediaViewerProps } from "./MediaViewer";

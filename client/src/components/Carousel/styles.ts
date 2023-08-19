@@ -17,7 +17,7 @@ const StyledCarousel = styled.div<StyledCarouselProps>`
     ${({ width, height, p, pl, pr, pt, pb, px, py }) => css`
         position: relative;
         display: flex;
-        flex-direction: center;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         width: ${width};
@@ -25,13 +25,13 @@ const StyledCarousel = styled.div<StyledCarouselProps>`
         overflow: hidden;
         ${p
             ? css`
-                  padding: ${p}px;
+                  padding: ${p || 0}px;
               `
             : css`
-                  padding-top: ${py ?? pt}px;
-                  padding-left: ${px ?? pl}px;
-                  padding-right: ${px ?? pr}px;
-                  padding-bottom: ${py ?? pb}px;
+                  padding-top: ${py ?? (pt || 0)}px;
+                  padding-left: ${px ?? (pl || 0)}px;
+                  padding-right: ${px ?? (pr || 0)}px;
+                  padding-bottom: ${py ?? (pb || 0)}px;
               `}
     `}
 `;

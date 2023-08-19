@@ -49,7 +49,7 @@ function EditChat(props: EditChatProps) {
             setLoadingBgImage(true);
             Api.media
                 .upload(file, `chats/${chat.uid}/cover/${file.name}`)
-                .then((url) => updateChat({ cover: url }))
+                .then(({ url }) => updateChat({ cover: url }))
                 .catch((err) => alert.error((err as Error).message))
                 .finally(() => setLoadingBgImage(false));
         });

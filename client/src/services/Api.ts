@@ -11,6 +11,7 @@ import {
     User,
     Chat,
     Message,
+    Media,
     FriendRequest,
     TextMessage,
     AudioMessage,
@@ -393,10 +394,19 @@ const Api = {
                         ),
                     });
                 },
-                sendTextMessage: (text: string, replyTo?: string) => {
+                sendTextMessage: (
+                    text: string,
+                    options: {
+                        repliedTo?: string;
+                        attachments?: TextMessage["attachments"];
+                    } = {}
+                ) => {
+                    const { repliedTo, attachments } = options;
+
                     const textMessage = new TextMessage({
                         text,
-                        repliedTo: replyTo,
+                        repliedTo,
+                        attachments,
                         chat: chat.uid,
                         sentBy: user.uid,
                     });
@@ -646,7 +656,7 @@ const Api = {
             metadata?: {
                 [key: string]: any;
             }
-        ): Promise<string> => {
+        ): Promise<Media> => {
             const arrayBuffer = new Uint8Array(await file.arrayBuffer());
             const bufferAsNums = Array.from(arrayBuffer);
 
@@ -659,9 +669,8 @@ const Api = {
                 metadata,
             });
 
-            const { url = "" } = data;
-
-            return url;
+            const { media } = data;
+            return new Media(media);
         },
     },
 };

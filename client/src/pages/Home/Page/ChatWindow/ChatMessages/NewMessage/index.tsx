@@ -1,5 +1,4 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-
 import { Message, TextMessage, AudioMessage } from "messaging-app-globals";
 
 import { useAuth } from "@providers";

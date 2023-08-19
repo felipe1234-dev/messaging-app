@@ -13,6 +13,7 @@ interface ContainerProps {
     height?: string;
 
     transparent?: boolean;
+    transparency?: number;
     variant?: Variant;
 
     light?: number;
@@ -80,6 +81,7 @@ const Container = styled.div<ContainerProps>`
 
         variant,
         transparent,
+        transparency,
 
         overflowX,
         overflowY,
@@ -101,6 +103,8 @@ const Container = styled.div<ContainerProps>`
         background-color: ${transparent || !variant
             ? `rgba(255, 255, 255, ${light})`
             : shade(theme.background[variant], light || 0)};
+
+        opacity: ${1 - (transparency || 0)};
 
         ${overflowX &&
         css`
@@ -155,6 +159,7 @@ Container.defaultProps = {
     width: "100%",
     height: "100%",
     transparent: false,
+    transparency: 0,
     light: 0,
     pl: 0,
     pr: 0,
