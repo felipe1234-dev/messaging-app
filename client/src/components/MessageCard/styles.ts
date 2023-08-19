@@ -75,7 +75,7 @@ interface MessageBalloonProps {
 
 const lineAmount = 6;
 
-const MessageBalloon = styled.pre<MessageBalloonProps>`
+const MessageBalloon = styled.p<MessageBalloonProps>`
     ${({ isSender, showSender, color, wasReplied, isReply, theme }) => css`
         background-color: ${shade(
             color || theme.background.highlight,
@@ -85,6 +85,7 @@ const MessageBalloon = styled.pre<MessageBalloonProps>`
         padding: 10px;
         animation-name: ${showItemAnimation};
         animation-duration: 1s;
+        white-space: pre-wrap;
 
         border-radius: 18px;
         ${wasReplied
