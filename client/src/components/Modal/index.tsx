@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
     DarkBackground,
     ModalContainer,
@@ -12,7 +12,7 @@ import { Variant } from "@types";
 import Button from "../Button";
 
 import { Icon, Whitespace } from "@styles/layout";
-import { ShowItem } from "@styles/animations";
+import { FadeIn, FadeOut } from "@styles/animations";
 import { Close } from "@styled-icons/ionicons-solid";
 
 interface ModalProps {
@@ -42,17 +42,30 @@ function Modal(props: ModalProps) {
         hideOnClickBackground = true,
     } = props;
 
+    const [fadeOut, setFadeOut] = useState(false);
+
+    const handleCloseModal = () => {
+        setFadeOut(true);
+        setTimeout(() => {
+            setFadeOut(false);
+            onClose();
+        }, 500);
+    };
+
     const handleBackgroundClick = () => {
         if (!hideOnClickBackground) return;
-        onClose();
+        handleCloseModal();
     };
+
+    const Fade = ({ children }: { children: ReactNode }) =>
+        fadeOut ? <FadeOut>{children}</FadeOut> : <FadeIn>{children}</FadeIn>;
 
     return (
         <DarkBackground
             visible={visible}
             onClick={handleBackgroundClick}
         >
-            <ShowItem>
+            <Fade>
                 <ModalContainer
                     variant={variant}
                     textVariant={textVariant}
@@ -67,7 +80,7 @@ function Modal(props: ModalProps) {
                                     round
                                     iconed
                                     transparent
-                                    onClick={onClose}
+                                    onClick={handleCloseModal}
                                     size={1.2}
                                     p={8}
                                 >
@@ -79,7 +92,7 @@ function Modal(props: ModalProps) {
                     {body && <ModalBody>{body}</ModalBody>}
                     {footer && <ModalFooter>{footer}</ModalFooter>}
                 </ModalContainer>
-            </ShowItem>
+            </Fade>
         </DarkBackground>
     );
 }

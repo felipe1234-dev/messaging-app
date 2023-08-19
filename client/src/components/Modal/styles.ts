@@ -55,7 +55,7 @@ const ModalContainer = styled.div<ModalContainerProps>`
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        max-height: calc(100% - 64px);
+        max-height: calc(100vh - 64px);
         max-width: 600px;
         opacity: 0.8;
         transition: opacity ease-in-out ${time};
