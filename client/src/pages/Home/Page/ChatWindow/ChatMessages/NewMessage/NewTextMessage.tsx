@@ -83,6 +83,7 @@ function NewTextMessage(props: NewTextMessageProps) {
 
         try {
             await promise;
+            setAttachmentList([]);
             resetMessage();
             scrollToBottom();
         } catch (err) {
@@ -149,9 +150,14 @@ function NewTextMessage(props: NewTextMessageProps) {
     };
 
     useEffect(() => {
-        if (!TextMessage.isTextMessage(messageToEdit)) return;
-        if (!messageToEdit.attachments) return;
-        setAttachmentList(messageToEdit.attachments);
+        const isTextMessage = TextMessage.isTextMessage(messageToEdit);
+        const hasAttachments =
+            isTextMessage &&
+            !!messageToEdit &&
+            !!messageToEdit.attachments &&
+            messageToEdit.attachments.length > 0;
+        if (!isTextMessage || !hasAttachments) return setAttachmentList([]);
+        setAttachmentList(messageToEdit.attachments || []);
     }, [messageToEdit]);
 
     useEffect(() => {
@@ -176,8 +182,6 @@ function NewTextMessage(props: NewTextMessageProps) {
         1000,
         [startedTypingAt]
     );
-
-    console.log("attachmentList", attachmentList);
 
     if (!user || !chatWindow) return <></>;
 
