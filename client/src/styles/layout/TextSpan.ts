@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 import { Variant, FontStyle } from "@types";
 
 interface TextSpanProps {
+    flex?: boolean;
     variant?: Variant;
     size?: number;
     fontStyle?: FontStyle;
@@ -18,6 +19,7 @@ interface TextSpanProps {
 
 const TextSpan = styled.span<TextSpanProps>`
     ${({
+        flex,
         size,
         variant,
         fontStyle,
@@ -32,6 +34,7 @@ const TextSpan = styled.span<TextSpanProps>`
         pb,
         theme,
     }) => css`
+        ${flex && css`display: flex;`}
         font-size: ${size}em;
         font-style: ${fontStyle};
         font-weight: ${fontWeight};
@@ -53,6 +56,7 @@ const TextSpan = styled.span<TextSpanProps>`
 `;
 
 TextSpan.defaultProps = {
+    flex: false,
     size: 1,
     variant: "primary",
     fontStyle: "normal",

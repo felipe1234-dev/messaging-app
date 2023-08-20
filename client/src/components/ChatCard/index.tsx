@@ -124,7 +124,10 @@ function ChatCard(props: ChatCardProps) {
                             {isTextMessage &&
                                 lastMessage.attachments &&
                                 lastMessage.attachments.length > 0 && (
-                                    <TextSpan ml={8}>
+                                    <TextSpan
+                                        flex
+                                        ml={8}
+                                    >
                                         <Icon icon={<Attachment />} />
                                         <TextSpan ml={8}>
                                             {lastMessage.attachments.length}
