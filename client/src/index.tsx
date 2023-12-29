@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import {
     ThemeProvider,
     LoaderProvider,
+    NotificationProvider,
     AlertProvider,
     ModalProvider,
     AuthProvider,
@@ -26,6 +27,7 @@ const providers = [
     BrowserRouter,
     ThemeProvider,
     LoaderProvider,
+    NotificationProvider,
     AlertProvider,
     ModalProvider,
     AuthProvider,

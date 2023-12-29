@@ -1,8 +1,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { User as Friend, FriendRequest } from "messaging-app-globals";
-import { useAuth } from "./Auth";
 import { Api } from "@services";
+import { useAuth } from "./Auth";
 import { useAlert } from "./Alert";
+import { useNotification } from "./Notification";
 
 interface FriendsValue {
     friends: Friend[];
@@ -21,6 +22,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
     const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
     const { user } = useAuth();
     const alert = useAlert();
+    const notif = useNotification();
 
     const fetchFriends = async () => {
         try {
@@ -100,6 +102,15 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
         });
     };
 
+    const onFriendRequestReceived = (friendRequest: FriendRequest) => {
+        notif.notify({
+            image: <></>,
+            title: <b>Friend request received!</b>,
+            subtitle: "",
+        });
+        onUpdateFriendRequests(friendRequest);
+    };
+
     useEffect(() => {
         if (!user?.uid) return setFriendRequests([]);
         fetchFriendRequests();
@@ -118,7 +129,7 @@ function FriendsProvider({ children }: { children: React.ReactNode }) {
         Api.friends.onFriendListUpdated(user.uid, onFriendUpdated);
         Api.friendRequests.onFriendRequestReceived(
             user.uid,
-            onUpdateFriendRequests
+            onFriendRequestReceived
         );
         Api.friendRequests.onFriendRequestSent(
             user.uid,

@@ -2,8 +2,8 @@ import { useEffect } from "react";
 
 import { Page } from "./styles/layout";
 import { routes } from "./constants";
-import { useLoader, useAlert, useModal } from "./providers";
-import { PageLoader, Alert, Modal } from "./components";
+import { useLoader, useAlert, useModal, useNotification } from "./providers";
+import { PageLoader, Alert, Modal, Notification } from "./components";
 import { useTimeout } from "./hooks";
 import { Api } from "./services";
 
@@ -13,6 +13,8 @@ function App() {
     const alert = useAlert();
     const loader = useLoader();
     const modal = useModal();
+    const notif = useNotification();
+
     const pageLocation = useLocation();
     const { pathname: pathNow } = pageLocation;
 
@@ -60,6 +62,17 @@ function App() {
             >
                 {alert.message}
             </Alert>
+            {notif.notifications.map(({ uid, image, title, subtitle }) => (
+                <Notification
+                    key={uid}
+                    show
+                    image={image}
+                    title={title}
+                    subtitle={subtitle}
+                    autoHideTime={notif.autoHideTime}
+                />
+            ))}
+
             <PageLoader visible={loader.visible} />
         </Page>
     );

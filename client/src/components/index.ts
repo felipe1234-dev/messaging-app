@@ -89,3 +89,6 @@ export type { SliderProps } from "./Slider";
 
 export { default as MediaViewer } from "./MediaViewer";
 export type { MediaViewerProps } from "./MediaViewer";
+
+export { default as Notification } from "./Notification";
+export type { NotificationProps } from "./Notification";

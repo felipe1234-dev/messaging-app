@@ -60,8 +60,8 @@
             "@icons": [
                 "src/icons"
             ],
-            "@assets": [
-                "src/assets"
+            "@assets/*": [
+                "src/assets/*"
             ],
             "@types": [
                 "src/types"

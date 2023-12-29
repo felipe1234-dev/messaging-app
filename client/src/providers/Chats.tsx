@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Chat, Message, User } from "messaging-app-globals";
+
 import { useAlert, useAuth } from "@providers";
 import { useAsyncEffect } from "@hooks";
 import { Api } from "@services";
 import { convertToHashMap } from "@functions";
 import { WrapperChat, HashMap } from "@types";
+
+import dingSound from "@assets/sounds/message_ding.wav";
 
 interface ChatsValue {
     chats: WrapperChat[];
@@ -48,6 +51,10 @@ function ChatsProvider(props: { children: React.ReactNode }) {
         setMessages((prev) => {
             const newMessages = { ...prev };
             newMessages[message.uid] = message;
+
+            const sound = new Audio(dingSound);
+            sound.play();
+
             return newMessages;
         });
     };
